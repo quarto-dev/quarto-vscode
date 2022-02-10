@@ -1,0 +1,7 @@
+{
+	"Insert Div": {
+		"prefix": "div",
+		"body": [":::", "${TM_SELECTED_TEXT}$0", ":::"],
+		"description": "Insert Div"
+	}
+}
