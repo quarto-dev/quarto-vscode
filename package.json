@@ -3,12 +3,9 @@
   "private": true,
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "build": "node build",
-    "test": "node ./test/runTest.js"
+    "build": "node build"
   },
-  "activationEvents": [],
   "engines": {
     "vscode": "^1.55.0"
   },
