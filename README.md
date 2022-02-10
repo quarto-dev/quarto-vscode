@@ -8,13 +8,15 @@ and  support for highlighting of executable code blocks
 
 ## Installation
 
-You can install the extension by:
+To install the Quarto extension:
 
-1. Downloading the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/dist/quarto-1.0.0.vsix)
+1. Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/dist/quarto-1.0.0.vsix)
 
-2. Installing from the command line with:
-    
+2. Install from the command line with:
+  
+   ```bash
    code --install-extension quarto-1.0.0.vsix
+   ```
 
 Note that in order to use the `code` command to perform the installation you may need to open the VS Code 
 Command Palette (Cmd+Shift+P) and type 'shell command' to find the Shell Command: Install 'code' command in PATH command.
