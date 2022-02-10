@@ -15,4 +15,4 @@ coverage/
 test_data/
 yarn-error.log
 .vscode-test
-*.vsix
+
