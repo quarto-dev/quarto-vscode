@@ -14,8 +14,8 @@
     "url": "https://github.com/quarto-dev/quarto-vscode.git"
   },
   "keywords": [],
-  "author": "Microsoft",
-  "publisher": "Microsoft",
+  "author": "quarto",
+  "publisher": "quarto",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/quarto-dev/quarto-vscode/issues"
