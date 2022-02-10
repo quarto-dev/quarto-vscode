@@ -1,8 +1,9 @@
 {
   "name": "quarto",
+  "displayName": "Quarto",
   "private": true,
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "The official extension for the Quarto scientific and technical publishing system.",
   "scripts": {
     "build": "node build"
   },
@@ -13,9 +14,14 @@
     "type": "git",
     "url": "https://github.com/quarto-dev/quarto-vscode.git"
   },
-  "keywords": [],
+  "keywords": [
+    "markdown",
+    "pandoc",
+    "quarto"
+  ],
   "author": "quarto",
   "publisher": "quarto",
+  "icon": "logo/quarto.png",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/quarto-dev/quarto-vscode/issues"
