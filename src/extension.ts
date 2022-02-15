@@ -10,16 +10,12 @@ import MarkdownFoldingProvider from './features/foldingProvider';
 import MarkdownSmartSelect from './features/smartSelect';
 import MarkdownWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
 import { MarkdownEngine } from './markdownEngine';
-import { getMarkdownExtensionContributions } from './markdownExtensions';
 import { githubSlugifier } from './slugify';
 
 
 export function activate(context: vscode.ExtensionContext) {
 
-	const contributions = getMarkdownExtensionContributions(context);
-	context.subscriptions.push(contributions);
-
-	const engine = new MarkdownEngine(contributions, githubSlugifier);
+	const engine = new MarkdownEngine(githubSlugifier);
 
 	const symbolProvider = new MDDocumentSymbolProvider(engine);
 

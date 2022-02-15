@@ -6,7 +6,6 @@
 import MarkdownIt = require('markdown-it');
 import Token = require('markdown-it/lib/token');
 import * as vscode from 'vscode';
-import { MarkdownContributionProvider as MarkdownContributionProvider } from './markdownExtensions';
 import { Slugifier } from './slugify';
 import { SkinnyTextDocument } from './tableOfContentsProvider';
 import { hash } from './util/hash';
@@ -99,13 +98,8 @@ export class MarkdownEngine {
 	private _tokenCache = new TokenCache();
 
 	public constructor(
-		private readonly contributionProvider: MarkdownContributionProvider,
 		private readonly slugifier: Slugifier,
 	) {
-		contributionProvider.onContributionsChanged(() => {
-			// Markdown plugin contributions may have changed
-			this.md = undefined;
-		});
 	}
 
 	private async getEngine(config: MarkdownItConfig): Promise<MarkdownIt> {
@@ -115,13 +109,6 @@ export class MarkdownEngine {
 				let md: MarkdownIt = markdownIt.default(await getMarkdownOptions(() => md));
 				md.linkify.set({ fuzzyLink: false });
 
-				for (const plugin of this.contributionProvider.contributions.markdownItPlugins.values()) {
-					try {
-						md = (await plugin)(md);
-					} catch (e) {
-						console.error('Could not load markdown it plugin', e);
-					}
-				}
 
 				this.addImageRenderer(md);
 				this.addFencedRenderer(md);
