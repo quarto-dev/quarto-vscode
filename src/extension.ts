@@ -9,6 +9,7 @@ import * as commands from './commands/index';
 import LinkProvider from './features/documentLinkProvider';
 import MDDocumentSymbolProvider from './features/documentSymbolProvider';
 import MarkdownFoldingProvider from './features/foldingProvider';
+import { PathCompletionProvider } from './features/pathCompletions';
 import MarkdownSmartSelect from './features/smartSelect';
 import MarkdownWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
 import { MarkdownEngine } from './markdownEngine';
@@ -37,6 +38,7 @@ function registerMarkdownLanguageFeatures(
 		vscode.languages.registerFoldingRangeProvider(selector, new MarkdownFoldingProvider(engine)),
 		vscode.languages.registerSelectionRangeProvider(selector, new MarkdownSmartSelect(engine)),
 		vscode.languages.registerWorkspaceSymbolProvider(new MarkdownWorkspaceSymbolProvider(symbolProvider)),
+		PathCompletionProvider.register(selector, engine),
 	);
 }
 
