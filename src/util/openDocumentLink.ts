@@ -3,159 +3,205 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from 'path';
-import * as vscode from 'vscode';
-import { MarkdownEngine } from '../markdownEngine';
-import { TableOfContents } from '../tableOfContentsProvider';
-import { isQuartoFile } from './file';
-import { extname } from './path';
+import * as path from "path";
+import * as vscode from "vscode";
+import { MarkdownEngine } from "../markdownEngine";
+import { TableOfContents } from "../tableOfContentsProvider";
+import { isQuartoFile } from "./file";
+import { extname } from "./path";
 
 export interface OpenDocumentLinkArgs {
-	readonly parts: vscode.Uri;
-	readonly fragment: string;
-	readonly fromResource: vscode.Uri;
+  readonly parts: vscode.Uri;
+  readonly fragment: string;
+  readonly fromResource: vscode.Uri;
 }
 
 enum OpenMarkdownLinks {
-	beside = 'beside',
-	currentGroup = 'currentGroup',
+  beside = "beside",
+  currentGroup = "currentGroup",
 }
 
-export function resolveDocumentLink(href: string, markdownFile: vscode.Uri): vscode.Uri {
-	let [hrefPath, fragment] = href.split('#').map(c => decodeURIComponent(c));
+export function resolveDocumentLink(
+  href: string,
+  markdownFile: vscode.Uri
+): vscode.Uri {
+  let [hrefPath, fragment] = href.split("#").map((c) => decodeURIComponent(c));
 
-	if (hrefPath[0] === '/') {
-		// Absolute path. Try to resolve relative to the workspace
-		const workspace = vscode.workspace.getWorkspaceFolder(markdownFile);
-		if (workspace) {
-			return vscode.Uri.joinPath(workspace.uri, hrefPath.slice(1)).with({ fragment });
-		}
-	}
+  if (hrefPath[0] === "/") {
+    // Absolute path. Try to resolve relative to the workspace
+    const workspace = vscode.workspace.getWorkspaceFolder(markdownFile);
+    if (workspace) {
+      return vscode.Uri.joinPath(workspace.uri, hrefPath.slice(1)).with({
+        fragment,
+      });
+    }
+  }
 
-	// Relative path. Resolve relative to the md file
-	const dirnameUri = markdownFile.with({ path: path.dirname(markdownFile.path) });
-	return vscode.Uri.joinPath(dirnameUri, hrefPath).with({ fragment });
+  // Relative path. Resolve relative to the md file
+  const dirnameUri = markdownFile.with({
+    path: path.dirname(markdownFile.path),
+  });
+  return vscode.Uri.joinPath(dirnameUri, hrefPath).with({ fragment });
 }
 
-export async function openDocumentLink(engine: MarkdownEngine, targetResource: vscode.Uri, fromResource: vscode.Uri): Promise<void> {
-	const column = getViewColumn(fromResource);
+export async function openDocumentLink(
+  engine: MarkdownEngine,
+  targetResource: vscode.Uri,
+  fromResource: vscode.Uri
+): Promise<void> {
+  const column = getViewColumn(fromResource);
 
-	if (await tryNavigateToFragmentInActiveEditor(engine, targetResource)) {
-		return;
-	}
+  if (await tryNavigateToFragmentInActiveEditor(engine, targetResource)) {
+    return;
+  }
 
-	let targetResourceStat: vscode.FileStat | undefined;
-	try {
-		targetResourceStat = await vscode.workspace.fs.stat(targetResource);
-	} catch {
-		// noop
-	}
+  let targetResourceStat: vscode.FileStat | undefined;
+  try {
+    targetResourceStat = await vscode.workspace.fs.stat(targetResource);
+  } catch {
+    // noop
+  }
 
-	if (typeof targetResourceStat === 'undefined') {
-		// We don't think the file exists. If it doesn't already have an extension, try tacking on a `.md` and using that instead
-		if (extname(targetResource.path) === '') {
-			const dotMdResource = targetResource.with({ path: targetResource.path + '.md' });
-			try {
-				const stat = await vscode.workspace.fs.stat(dotMdResource);
-				if (stat.type === vscode.FileType.File) {
-					await tryOpenMdFile(engine, dotMdResource, column);
-					return;
-				}
-			} catch {
-				// noop
-			}
-		}
-	} else if (targetResourceStat.type === vscode.FileType.Directory) {
-		return vscode.commands.executeCommand('revealInExplorer', targetResource);
-	}
+  if (typeof targetResourceStat === "undefined") {
+    // We don't think the file exists. If it doesn't already have an extension, try tacking on a `.md` and using that instead
+    if (extname(targetResource.path) === "") {
+      const dotMdResource = targetResource.with({
+        path: targetResource.path + ".md",
+      });
+      try {
+        const stat = await vscode.workspace.fs.stat(dotMdResource);
+        if (stat.type === vscode.FileType.File) {
+          await tryOpenMdFile(engine, dotMdResource, column);
+          return;
+        }
+      } catch {
+        // noop
+      }
+    }
+  } else if (targetResourceStat.type === vscode.FileType.Directory) {
+    return vscode.commands.executeCommand("revealInExplorer", targetResource);
+  }
 
-	await tryOpenMdFile(engine, targetResource, column);
+  await tryOpenMdFile(engine, targetResource, column);
 }
 
-async function tryOpenMdFile(engine: MarkdownEngine, resource: vscode.Uri, column: vscode.ViewColumn): Promise<boolean> {
-	await vscode.commands.executeCommand('vscode.open', resource.with({ fragment: '' }), column);
-	return tryNavigateToFragmentInActiveEditor(engine, resource);
+async function tryOpenMdFile(
+  engine: MarkdownEngine,
+  resource: vscode.Uri,
+  column: vscode.ViewColumn
+): Promise<boolean> {
+  await vscode.commands.executeCommand(
+    "vscode.open",
+    resource.with({ fragment: "" }),
+    column
+  );
+  return tryNavigateToFragmentInActiveEditor(engine, resource);
 }
 
-async function tryNavigateToFragmentInActiveEditor(engine: MarkdownEngine, resource: vscode.Uri): Promise<boolean> {
-	const activeEditor = vscode.window.activeTextEditor;
-	if (activeEditor?.document.uri.fsPath === resource.fsPath) {
-		if (isQuartoFile(activeEditor.document)) {
-			if (await tryRevealLineUsingTocFragment(engine, activeEditor, resource.fragment)) {
-				return true;
-			}
-		}
-		tryRevealLineUsingLineFragment(activeEditor, resource.fragment);
-		return true;
-	}
-	return false;
+async function tryNavigateToFragmentInActiveEditor(
+  engine: MarkdownEngine,
+  resource: vscode.Uri
+): Promise<boolean> {
+  const activeEditor = vscode.window.activeTextEditor;
+  if (activeEditor?.document.uri.fsPath === resource.fsPath) {
+    if (isQuartoFile(activeEditor.document)) {
+      if (
+        await tryRevealLineUsingTocFragment(
+          engine,
+          activeEditor,
+          resource.fragment
+        )
+      ) {
+        return true;
+      }
+    }
+    tryRevealLineUsingLineFragment(activeEditor, resource.fragment);
+    return true;
+  }
+  return false;
 }
 
 function getViewColumn(resource: vscode.Uri): vscode.ViewColumn {
-	const config = vscode.workspace.getConfiguration('markdown', resource);
-	const openLinks = config.get<OpenMarkdownLinks>('links.openLocation', OpenMarkdownLinks.currentGroup);
-	switch (openLinks) {
-		case OpenMarkdownLinks.beside:
-			return vscode.ViewColumn.Beside;
-		case OpenMarkdownLinks.currentGroup:
-		default:
-			return vscode.ViewColumn.Active;
-	}
+  const config = vscode.workspace.getConfiguration("markdown", resource);
+  const openLinks = config.get<OpenMarkdownLinks>(
+    "links.openLocation",
+    OpenMarkdownLinks.currentGroup
+  );
+  switch (openLinks) {
+    case OpenMarkdownLinks.beside:
+      return vscode.ViewColumn.Beside;
+    case OpenMarkdownLinks.currentGroup:
+    default:
+      return vscode.ViewColumn.Active;
+  }
 }
 
-async function tryRevealLineUsingTocFragment(engine: MarkdownEngine, editor: vscode.TextEditor, fragment: string): Promise<boolean> {
-	const toc = await TableOfContents.create(engine, editor.document);
-	const entry = toc.lookup(fragment);
-	if (entry) {
-		const lineStart = new vscode.Range(entry.line, 0, entry.line, 0);
-		editor.selection = new vscode.Selection(lineStart.start, lineStart.end);
-		editor.revealRange(lineStart, vscode.TextEditorRevealType.AtTop);
-		return true;
-	}
-	return false;
+async function tryRevealLineUsingTocFragment(
+  engine: MarkdownEngine,
+  editor: vscode.TextEditor,
+  fragment: string
+): Promise<boolean> {
+  const toc = await TableOfContents.create(engine, editor.document);
+  const entry = toc.lookup(fragment);
+  if (entry) {
+    const lineStart = new vscode.Range(entry.line, 0, entry.line, 0);
+    editor.selection = new vscode.Selection(lineStart.start, lineStart.end);
+    editor.revealRange(lineStart, vscode.TextEditorRevealType.AtTop);
+    return true;
+  }
+  return false;
 }
 
-function tryRevealLineUsingLineFragment(editor: vscode.TextEditor, fragment: string): boolean {
-	const lineNumberFragment = fragment.match(/^L(\d+)$/i);
-	if (lineNumberFragment) {
-		const line = +lineNumberFragment[1] - 1;
-		if (!isNaN(line)) {
-			const lineStart = new vscode.Range(line, 0, line, 0);
-			editor.selection = new vscode.Selection(lineStart.start, lineStart.end);
-			editor.revealRange(lineStart, vscode.TextEditorRevealType.AtTop);
-			return true;
-		}
-	}
-	return false;
+function tryRevealLineUsingLineFragment(
+  editor: vscode.TextEditor,
+  fragment: string
+): boolean {
+  const lineNumberFragment = fragment.match(/^L(\d+)$/i);
+  if (lineNumberFragment) {
+    const line = +lineNumberFragment[1] - 1;
+    if (!isNaN(line)) {
+      const lineStart = new vscode.Range(line, 0, line, 0);
+      editor.selection = new vscode.Selection(lineStart.start, lineStart.end);
+      editor.revealRange(lineStart, vscode.TextEditorRevealType.AtTop);
+      return true;
+    }
+  }
+  return false;
 }
 
-export async function resolveUriToQuartoFile(resource: vscode.Uri): Promise<vscode.TextDocument | undefined> {
-	try {
-		const doc = await tryResolveUriToQuartoFile(resource);
-		if (doc) {
-			return doc;
-		}
-	} catch {
-		// Noop
-	}
+export async function resolveUriToQuartoFile(
+  resource: vscode.Uri
+): Promise<vscode.TextDocument | undefined> {
+  try {
+    const doc = await tryResolveUriToQuartoFile(resource);
+    if (doc) {
+      return doc;
+    }
+  } catch {
+    // Noop
+  }
 
-	// If no extension, try with `.md` extension
-	if (extname(resource.path) === '') {
-		return tryResolveUriToQuartoFile(resource.with({ path: resource.path + '.md' }));
-	}
+  // If no extension, try with `.md` extension
+  if (extname(resource.path) === "") {
+    return tryResolveUriToQuartoFile(
+      resource.with({ path: resource.path + ".md" })
+    );
+  }
 
-	return undefined;
+  return undefined;
 }
 
-async function tryResolveUriToQuartoFile(resource: vscode.Uri): Promise<vscode.TextDocument | undefined> {
-	let document: vscode.TextDocument;
-	try {
-		document = await vscode.workspace.openTextDocument(resource);
-	} catch {
-		return undefined;
-	}
-	if (isQuartoFile(document)) {
-		return document;
-	}
-	return undefined;
+async function tryResolveUriToQuartoFile(
+  resource: vscode.Uri
+): Promise<vscode.TextDocument | undefined> {
+  let document: vscode.TextDocument;
+  try {
+    document = await vscode.workspace.openTextDocument(resource);
+  } catch {
+    return undefined;
+  }
+  if (isQuartoFile(document)) {
+    return document;
+  }
+  return undefined;
 }

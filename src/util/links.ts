@@ -3,36 +3,33 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 export const Schemes = {
-	http: 'http:',
-	https: 'https:',
-	file: 'file:',
-	untitled: 'untitled',
-	mailto: 'mailto:',
-	data: 'data:',
-	vscode: 'vscode:',
-	'vscode-insiders': 'vscode-insiders:',
+  http: "http:",
+  https: "https:",
+  file: "file:",
+  untitled: "untitled",
+  mailto: "mailto:",
+  data: "data:",
+  vscode: "vscode:",
+  "vscode-insiders": "vscode-insiders:",
 };
 
-const knownSchemes = [
-	...Object.values(Schemes),
-	`${vscode.env.uriScheme}:`
-];
+const knownSchemes = [...Object.values(Schemes), `${vscode.env.uriScheme}:`];
 
-export function getUriForLinkWithKnownExternalScheme(link: string): vscode.Uri | undefined {
-	if (knownSchemes.some(knownScheme => isOfScheme(knownScheme, link))) {
-		return vscode.Uri.parse(link);
-	}
+export function getUriForLinkWithKnownExternalScheme(
+  link: string
+): vscode.Uri | undefined {
+  if (knownSchemes.some((knownScheme) => isOfScheme(knownScheme, link))) {
+    return vscode.Uri.parse(link);
+  }
 
-	return undefined;
+  return undefined;
 }
 
 export function isOfScheme(scheme: string, link: string): boolean {
-	return link.toLowerCase().startsWith(scheme);
+  return link.toLowerCase().startsWith(scheme);
 }
 
-export const QuartoFileExtensions: readonly string[] = [
-	'.qmd',
-];
+export const QuartoFileExtensions: readonly string[] = [".qmd"];

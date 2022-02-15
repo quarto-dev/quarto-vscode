@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 export function isQuartoFile(document: vscode.TextDocument) {
-	return document.languageId === 'quarto';
+  return document.languageId === "quarto";
 }
