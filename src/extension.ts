@@ -4,7 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-
+import { CommandManager } from './commandManager';
+import * as commands from './commands/index';
+import LinkProvider from './features/documentLinkProvider';
 import MDDocumentSymbolProvider from './features/documentSymbolProvider';
 import MarkdownFoldingProvider from './features/foldingProvider';
 import MarkdownSmartSelect from './features/smartSelect';
@@ -20,6 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const symbolProvider = new MDDocumentSymbolProvider(engine);
 
 	context.subscriptions.push(registerMarkdownLanguageFeatures(symbolProvider, engine));
+	context.subscriptions.push(registerMarkdownCommands(engine));
 }
 
 function registerMarkdownLanguageFeatures(
@@ -30,9 +33,16 @@ function registerMarkdownLanguageFeatures(
 
 	return vscode.Disposable.from(
 		vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
+		vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider(engine)),
 		vscode.languages.registerFoldingRangeProvider(selector, new MarkdownFoldingProvider(engine)),
 		vscode.languages.registerSelectionRangeProvider(selector, new MarkdownSmartSelect(engine)),
 		vscode.languages.registerWorkspaceSymbolProvider(new MarkdownWorkspaceSymbolProvider(symbolProvider)),
 	);
 }
 
+function registerMarkdownCommands(engine: MarkdownEngine): vscode.Disposable {
+
+	const commandManager = new CommandManager();
+	commandManager.register(new commands.OpenDocumentLinkCommand(engine));
+	return commandManager;
+}

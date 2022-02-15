@@ -134,7 +134,8 @@
     "markdown-it-dollarmath": "^0.4.0",
     "markdown-it-footnote": "^3.0.3",
     "markdown-it-front-matter": "^0.2.3",
-    "markdown-it-task-lists": "^2.1.1"
+    "markdown-it-task-lists": "^2.1.1",
+    "vscode-nls": "^5.0.0"
   },
   "devDependencies": {
     "@types/js-yaml": "^3.12.2",
