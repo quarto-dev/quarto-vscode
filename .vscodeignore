@@ -1,5 +1,12 @@
-build.js
+.gitignore
+.github/**
+.vscode/**
+.vscode-test/**
 test/**
 src/**
+node_modules/**
+**/*.map
+**/*.ts
+build-lang.js
 tsconfig.json
 cgmanifest.json

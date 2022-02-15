@@ -1,30 +1,47 @@
 {
   "name": "quarto",
   "displayName": "Quarto",
-  "private": true,
-  "version": "1.0.1",
-  "description": "The official extension for the Quarto scientific and technical publishing system.",
-  "scripts": {
-    "build": "node build"
-  },
-  "engines": {
-    "vscode": "^1.55.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/quarto-dev/quarto-vscode.git"
-  },
+  "description": "Official extension for the Quarto scientific and technical publishing system.",
+  "author": "quarto",
+  "publisher": "quarto",
+  "icon": "logo/quarto.png",
+  "license": "MIT",
   "keywords": [
     "markdown",
     "pandoc",
     "quarto"
   ],
-  "author": "quarto",
-  "publisher": "quarto",
-  "icon": "logo/quarto.png",
-  "license": "MIT",
+  "version": "1.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quarto-dev/quarto-vscode.git"
+  },
+  "homepage": "https://github.com/quarto-dev/quarto-vscode#readme",
   "bugs": {
     "url": "https://github.com/quarto-dev/quarto-vscode/issues"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "private": true,
+  "scripts": {
+    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
+    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+    "test-compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "build-lang": "node build-lang"
+  },
+  "engines": {
+    "vscode": "^1.55.0"
+  },
+  "main": "./out/main.js",
+  "activationEvents": [
+    "onLanguage:quarto"
+  ],
+  "capabilities": {
+    "virtualWorkspaces": true
   },
   "contributes": {
     "languages": [
@@ -100,14 +117,33 @@
     ],
     "configurationDefaults": {
       "[quarto]": {
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": false,
         "editor.unicodeHighlight.ambiguousCharacters": false,
         "editor.unicodeHighlight.invisibleCharacters": false
       }
     }
   },
-  "homepage": "https://github.com/quarto-dev/quarto-vscode#readme",
+  "dependencies": {
+    "highlight.js": "^10.4.1",
+    "js-yaml": "^4.1.0",
+    "katex": "^0.15.2",
+    "markdown-it": "^12.0.2",
+    "markdown-it-amsmath": "^0.3.0",
+    "markdown-it-deflist": "^2.1.0",
+    "markdown-it-dollarmath": "^0.4.0",
+    "markdown-it-footnote": "^3.0.3",
+    "markdown-it-front-matter": "^0.2.3",
+    "markdown-it-task-lists": "^2.1.1"
+  },
   "devDependencies": {
-    "js-yaml": "^3.13.1",
-    "plist": "^3.0.1"
+    "@types/js-yaml": "^3.12.2",
+    "@types/katex": "^0.11.1",
+    "@types/markdown-it": "^12.0.2",
+    "@types/node": "^8.10.25",
+    "@types/vscode": "^1.55.0",
+    "esbuild": "^0.14.21",
+    "plist": "^3.0.1",
+    "typescript": "^4.5.5"
   }
 }
