@@ -37,6 +37,15 @@
     ],
     "description": "Insert executable code block"
   },
+  "Insert raw code block": {
+    "prefix": "raw codeblock",
+    "body": [
+      "```{${1|html,latex,openxml,opendocument,asciidoc,docbook,markdown,dokuwiki,fb2,gfm,haddock,icml,ipynb,jats,jira,json,man,mediawiki,ms,muse,opml,org,plain,rst,rtf,tei,texinfo,textile,xwiki,zimwiki,native|}}",
+      "${TM_SELECTED_TEXT}$0",
+      "```"
+    ],
+    "description": "Insert raw code block"
+  },
   "Insert heading level 1": {
     "prefix": "heading1",
     "body": "# ${1:${TM_SELECTED_TEXT}}",

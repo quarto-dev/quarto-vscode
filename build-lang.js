@@ -419,7 +419,7 @@ const fencedCodeBlockDefinition = (
 
   return `fenced_code_block_${name}:
   begin:
-    (^|\\G)(\\s*)(\`{3,}|~{3,})\\s*(?:\\{[\\{\\.]?)?(?i:(${identifiers.join(
+    (^|\\G)(\\s*)(\`{3,}|~{3,})\\s*(?:\\{[\\{\\.=]?)?(?i:(${identifiers.join(
       "|"
     )})(?:\\}{1,2})?((\\s+|:|,|\\{|\\?)[^\`~]*)?$)
   name:
