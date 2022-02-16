@@ -15,7 +15,7 @@ let updateAllEditorsTimeout: NodeJS.Timer | undefined = undefined;
 
 const kHighlightDelayMs = 200;
 
-export function activateHighligher(context: vscode.ExtensionContext) {
+export function activateCellHighlighter(context: vscode.ExtensionContext) {
   // create shared background decoration
   codeBackgrondDecoration = vscode.window.createTextEditorDecorationType({
     isWholeLine: true,
