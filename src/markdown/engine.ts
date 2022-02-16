@@ -31,7 +31,7 @@ export class MarkdownEngine {
     if (!this.md) {
       this.md = (async () => {
         const markdownIt = await import("markdown-it");
-        return markdownIt.default();
+        return markdownIt.default("commonmark");
       })();
     }
 
