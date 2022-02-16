@@ -46,6 +46,12 @@
       "end": "^\\s*<!--\\s*#?endregion\\b.*-->"
     }
   },
+  "onEnterRules": [
+    {
+      "beforeText": "^([ ]{0,3})(\\|) .*",
+      "action": { "indent": "none", "appendText": "| " }
+    }
+  ],
   "wordPattern": {
     "pattern": "(\\p{Alphabetic}|\\p{Number}|\\p{Nonspacing_Mark})(((\\p{Alphabetic}|\\p{Number}|\\p{Nonspacing_Mark})|[_])?(\\p{Alphabetic}|\\p{Number}|\\p{Nonspacing_Mark}))*",
     "flags": "ug"

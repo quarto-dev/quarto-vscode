@@ -43,6 +43,10 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#line_block</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#lists</string>
           </dict>
           <dict>
@@ -90,6 +94,30 @@
         </array>
         <key>while</key>
         <string>(^|\G)\s*(&gt;) ?</string>
+      </dict>
+      <key>line_block</key>
+      <dict>
+        <key>begin</key>
+        <string>(^|\G)[ ]{0,3}(\|) ?</string>
+        <key>captures</key>
+        <dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.definition.quote.begin.markdown</string>
+          </dict>
+        </dict>
+        <key>name</key>
+        <string>markup.line_block.markdown</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#block</string>
+          </dict>
+        </array>
+        <key>while</key>
+        <string>(^|\G)\s*(\|) ?</string>
       </dict>
       <key>fenced_code_block_css</key>
       <dict>

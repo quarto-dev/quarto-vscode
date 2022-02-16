@@ -10,6 +10,7 @@ repository:
     - {include: '#separator'}
     - {include: '#heading'}
     - {include: '#blockquote'}
+    - {include: '#line_block'}
     - {include: '#lists'}
     - {include: '#fenced_code_block'}
     - {include: '#raw_block'}
@@ -24,6 +25,14 @@ repository:
     patterns:
     - {include: '#block'}
     while: (^|\G)\s*(>) ?
+  line_block:
+    begin: (^|\G)[ ]{0,3}(\|) ?
+    captures:
+      '2': {name: punctuation.definition.quote.begin.markdown}
+    name: markup.line_block.markdown
+    patterns:
+    - {include: '#block'}
+    while: (^|\G)\s*(\|) ?
 {{languageDefinitions}}
   fenced_code_block:
     patterns:
