@@ -120,7 +120,10 @@
     "configurationDefaults": {
       "[quarto]": {
         "editor.wordWrap": "on",
-        "editor.quickSuggestions": false,
+        "editor.quickSuggestions": true,
+        "editor.quickSuggestionsDelay": 10,
+        "editor.snippetSuggestions": "none",
+        "editor.wordBasedSuggestions": false,
         "editor.unicodeHighlight.ambiguousCharacters": false,
         "editor.unicodeHighlight.invisibleCharacters": false
       }
