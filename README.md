@@ -12,7 +12,7 @@ This extension provides language support for Quarto `.qmd` files, including:
 
 ### Installation
 
-The easiest way to install is directly within VS Code (search extensions for "quarto").
+The easiest way to install is directly from within VS Code (search extensions for "quarto").
 
 You can also install from the [VS Code Extension Marketplace](https://marketplace.visualstudio.com/items?itemName=quarto.quarto).
 
