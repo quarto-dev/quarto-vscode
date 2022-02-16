@@ -87,5 +87,19 @@
     "prefix": "strikethrough",
     "body": "~~${1:${TM_SELECTED_TEXT}}~~",
     "description": "Insert strikethrough"
+  },
+  "Insert div block": {
+    "prefix": "div",
+    "body": ["::: {.${1:class}}", "${TM_SELECTED_TEXT}$0", ":::"],
+    "description": "Insert div block"
+  },
+  "Insert callout block": {
+    "prefix": "callout",
+    "body": [
+      "::: {.${1|callout,callout-note,callout-tip,callout-important,callout-caution,callout-warning|}}",
+      "${TM_SELECTED_TEXT}$0",
+      ":::"
+    ],
+    "description": "Insert callout block"
   }
 }

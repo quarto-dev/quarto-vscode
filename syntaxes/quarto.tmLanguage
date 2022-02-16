@@ -27,6 +27,10 @@
         <array>
           <dict>
             <key>include</key>
+            <string>#div</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#separator</string>
           </dict>
           <dict>
@@ -3208,6 +3212,43 @@
         </dict>
         <key>name</key>
         <string>markup.fenced_code.block.markdown</string>
+      </dict>
+      <key>div</key>
+      <dict>
+        <key>name</key>
+        <string>markup.div.markdown</string>
+        <key>begin</key>
+        <string>(^|\G)(\s*)(:{3,})(\s*\{.*$|\s*$)</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>markup.heading.div.markdown</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>markup.heading.div.markdown</string>
+          </dict>
+        </dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#block</string>
+          </dict>
+        </array>
+        <key>end</key>
+        <string>(^|\G)(\2)(\3)(\s*$)</string>
+        <key>endCaptures</key>
+        <dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>markup.heading.div.markdown</string>
+          </dict>
+        </dict>
       </dict>
       <key>heading</key>
       <dict>
