@@ -1,15 +1,13 @@
 /*---------------------------------------------------------------------------------------------
+ *  Copyright (c) RStudio, PBC. All rights reserved.
  *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import { MarkdownEngine } from "../markdownEngine";
-import {
-  SkinnyTextDocument,
-  TableOfContents,
-  TocEntry,
-} from "../tableOfContentsProvider";
+import { MarkdownTextDocument } from "../markdown/document";
+import { MarkdownEngine } from "../markdown/engine";
+import { MarkdownTableOfContents, TocEntry } from "../markdown/toc";
 
 interface MarkdownSymbol {
   readonly level: number;
@@ -17,22 +15,22 @@ interface MarkdownSymbol {
   readonly children: vscode.DocumentSymbol[];
 }
 
-export default class MDDocumentSymbolProvider
+export default class QuartoDocumentSymbolProvider
   implements vscode.DocumentSymbolProvider
 {
   constructor(private readonly engine: MarkdownEngine) {}
 
   public async provideDocumentSymbolInformation(
-    document: SkinnyTextDocument
+    document: MarkdownTextDocument
   ): Promise<vscode.SymbolInformation[]> {
-    const toc = await TableOfContents.create(this.engine, document);
+    const toc = await MarkdownTableOfContents.create(this.engine, document);
     return toc.entries.map((entry) => this.toSymbolInformation(entry));
   }
 
   public async provideDocumentSymbols(
-    document: SkinnyTextDocument
+    document: MarkdownTextDocument
   ): Promise<vscode.DocumentSymbol[]> {
-    const toc = await TableOfContents.create(this.engine, document);
+    const toc = await MarkdownTableOfContents.create(this.engine, document);
     const root: MarkdownSymbol = {
       level: -Infinity,
       children: [],

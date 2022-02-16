@@ -1,24 +1,23 @@
 /*---------------------------------------------------------------------------------------------
+ *  Copyright (c) RStudio, PBC. All rights reserved.
  *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import { CommandManager } from "./commandManager";
-import * as commands from "./commands/index";
-import LinkProvider from "./features/documentLinkProvider";
-import MDDocumentSymbolProvider from "./features/documentSymbolProvider";
-import MarkdownFoldingProvider from "./features/foldingProvider";
-import { PathCompletionProvider } from "./features/pathCompletions";
-import MarkdownSmartSelect from "./features/smartSelect";
-import MarkdownWorkspaceSymbolProvider from "./features/workspaceSymbolProvider";
-import { MarkdownEngine } from "./markdownEngine";
-import { githubSlugifier } from "./slugify";
+import { OpenLinkCommand } from "./commands/open-link";
+import QuartoLinkProvider from "./providers/link";
+import QuartoDocumentSymbolProvider from "./providers/symbol-document";
+import QuartoFoldingProvider from "./providers/folding";
+import { PathCompletionProvider } from "./completion/path";
+import QuartoSelectionRangeProvider from "./providers/selection-range";
+import QuartoWorkspaceSymbolProvider from "./providers/symbol-workspace";
+import { MarkdownEngine } from "./markdown/engine";
 
 export function activate(context: vscode.ExtensionContext) {
-  const engine = new MarkdownEngine(githubSlugifier);
+  const engine = new MarkdownEngine();
 
-  const symbolProvider = new MDDocumentSymbolProvider(engine);
+  const symbolProvider = new QuartoDocumentSymbolProvider(engine);
 
   context.subscriptions.push(
     registerMarkdownLanguageFeatures(symbolProvider, engine)
@@ -27,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function registerMarkdownLanguageFeatures(
-  symbolProvider: MDDocumentSymbolProvider,
+  symbolProvider: QuartoDocumentSymbolProvider,
   engine: MarkdownEngine
 ): vscode.Disposable {
   const selector: vscode.DocumentSelector = { language: "quarto", scheme: "*" };
@@ -36,18 +35,18 @@ function registerMarkdownLanguageFeatures(
     vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
     vscode.languages.registerDocumentLinkProvider(
       selector,
-      new LinkProvider(engine)
+      new QuartoLinkProvider(engine)
     ),
     vscode.languages.registerFoldingRangeProvider(
       selector,
-      new MarkdownFoldingProvider(engine)
+      new QuartoFoldingProvider(engine)
     ),
     vscode.languages.registerSelectionRangeProvider(
       selector,
-      new MarkdownSmartSelect(engine)
+      new QuartoSelectionRangeProvider(engine)
     ),
     vscode.languages.registerWorkspaceSymbolProvider(
-      new MarkdownWorkspaceSymbolProvider(symbolProvider)
+      new QuartoWorkspaceSymbolProvider(symbolProvider)
     ),
     PathCompletionProvider.register(selector, engine)
   );
@@ -55,6 +54,40 @@ function registerMarkdownLanguageFeatures(
 
 function registerMarkdownCommands(engine: MarkdownEngine): vscode.Disposable {
   const commandManager = new CommandManager();
-  commandManager.register(new commands.OpenDocumentLinkCommand(engine));
+  commandManager.register(new OpenLinkCommand(engine));
   return commandManager;
+}
+
+export interface Command {
+  readonly id: string;
+
+  execute(...args: any[]): void;
+}
+
+class CommandManager {
+  private readonly commands = new Map<string, vscode.Disposable>();
+
+  public dispose() {
+    for (const registration of this.commands.values()) {
+      registration.dispose();
+    }
+    this.commands.clear();
+  }
+
+  public register<T extends Command>(command: T): T {
+    this.registerCommand(command.id, command.execute, command);
+    return command;
+  }
+
+  private registerCommand(
+    id: string,
+    impl: (...args: any[]) => void,
+    thisArg?: any
+  ) {
+    if (this.commands.has(id)) {
+      return;
+    }
+
+    this.commands.set(id, vscode.commands.registerCommand(id, impl, thisArg));
+  }
 }

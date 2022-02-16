@@ -1,47 +1,36 @@
 /*---------------------------------------------------------------------------------------------
+ *  Copyright (c) RStudio, PBC. All rights reserved.
  *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See LLICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import { MarkdownEngine } from "./markdownEngine";
-import { githubSlugifier, Slug } from "./slugify";
-import { isQuartoFile } from "./util/file";
+import { MarkdownEngine } from "./engine";
+import { isQuartoFile } from "../core/file";
+import { pandocAutoIdentifier } from "./auto-id";
+import { MarkdownTextDocument } from "./document";
 
 export interface TocEntry {
-  readonly slug: Slug;
+  readonly slug: string;
   readonly text: string;
   readonly level: number;
   readonly line: number;
   readonly location: vscode.Location;
 }
 
-export interface SkinnyTextLine {
-  text: string;
-}
-
-export interface SkinnyTextDocument {
-  readonly uri: vscode.Uri;
-  readonly version: number;
-  readonly lineCount: number;
-
-  lineAt(line: number): SkinnyTextLine;
-  getText(): string;
-}
-
-export class TableOfContents {
+export class MarkdownTableOfContents {
   public static async create(
     engine: MarkdownEngine,
-    document: SkinnyTextDocument
-  ): Promise<TableOfContents> {
+    document: MarkdownTextDocument
+  ): Promise<MarkdownTableOfContents> {
     const entries = await this.buildToc(engine, document);
-    return new TableOfContents(entries);
+    return new MarkdownTableOfContents(entries);
   }
 
   public static async createForDocumentOrNotebook(
     engine: MarkdownEngine,
-    document: SkinnyTextDocument
-  ): Promise<TableOfContents> {
+    document: MarkdownTextDocument
+  ): Promise<MarkdownTableOfContents> {
     if (document.uri.scheme === "vscode-notebook-cell") {
       const notebook = vscode.workspace.notebookDocuments.find((notebook) =>
         notebook.getCells().some((cell) => cell.document === document)
@@ -59,7 +48,7 @@ export class TableOfContents {
           }
         }
 
-        return new TableOfContents(entries);
+        return new MarkdownTableOfContents(entries);
       }
     }
 
@@ -69,13 +58,13 @@ export class TableOfContents {
   private constructor(public readonly entries: readonly TocEntry[]) {}
 
   public lookup(fragment: string): TocEntry | undefined {
-    const slug = githubSlugifier.fromHeading(fragment);
-    return this.entries.find((entry) => entry.slug.equals(slug));
+    const slug = pandocAutoIdentifier(fragment, false);
+    return this.entries.find((entry) => entry.slug === slug);
   }
 
   private static async buildToc(
     engine: MarkdownEngine,
-    document: SkinnyTextDocument
+    document: MarkdownTextDocument
   ): Promise<TocEntry[]> {
     const toc: TocEntry[] = [];
     const tokens = await engine.parse(document);
@@ -92,21 +81,19 @@ export class TableOfContents {
       const lineNumber = heading.map[0];
       const line = document.lineAt(lineNumber);
 
-      let slug = githubSlugifier.fromHeading(line.text);
-      const existingSlugEntry = existingSlugEntries.get(slug.value);
+      let slug = pandocAutoIdentifier(line.text);
+      const existingSlugEntry = existingSlugEntries.get(slug);
       if (existingSlugEntry) {
         ++existingSlugEntry.count;
-        slug = githubSlugifier.fromHeading(
-          slug.value + "-" + existingSlugEntry.count
-        );
+        slug = pandocAutoIdentifier(slug + "-" + existingSlugEntry.count);
       } else {
-        existingSlugEntries.set(slug.value, { count: 0 });
+        existingSlugEntries.set(slug, { count: 0 });
       }
 
       toc.push({
         slug,
-        text: TableOfContents.getHeaderText(line.text),
-        level: TableOfContents.getHeaderLevel(heading.markup),
+        text: MarkdownTableOfContents.getHeaderText(line.text),
+        level: MarkdownTableOfContents.getHeaderLevel(heading.markup),
         line: lineNumber,
         location: new vscode.Location(
           document.uri,

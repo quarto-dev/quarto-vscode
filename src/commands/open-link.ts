@@ -1,47 +1,81 @@
 /*---------------------------------------------------------------------------------------------
+ *  Copyright (c) RStudio, PBC. All rights reserved.
  *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from "path";
 import * as vscode from "vscode";
-import { MarkdownEngine } from "../markdownEngine";
-import { TableOfContents } from "../tableOfContentsProvider";
-import { isQuartoFile } from "./file";
-import { extname } from "./path";
+import { Command } from "../core/command";
+import { MarkdownEngine } from "../markdown/engine";
 
-export interface OpenDocumentLinkArgs {
-  readonly parts: vscode.Uri;
+import { MarkdownTableOfContents } from "../markdown/toc";
+import { isQuartoFile } from "../core/file";
+import { extname } from "../core/path";
+
+export class OpenLinkCommand implements Command {
+  private static readonly id = "_quarto.openLink";
+  public readonly id = OpenLinkCommand.id;
+
+  public static createCommandUri(
+    fromResource: vscode.Uri,
+    path: vscode.Uri,
+    fragment: string
+  ): vscode.Uri {
+    const toJson = (uri: vscode.Uri): UriComponents => {
+      return {
+        scheme: uri.scheme,
+        authority: uri.authority,
+        path: uri.path,
+        fragment: uri.fragment,
+        query: uri.query,
+      };
+    };
+    return vscode.Uri.parse(
+      `command:${OpenLinkCommand.id}?${encodeURIComponent(
+        JSON.stringify(<OpenLinkArgs>{
+          parts: toJson(path),
+          fragment,
+          fromResource: toJson(fromResource),
+        })
+      )}`
+    );
+  }
+
+  public constructor(private readonly engine: MarkdownEngine) {}
+
+  public async execute(args: OpenLinkArgs) {
+    const fromResource = vscode.Uri.parse("").with(args.fromResource);
+    const targetResource = reviveUri(args.parts).with({
+      fragment: args.fragment,
+    });
+    return openDocumentLink(this.engine, targetResource, fromResource);
+  }
+}
+
+function reviveUri(parts: any) {
+  if (parts.scheme === "file") {
+    return vscode.Uri.file(parts.path);
+  }
+  return vscode.Uri.parse("").with(parts);
+}
+
+type UriComponents = {
+  readonly scheme?: string;
+  readonly path: string;
+  readonly fragment?: string;
+  readonly authority?: string;
+  readonly query?: string;
+};
+
+interface OpenLinkArgs {
+  readonly parts: UriComponents;
   readonly fragment: string;
-  readonly fromResource: vscode.Uri;
+  readonly fromResource: UriComponents;
 }
 
 enum OpenMarkdownLinks {
   beside = "beside",
   currentGroup = "currentGroup",
-}
-
-export function resolveDocumentLink(
-  href: string,
-  markdownFile: vscode.Uri
-): vscode.Uri {
-  let [hrefPath, fragment] = href.split("#").map((c) => decodeURIComponent(c));
-
-  if (hrefPath[0] === "/") {
-    // Absolute path. Try to resolve relative to the workspace
-    const workspace = vscode.workspace.getWorkspaceFolder(markdownFile);
-    if (workspace) {
-      return vscode.Uri.joinPath(workspace.uri, hrefPath.slice(1)).with({
-        fragment,
-      });
-    }
-  }
-
-  // Relative path. Resolve relative to the md file
-  const dirnameUri = markdownFile.with({
-    path: path.dirname(markdownFile.path),
-  });
-  return vscode.Uri.joinPath(dirnameUri, hrefPath).with({ fragment });
 }
 
 export async function openDocumentLink(
@@ -141,7 +175,7 @@ async function tryRevealLineUsingTocFragment(
   editor: vscode.TextEditor,
   fragment: string
 ): Promise<boolean> {
-  const toc = await TableOfContents.create(engine, editor.document);
+  const toc = await MarkdownTableOfContents.create(engine, editor.document);
   const entry = toc.lookup(fragment);
   if (entry) {
     const lineStart = new vscode.Range(entry.line, 0, entry.line, 0);
@@ -181,10 +215,10 @@ export async function resolveUriToQuartoFile(
     // Noop
   }
 
-  // If no extension, try with `.md` extension
+  // If no extension, try with `.qmd` extension
   if (extname(resource.path) === "") {
     return tryResolveUriToQuartoFile(
-      resource.with({ path: resource.path + ".md" })
+      resource.with({ path: resource.path + ".qmd" })
     );
   }
 

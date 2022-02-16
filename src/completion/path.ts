@@ -1,14 +1,14 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import { dirname, resolve } from "path";
 import * as vscode from "vscode";
-import { MarkdownEngine } from "../markdownEngine";
-import { TableOfContents } from "../tableOfContentsProvider";
-import { resolveUriToQuartoFile } from "../util/openDocumentLink";
-import LinkProvider from "./documentLinkProvider";
+import { MarkdownEngine } from "../markdown/engine";
+import { MarkdownTableOfContents } from "../markdown/toc";
+import { resolveQuartoFileUri } from "../core/file";
+import QuartoLinkProvider from "../providers/link";
 
 enum CompletionContextKind {
   Link, // [...](|)
@@ -132,7 +132,7 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
               context.anchorInfo.beforeAnchor
             );
             if (rawUri) {
-              const otherDoc = await resolveUriToQuartoFile(rawUri);
+              const otherDoc = await resolveQuartoFileUri(rawUri);
               if (otherDoc) {
                 const anchorStartPosition = position.translate({
                   characterDelta: -(context.anchorInfo.anchorPrefix.length + 1),
@@ -280,7 +280,7 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
       position.translate({ characterDelta: context.linkSuffix.length })
     );
 
-    const definitions = LinkProvider.getDefinitions(
+    const definitions = QuartoLinkProvider.getDefinitions(
       document.getText(),
       document
     );
@@ -302,7 +302,7 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     context: CompletionContext,
     insertionRange: vscode.Range
   ): AsyncIterable<vscode.CompletionItem> {
-    const toc = await TableOfContents.createForDocumentOrNotebook(
+    const toc = await MarkdownTableOfContents.createForDocumentOrNotebook(
       this.engine,
       document
     );
@@ -313,7 +313,7 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
       );
       yield {
         kind: vscode.CompletionItemKind.Reference,
-        label: "#" + decodeURI(entry.slug.value),
+        label: "#" + decodeURI(entry.slug),
         range: {
           inserting: insertionRange,
           replacing: replacementRange,

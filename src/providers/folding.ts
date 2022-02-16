@@ -1,12 +1,13 @@
 /*---------------------------------------------------------------------------------------------
+ *  Copyright (c) RStudio, PBC. All rights reserved.
  *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import Token = require("markdown-it/lib/token");
 import * as vscode from "vscode";
-import { MarkdownEngine } from "../markdownEngine";
-import { TableOfContents } from "../tableOfContentsProvider";
+import { MarkdownEngine } from "../markdown/engine";
+import { MarkdownTableOfContents } from "../markdown/toc";
 
 const rangeLimit = 5000;
 
@@ -14,7 +15,7 @@ interface MarkdownItTokenWithMap extends Token {
   map: [number, number];
 }
 
-export default class MarkdownFoldingProvider
+export default class QuartoFoldingProvider
   implements vscode.FoldingRangeProvider
 {
   constructor(private readonly engine: MarkdownEngine) {}
@@ -67,7 +68,7 @@ export default class MarkdownFoldingProvider
   }
 
   private async getHeaderFoldingRanges(document: vscode.TextDocument) {
-    const toc = await TableOfContents.create(this.engine, document);
+    const toc = await MarkdownTableOfContents.create(this.engine, document);
     return toc.entries.map((entry) => {
       let endLine = entry.location.range.end.line;
       if (

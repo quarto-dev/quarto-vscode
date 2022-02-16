@@ -1,21 +1,98 @@
 /*---------------------------------------------------------------------------------------------
+ *  Copyright (c) RStudio, PBC. All rights reserved.
  *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import { SkinnyTextDocument, SkinnyTextLine } from "../tableOfContentsProvider";
-import { Disposable } from "../util/dispose";
-import { isQuartoFile } from "../util/file";
-import { Lazy, lazy } from "../util/lazy";
-import MDDocumentSymbolProvider from "./documentSymbolProvider";
+import { MarkdownTextDocument, MarkdownTextLine } from "../markdown/document";
+import { Disposable } from "../core/dispose";
+import { isQuartoFile } from "../core/file";
+import { Lazy, lazy } from "../core/lazy";
+import QuartoDocumentSymbolProvider from "./symbol-document";
 
 export interface WorkspaceQuartoDocumentProvider {
-  getAllQuartoDocuments(): Thenable<Iterable<SkinnyTextDocument>>;
+  getAllQuartoDocuments(): Thenable<Iterable<MarkdownTextDocument>>;
 
-  readonly onDidChangeQuartoDocument: vscode.Event<SkinnyTextDocument>;
-  readonly onDidCreateQuartoDocument: vscode.Event<SkinnyTextDocument>;
+  readonly onDidChangeQuartoDocument: vscode.Event<MarkdownTextDocument>;
+  readonly onDidCreateQuartoDocument: vscode.Event<MarkdownTextDocument>;
   readonly onDidDeleteQuartoDocument: vscode.Event<vscode.Uri>;
+}
+
+export default class QuartoWorkspaceSymbolProvider
+  extends Disposable
+  implements vscode.WorkspaceSymbolProvider
+{
+  private _symbolCache = new Map<
+    string,
+    Lazy<Thenable<vscode.SymbolInformation[]>>
+  >();
+  private _symbolCachePopulated: boolean = false;
+
+  public constructor(
+    private _symbolProvider: QuartoDocumentSymbolProvider,
+    private _workspaceQuartoDocumentProvider: WorkspaceQuartoDocumentProvider = new VSCodeWorkspaceQuartoDocumentProvider()
+  ) {
+    super();
+  }
+
+  public async provideWorkspaceSymbols(
+    query: string
+  ): Promise<vscode.SymbolInformation[]> {
+    if (!this._symbolCachePopulated) {
+      await this.populateSymbolCache();
+      this._symbolCachePopulated = true;
+
+      this._workspaceQuartoDocumentProvider.onDidChangeQuartoDocument(
+        this.onDidChangeDocument,
+        this,
+        this._disposables
+      );
+      this._workspaceQuartoDocumentProvider.onDidCreateQuartoDocument(
+        this.onDidChangeDocument,
+        this,
+        this._disposables
+      );
+      this._workspaceQuartoDocumentProvider.onDidDeleteQuartoDocument(
+        this.onDidDeleteDocument,
+        this,
+        this._disposables
+      );
+    }
+
+    const allSymbolsSets = await Promise.all(
+      Array.from(this._symbolCache.values(), (x) => x.value)
+    );
+    const allSymbols = allSymbolsSets.flat();
+    return allSymbols.filter(
+      (symbolInformation) =>
+        symbolInformation.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+    );
+  }
+
+  public async populateSymbolCache(): Promise<void> {
+    const markdownDocumentUris =
+      await this._workspaceQuartoDocumentProvider.getAllQuartoDocuments();
+    for (const document of markdownDocumentUris) {
+      this._symbolCache.set(document.uri.fsPath, this.getSymbols(document));
+    }
+  }
+
+  private getSymbols(
+    document: MarkdownTextDocument
+  ): Lazy<Thenable<vscode.SymbolInformation[]>> {
+    return lazy(async () => {
+      return this._symbolProvider.provideDocumentSymbolInformation(document);
+    });
+  }
+
+  private onDidChangeDocument(document: MarkdownTextDocument) {
+    this._symbolCache.set(document.uri.fsPath, this.getSymbols(document));
+  }
+
+  private onDidDeleteDocument(resource: vscode.Uri) {
+    this._symbolCache.delete(resource.fsPath);
+  }
 }
 
 class VSCodeWorkspaceQuartoDocumentProvider
@@ -23,10 +100,10 @@ class VSCodeWorkspaceQuartoDocumentProvider
   implements WorkspaceQuartoDocumentProvider
 {
   private readonly _onDidChangeQuartoDocumentEmitter = this._register(
-    new vscode.EventEmitter<SkinnyTextDocument>()
+    new vscode.EventEmitter<MarkdownTextDocument>()
   );
   private readonly _onDidCreateQuartoDocumentEmitter = this._register(
-    new vscode.EventEmitter<SkinnyTextDocument>()
+    new vscode.EventEmitter<MarkdownTextDocument>()
   );
   private readonly _onDidDeleteQuartoDocumentEmitter = this._register(
     new vscode.EventEmitter<vscode.Uri>()
@@ -42,9 +119,9 @@ class VSCodeWorkspaceQuartoDocumentProvider
    *
    * @returns Array of processed .qmd files.
    */
-  async getAllQuartoDocuments(): Promise<SkinnyTextDocument[]> {
+  async getAllQuartoDocuments(): Promise<MarkdownTextDocument[]> {
     const maxConcurrent = 20;
-    const docList: SkinnyTextDocument[] = [];
+    const docList: MarkdownTextDocument[] = [];
     const resources = await vscode.workspace.findFiles(
       "**/*.md",
       "**/node_modules/**"
@@ -54,7 +131,7 @@ class VSCodeWorkspaceQuartoDocumentProvider
       const resourceBatch = resources.slice(i, i + maxConcurrent);
       const documentBatch = (
         await Promise.all(resourceBatch.map((x) => this.getQuartoDocument(x)))
-      ).filter((doc) => !!doc) as SkinnyTextDocument[];
+      ).filter((doc) => !!doc) as MarkdownTextDocument[];
       docList.push(...documentBatch);
     }
     return docList;
@@ -127,7 +204,7 @@ class VSCodeWorkspaceQuartoDocumentProvider
 
   private async getQuartoDocument(
     resource: vscode.Uri
-  ): Promise<SkinnyTextDocument | undefined> {
+  ): Promise<MarkdownTextDocument | undefined> {
     const matchingDocuments = vscode.workspace.textDocuments.filter(
       (doc) => doc.uri.toString() === resource.toString()
     );
@@ -140,7 +217,7 @@ class VSCodeWorkspaceQuartoDocumentProvider
     // We assume that markdown is in UTF-8
     const text = this.utf8Decoder.decode(bytes);
 
-    const lines: SkinnyTextLine[] = [];
+    const lines: MarkdownTextLine[] = [];
     const parts = text.split(/(\r?\n)/);
     const lineCount = Math.floor(parts.length / 2) + 1;
     for (let line = 0; line < lineCount; line++) {
@@ -160,81 +237,5 @@ class VSCodeWorkspaceQuartoDocumentProvider
         return text;
       },
     };
-  }
-}
-
-export default class MarkdownWorkspaceSymbolProvider
-  extends Disposable
-  implements vscode.WorkspaceSymbolProvider
-{
-  private _symbolCache = new Map<
-    string,
-    Lazy<Thenable<vscode.SymbolInformation[]>>
-  >();
-  private _symbolCachePopulated: boolean = false;
-
-  public constructor(
-    private _symbolProvider: MDDocumentSymbolProvider,
-    private _workspaceQuartoDocumentProvider: WorkspaceQuartoDocumentProvider = new VSCodeWorkspaceQuartoDocumentProvider()
-  ) {
-    super();
-  }
-
-  public async provideWorkspaceSymbols(
-    query: string
-  ): Promise<vscode.SymbolInformation[]> {
-    if (!this._symbolCachePopulated) {
-      await this.populateSymbolCache();
-      this._symbolCachePopulated = true;
-
-      this._workspaceQuartoDocumentProvider.onDidChangeQuartoDocument(
-        this.onDidChangeDocument,
-        this,
-        this._disposables
-      );
-      this._workspaceQuartoDocumentProvider.onDidCreateQuartoDocument(
-        this.onDidChangeDocument,
-        this,
-        this._disposables
-      );
-      this._workspaceQuartoDocumentProvider.onDidDeleteQuartoDocument(
-        this.onDidDeleteDocument,
-        this,
-        this._disposables
-      );
-    }
-
-    const allSymbolsSets = await Promise.all(
-      Array.from(this._symbolCache.values(), (x) => x.value)
-    );
-    const allSymbols = allSymbolsSets.flat();
-    return allSymbols.filter(
-      (symbolInformation) =>
-        symbolInformation.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
-    );
-  }
-
-  public async populateSymbolCache(): Promise<void> {
-    const markdownDocumentUris =
-      await this._workspaceQuartoDocumentProvider.getAllQuartoDocuments();
-    for (const document of markdownDocumentUris) {
-      this._symbolCache.set(document.uri.fsPath, this.getSymbols(document));
-    }
-  }
-
-  private getSymbols(
-    document: SkinnyTextDocument
-  ): Lazy<Thenable<vscode.SymbolInformation[]>> {
-    return lazy(async () => {
-      return this._symbolProvider.provideDocumentSymbolInformation(document);
-    });
-  }
-
-  private onDidChangeDocument(document: SkinnyTextDocument) {
-    this._symbolCache.set(document.uri.fsPath, this.getSymbols(document));
-  }
-
-  private onDidDeleteDocument(resource: vscode.Uri) {
-    this._symbolCache.delete(resource.fsPath);
   }
 }
