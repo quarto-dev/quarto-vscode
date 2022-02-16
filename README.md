@@ -27,4 +27,5 @@ Alternatively, you can download and install the extension from the command line 
    ```
 
 Note that in order to use the `code` command to perform the installation you may need to open the VS Code
-Command Palette (Ctrl+Shift+P) and type 'shell command' to find the `Shell Command: Install 'code' command in PATH` command.
+Command Palette (Ctrl+Shift+P) and type "shell command" to execute the `Shell Command: Install 'code' command in PATH` command.
+This will make sure that `code` can be invoked from the command line on your system.
