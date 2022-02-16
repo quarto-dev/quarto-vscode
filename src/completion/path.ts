@@ -7,7 +7,7 @@ import { dirname, resolve } from "path";
 import * as vscode from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
 import { MarkdownTableOfContents } from "../markdown/toc";
-import { resolveQuartoFileUri } from "../core/file";
+import { kQuartoDocumentSelector, resolveQuartoFileUri } from "../core/file";
 import QuartoLinkProvider from "../providers/link";
 
 enum CompletionContextKind {
@@ -64,12 +64,9 @@ interface CompletionContext {
 }
 
 export class PathCompletionProvider implements vscode.CompletionItemProvider {
-  public static register(
-    selector: vscode.DocumentSelector,
-    engine: MarkdownEngine
-  ): vscode.Disposable {
+  public static register(engine: MarkdownEngine): vscode.Disposable {
     return vscode.languages.registerCompletionItemProvider(
-      selector,
+      kQuartoDocumentSelector,
       new PathCompletionProvider(engine),
       ".",
       "/",

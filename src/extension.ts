@@ -13,11 +13,15 @@ import { PathCompletionProvider } from "./completion/path";
 import QuartoSelectionRangeProvider from "./providers/selection-range";
 import QuartoWorkspaceSymbolProvider from "./providers/symbol-workspace";
 import { MarkdownEngine } from "./markdown/engine";
+import { activateHighligher } from "./providers/highlight";
+import { kQuartoDocumentSelector } from "./core/file";
 
 export function activate(context: vscode.ExtensionContext) {
   const engine = new MarkdownEngine();
 
   const symbolProvider = new QuartoDocumentSymbolProvider(engine);
+
+  activateHighligher(context);
 
   context.subscriptions.push(
     registerMarkdownLanguageFeatures(symbolProvider, engine)
@@ -29,26 +33,27 @@ function registerMarkdownLanguageFeatures(
   symbolProvider: QuartoDocumentSymbolProvider,
   engine: MarkdownEngine
 ): vscode.Disposable {
-  const selector: vscode.DocumentSelector = { language: "quarto", scheme: "*" };
-
   return vscode.Disposable.from(
-    vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
+    vscode.languages.registerDocumentSymbolProvider(
+      kQuartoDocumentSelector,
+      symbolProvider
+    ),
     vscode.languages.registerDocumentLinkProvider(
-      selector,
+      kQuartoDocumentSelector,
       new QuartoLinkProvider(engine)
     ),
     vscode.languages.registerFoldingRangeProvider(
-      selector,
+      kQuartoDocumentSelector,
       new QuartoFoldingProvider(engine)
     ),
     vscode.languages.registerSelectionRangeProvider(
-      selector,
+      kQuartoDocumentSelector,
       new QuartoSelectionRangeProvider(engine)
     ),
     vscode.languages.registerWorkspaceSymbolProvider(
       new QuartoWorkspaceSymbolProvider(symbolProvider)
     ),
-    PathCompletionProvider.register(selector, engine)
+    PathCompletionProvider.register(engine)
   );
 }
 

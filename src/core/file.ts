@@ -7,6 +7,11 @@
 import * as vscode from "vscode";
 import { extname } from "../core/path";
 
+export const kQuartoDocumentSelector: vscode.DocumentSelector = {
+  language: "quarto",
+  scheme: "*",
+};
+
 export function isQuartoFile(document: vscode.TextDocument) {
   return document.languageId === "quarto";
 }
