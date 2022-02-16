@@ -28,6 +28,15 @@
     ],
     "description": "Insert fenced code block"
   },
+  "Insert executable code block": {
+    "prefix": "executable codeblock",
+    "body": [
+      "```{${1|python,r,julia,ojs,sql,bash|}}",
+      "${TM_SELECTED_TEXT}$0",
+      "```"
+    ],
+    "description": "Insert executable code block"
+  },
   "Insert heading level 1": {
     "prefix": "heading1",
     "body": "# ${1:${TM_SELECTED_TEXT}}",
