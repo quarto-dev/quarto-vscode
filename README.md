@@ -10,11 +10,9 @@ This extension provides language support for Quarto `.qmd` files, including:
 - Clickable links within documents
 - Code completion for link and image paths
 
-You can install the Quarto extension from within VS Code (search extensions for 'quarto').
-
 ### Installation
 
-The easiest way to install is directly within VS Code (search extensions for 'quarto').
+The easiest way to install is directly within VS Code (search extensions for "quarto").
 
 You can also install from the [VS Code Extension Marketplace](https://marketplace.visualstudio.com/items?itemName=quarto.quarto).
 
@@ -29,4 +27,4 @@ Alternatively, you can download and install the extension from the command line 
    ```
 
 Note that in order to use the `code` command to perform the installation you may need to open the VS Code
-Command Palette (Cmd+Shift+P) and type 'shell command' to find the Shell Command: Install 'code' command in PATH command.
+Command Palette (Ctrl+Shift+P) and type 'shell command' to find the `Shell Command: Install 'code' command in PATH` command.
