@@ -479,7 +479,7 @@ const buildGrammar = () => {
     "\n" + indent(1, fencedCodeBlockDefinitions())
   );
 
-  const grammar = yaml.safeLoad(text);
+  const grammar = yaml.load(text);
   // @ts-ignore
   const out = plist.build(grammar);
   fs.writeFileSync(path.join(__dirname, "syntaxes", "quarto.tmLanguage"), out);

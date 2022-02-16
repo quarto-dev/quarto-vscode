@@ -127,25 +127,16 @@
     }
   },
   "dependencies": {
-    "highlight.js": "^10.4.1",
-    "js-yaml": "^4.1.0",
-    "katex": "^0.15.2",
     "markdown-it": "^12.0.2",
-    "markdown-it-amsmath": "^0.3.0",
-    "markdown-it-deflist": "^2.1.0",
-    "markdown-it-dollarmath": "^0.4.0",
-    "markdown-it-footnote": "^3.0.3",
-    "markdown-it-front-matter": "^0.2.3",
-    "markdown-it-task-lists": "^2.1.1",
     "vscode-nls": "^5.0.0"
   },
   "devDependencies": {
     "@types/js-yaml": "^3.12.2",
-    "@types/katex": "^0.11.1",
     "@types/markdown-it": "^12.0.2",
     "@types/node": "^8.10.25",
     "@types/vscode": "^1.55.0",
     "esbuild": "^0.14.21",
+    "js-yaml": "^4.1.0",
     "plist": "^3.0.1",
     "typescript": "^4.5.5"
   }
