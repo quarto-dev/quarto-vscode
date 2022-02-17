@@ -6,7 +6,7 @@ This extension provides language support for Quarto `.qmd` files, including:
 
 - Syntax highlighting
 - Code folding and outline navigation
-- Code snippets for common markdown constructs
+- Code snippets
 - Clickable links within documents
 - Code completion for link and image paths
 
@@ -18,12 +18,12 @@ You can also install from the [VS Code Extension Marketplace](https://marketplac
 
 Alternatively, you can download and install the extension from the command line as follows:
 
-1. Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/dist/quarto-1.2.0.vsix)
+1. Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/dist/quarto-1.3.0.vsix)
 
 2. Install from the command line with:
 
    ```bash
-   code --install-extension quarto-1.2.0.vsix
+   code --install-extension quarto-1.3.0.vsix
    ```
 
 Note that in order to use the `code` command to perform the installation you may need to open the VS Code
