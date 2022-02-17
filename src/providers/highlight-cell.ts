@@ -18,7 +18,12 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
   // create shared background decoration
   codeBackgrondDecoration = vscode.window.createTextEditorDecorationType({
     isWholeLine: true,
-    backgroundColor: new vscode.ThemeColor("sideBar.background"),
+    light: {
+      backgroundColor: "#DCDCDC66",
+    },
+    dark: {
+      backgroundColor: "#0A0A0A66",
+    },
   });
 
   // update highlighting when docs are opened
@@ -55,6 +60,7 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
         triggerUpdateActiveEditorDecorations(
           vscode.window.activeTextEditor,
           kHighlightDelayMs,
+          true,
           event.contentChanges.length == 1
             ? event.contentChanges[0].range.start
             : undefined
@@ -79,6 +85,7 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
             triggerUpdateActiveEditorDecorations(
               vscode.window.activeTextEditor,
               kHighlightDelayMs,
+              true,
               position,
               token
             );
@@ -96,11 +103,12 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
 function triggerUpdateActiveEditorDecorations(
   editor: vscode.TextEditor,
   delay: number,
+  immediate?: boolean,
   pos?: vscode.Position,
   token?: vscode.CancellationToken
 ) {
   debounce(() => setEditorHighlightDecorations(editor, pos, token), delay, {
-    leading: true,
+    leading: !!immediate,
   })();
 }
 
@@ -110,8 +118,7 @@ function triggerUpdateAllEditorsDecorations() {
       vscode.window.visibleTextEditors.forEach((e) =>
         setEditorHighlightDecorations(e)
       ),
-    kHighlightDelayMs,
-    { leading: true }
+    kHighlightDelayMs
   )();
 }
 
