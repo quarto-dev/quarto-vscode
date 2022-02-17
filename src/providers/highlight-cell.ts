@@ -5,15 +5,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
+import debounce from "lodash.debounce";
 
 import { isQuartoFile, kQuartoDocumentSelector } from "../core/file";
 
 let codeBackgrondDecoration: vscode.TextEditorDecorationType | undefined =
   undefined;
-let updateActiveEditorTimeout: NodeJS.Timer | undefined = undefined;
-let updateAllEditorsTimeout: NodeJS.Timer | undefined = undefined;
 
-const kHighlightDelayMs = 200;
+const kHighlightDelayMs = 2000;
 
 export function activateCellHighlighter(context: vscode.ExtensionContext) {
   // create shared background decoration
@@ -100,28 +99,20 @@ function triggerUpdateActiveEditorDecorations(
   pos?: vscode.Position,
   token?: vscode.CancellationToken
 ) {
-  if (updateActiveEditorTimeout) {
-    clearTimeout(updateActiveEditorTimeout);
-    updateActiveEditorTimeout = undefined;
-  }
-  updateActiveEditorTimeout = setTimeout(
-    () => setEditorHighlightDecorations(editor, pos, token),
-    delay
-  );
+  debounce(() => setEditorHighlightDecorations(editor, pos, token), delay, {
+    leading: true,
+  })();
 }
 
 function triggerUpdateAllEditorsDecorations() {
-  if (updateAllEditorsTimeout) {
-    clearTimeout(updateAllEditorsTimeout);
-    updateAllEditorsTimeout = undefined;
-  }
-  updateAllEditorsTimeout = setTimeout(
+  debounce(
     () =>
       vscode.window.visibleTextEditors.forEach((e) =>
         setEditorHighlightDecorations(e)
       ),
-    kHighlightDelayMs
-  );
+    kHighlightDelayMs,
+    { leading: true }
+  )();
 }
 
 function setEditorHighlightDecorations(
