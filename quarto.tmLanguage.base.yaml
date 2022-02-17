@@ -232,6 +232,7 @@ repository:
     - {include: '#bracket'}
     - {include: '#bold'}
     - {include: '#italic'}
+    - {include: '#reference'}
     - {include: '#raw'}
     - {include: '#strikethrough'}
     - {include: '#escape'}
@@ -305,6 +306,7 @@ repository:
     - {include: '#raw'}
     - {include: '#bold'}
     - {include: '#italic'}
+    - {include: '#reference'}
     - {include: '#image-inline'}
     - {include: '#link-inline'}
     - {include: '#link-inet'}
@@ -421,6 +423,7 @@ repository:
     - {include: '#bracket'}
     - {include: '#raw'}
     - {include: '#bold'}
+    - {include: '#reference'}
     - {include: '#image-inline'}
     - {include: '#link-inline'}
     - {include: '#link-inet'}
@@ -430,6 +433,9 @@ repository:
     - {include: '#link-ref'}
     - {include: '#link-ref-shortcut'}
     - {include: '#strikethrough'}
+  reference:
+    match: "-?\\@[\\w\\d-]+"
+    name: entity.name.tag.reference
   link-email:
     captures:
       '1': {name: punctuation.definition.link.markdown}
@@ -526,6 +532,7 @@ repository:
         - {include: '#raw'}
         - {include: '#bold'}
         - {include: '#italic'}
+        - {include: '#reference'}
         - {include: '#image-inline'}
         - {include: '#link-inline'}
         - {include: '#link-inet'}

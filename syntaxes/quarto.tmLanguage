@@ -3909,6 +3909,10 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#reference</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#raw</string>
           </dict>
           <dict>
@@ -4056,6 +4060,10 @@
           <dict>
             <key>include</key>
             <string>#italic</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#reference</string>
           </dict>
           <dict>
             <key>include</key>
@@ -4354,6 +4362,10 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#reference</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#image-inline</string>
           </dict>
           <dict>
@@ -4389,6 +4401,13 @@
             <string>#strikethrough</string>
           </dict>
         </array>
+      </dict>
+      <key>reference</key>
+      <dict>
+        <key>match</key>
+        <string>-?\@[\w\d-]+</string>
+        <key>name</key>
+        <string>entity.name.tag.reference</string>
       </dict>
       <key>link-email</key>
       <dict>
@@ -4719,6 +4738,10 @@
               <dict>
                 <key>include</key>
                 <string>#italic</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#reference</string>
               </dict>
               <dict>
                 <key>include</key>
