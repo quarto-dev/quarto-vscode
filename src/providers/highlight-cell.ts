@@ -117,6 +117,8 @@ function triggerUpdateAllEditorsDecorations() {
   )();
 }
 
+const kBeginCodePattern = /^([\t >]*)(```+)\s*.+/;
+
 function setEditorHighlightDecorations(
   editor: vscode.TextEditor,
   _pos?: vscode.Position,
@@ -147,8 +149,21 @@ function setEditorHighlightDecorations(
         // look for the end line
         const endPattern = new RegExp("^" + prefix + ticks + "[ \\t]*$");
         while (++currentLine < editor.document.lineCount) {
-          let line = editor.document.lineAt(currentLine).text;
-          if (line.match(endPattern)) {
+          const line = editor.document.lineAt(currentLine).text;
+
+          // if another code block is started we want to read past it
+          const beginCodeMatch = line.match(kBeginCodePattern);
+          if (beginCodeMatch) {
+            const codeBlockEndPattern = new RegExp(
+              "^" + match[1] + match[2] + "[ \\t]*$"
+            );
+            while (++currentLine < editor.document.lineCount) {
+              const line = editor.document.lineAt(currentLine).text;
+              if (line.match(codeBlockEndPattern)) {
+                break;
+              }
+            }
+          } else if (line.match(endPattern)) {
             executableCodeBlocks.push(
               new vscode.Range(startLine, 0, currentLine, line.length)
             );
