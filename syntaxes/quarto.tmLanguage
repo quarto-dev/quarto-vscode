@@ -3874,7 +3874,7 @@
       <key>frontMatter</key>
       <dict>
         <key>begin</key>
-        <string>\A-{3}\s*$</string>
+        <string>(^|\G)-{3}\s*$</string>
         <key>contentName</key>
         <string>meta.embedded.block.frontmatter</string>
         <key>patterns</key>
