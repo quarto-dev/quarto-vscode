@@ -62,7 +62,7 @@ export default class QuartoDocumentSymbolProvider
   private toSymbolInformation(entry: TocEntry): vscode.SymbolInformation {
     return new vscode.SymbolInformation(
       this.getSymbolName(entry),
-      vscode.SymbolKind.String,
+      vscode.SymbolKind.Constant,
       "",
       entry.location
     );
@@ -72,13 +72,13 @@ export default class QuartoDocumentSymbolProvider
     return new vscode.DocumentSymbol(
       this.getSymbolName(entry),
       "",
-      vscode.SymbolKind.String,
+      vscode.SymbolKind.Constant,
       entry.location.range,
       entry.location.range
     );
   }
 
   private getSymbolName(entry: TocEntry): string {
-    return "#".repeat(entry.level) + " " + entry.text;
+    return entry.text;
   }
 }
