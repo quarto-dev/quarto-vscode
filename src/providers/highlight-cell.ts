@@ -9,22 +9,17 @@ import debounce from "lodash.debounce";
 
 import { isQuartoFile, kQuartoDocumentSelector } from "../core/file";
 
-let codeBackgrondDecoration: vscode.TextEditorDecorationType | undefined =
-  undefined;
-
-const kHighlightDelayMs = 2000;
-
 export function activateCellHighlighter(context: vscode.ExtensionContext) {
-  // create shared background decoration
-  codeBackgrondDecoration = vscode.window.createTextEditorDecorationType({
-    isWholeLine: true,
-    light: {
-      backgroundColor: "#DCDCDC66",
+  // read config and monitor it for changes
+  highlightingConfig.sync();
+  vscode.workspace.onDidChangeConfiguration(
+    () => {
+      highlightingConfig.sync();
+      triggerUpdateAllEditorsDecorations();
     },
-    dark: {
-      backgroundColor: "#0A0A0A66",
-    },
-  });
+    null,
+    context.subscriptions
+  );
 
   // update highlighting when docs are opened
   vscode.workspace.onDidOpenTextDocument(
@@ -35,7 +30,7 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
         } else {
           triggerUpdateActiveEditorDecorations(
             vscode.window.activeTextEditor,
-            kHighlightDelayMs
+            highlightingConfig.delayMs()
           );
         }
       }
@@ -59,7 +54,7 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
       if (event.document === vscode.window.activeTextEditor?.document) {
         triggerUpdateActiveEditorDecorations(
           vscode.window.activeTextEditor,
-          kHighlightDelayMs,
+          highlightingConfig.delayMs(),
           true,
           event.contentChanges.length == 1
             ? event.contentChanges[0].range.start
@@ -84,7 +79,7 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
           if (document === vscode.window.activeTextEditor?.document) {
             triggerUpdateActiveEditorDecorations(
               vscode.window.activeTextEditor,
-              kHighlightDelayMs,
+              highlightingConfig.delayMs(),
               true,
               position,
               token
@@ -118,7 +113,7 @@ function triggerUpdateAllEditorsDecorations() {
       vscode.window.visibleTextEditors.forEach((e) =>
         setEditorHighlightDecorations(e)
       ),
-    kHighlightDelayMs
+    highlightingConfig.delayMs()
   )();
 }
 
@@ -127,41 +122,92 @@ function setEditorHighlightDecorations(
   _pos?: vscode.Position,
   token?: vscode.CancellationToken
 ) {
+  if (!editor || !isQuartoFile(editor.document)) {
+    return;
+  }
+
   const executableCodeBlocks: vscode.Range[] = [];
 
-  let currentLine = -1;
-  while (
-    !token?.isCancellationRequested &&
-    ++currentLine < editor.document.lineCount
-  ) {
-    let line = editor.document.lineAt(currentLine).text;
-    const match = line.match(
-      /^([\t >]*)(```+)\s*\{([a-zA-Z0-9_]+)(?: *[ ,].*?)?\}[ \t]*$/
-    );
-    if (match) {
-      // get the match and record the start line
-      const prefix = match[1];
-      const ticks = match[2];
-      const startLine = currentLine;
+  if (highlightingConfig.enabled()) {
+    let currentLine = -1;
+    while (
+      !token?.isCancellationRequested &&
+      ++currentLine < editor.document.lineCount
+    ) {
+      let line = editor.document.lineAt(currentLine).text;
+      const match = line.match(
+        /^([\t >]*)(```+)\s*\{([a-zA-Z0-9_]+)(?: *[ ,].*?)?\}[ \t]*$/
+      );
+      if (match) {
+        // get the match and record the start line
+        const prefix = match[1];
+        const ticks = match[2];
+        const startLine = currentLine;
 
-      // look for the end line
-      const endPattern = new RegExp("^" + prefix + ticks + "[ \\t]*$");
-      while (++currentLine < editor.document.lineCount) {
-        let line = editor.document.lineAt(currentLine).text;
-        if (line.match(endPattern)) {
-          executableCodeBlocks.push(
-            new vscode.Range(startLine, 0, currentLine, line.length)
-          );
-          break;
+        // look for the end line
+        const endPattern = new RegExp("^" + prefix + ticks + "[ \\t]*$");
+        while (++currentLine < editor.document.lineCount) {
+          let line = editor.document.lineAt(currentLine).text;
+          if (line.match(endPattern)) {
+            executableCodeBlocks.push(
+              new vscode.Range(startLine, 0, currentLine, line.length)
+            );
+            break;
+          }
         }
       }
     }
   }
 
-  // set highlights
-  editor.setDecorations(codeBackgrondDecoration!, executableCodeBlocks);
+  // set highlights (could be none if we highlighting isn't enabled)
+  editor.setDecorations(
+    highlightingConfig.backgroundDecoration(),
+    executableCodeBlocks
+  );
 }
 
 function clearEditorHighlightDecorations(editor: vscode.TextEditor) {
-  editor.setDecorations(codeBackgrondDecoration!, []);
+  editor.setDecorations(highlightingConfig.backgroundDecoration(), []);
 }
+
+class HiglightingConfig {
+  constructor() {}
+
+  public enabled() {
+    return this.enabled_;
+  }
+
+  public backgroundDecoration() {
+    return this.backgroundDecoration_!;
+  }
+
+  public delayMs() {
+    return this.delayMs_;
+  }
+
+  public sync() {
+    const config = vscode.workspace.getConfiguration("quarto");
+
+    this.enabled_ = config.get("cells.background.enabled", true);
+    this.delayMs_ = config.get("cells.background.delay", 200);
+
+    if (this.backgroundDecoration_) {
+      this.backgroundDecoration_.dispose();
+    }
+    this.backgroundDecoration_ = vscode.window.createTextEditorDecorationType({
+      isWholeLine: true,
+      light: {
+        backgroundColor: config.get("cells.background.light", "#DCDCDC66"),
+      },
+      dark: {
+        backgroundColor: config.get("cells.background.dark", "#0A0A0A66"),
+      },
+    });
+  }
+
+  private enabled_ = true;
+  private backgroundDecoration_: vscode.TextEditorDecorationType | undefined;
+  private delayMs_ = 200;
+}
+
+const highlightingConfig = new HiglightingConfig();

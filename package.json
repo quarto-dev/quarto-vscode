@@ -128,22 +128,48 @@
         "editor.unicodeHighlight.ambiguousCharacters": false,
         "editor.unicodeHighlight.invisibleCharacters": false
       }
+    },
+    "configuration": {
+      "properties": {
+        "quarto.cells.background.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Enable coloring the background of executable code cells."
+        },
+        "quarto.cells.background.light": {
+          "type": "string",
+          "format": "color",
+          "default": "#DCDCDC66",
+          "markdownDescription": "CSS color for background of executable code cells on light themes.\n\n*Note that this color should include an alpha channel so that selections show up against the background.*"
+        },
+        "quarto.cells.background.dark": {
+          "type": "string",
+          "format": "color",
+          "default": "#0A0A0A66",
+          "markdownDescription": "CSS color for background of executable code cells on dark themes.\n\n*Note that this color should include an alpha channel so that selections show up against the background.*"
+        },
+        "quarto.cells.background.delay": {
+          "type": "integer",
+          "default": 200,
+          "markdownDescription": "Millisecond delay between background color updates."
+        }
+      }
+    },
+    "dependencies": {
+      "lodash.debounce": "^4.0.8",
+      "markdown-it": "^12.0.2",
+      "vscode-nls": "^5.0.0"
+    },
+    "devDependencies": {
+      "@types/js-yaml": "^3.12.2",
+      "@types/lodash.debounce": "^4.0.6",
+      "@types/markdown-it": "^12.0.2",
+      "@types/node": "^8.10.25",
+      "@types/vscode": "^1.55.0",
+      "esbuild": "^0.14.21",
+      "js-yaml": "^4.1.0",
+      "plist": "^3.0.1",
+      "typescript": "^4.5.5"
     }
-  },
-  "dependencies": {
-    "lodash.debounce": "^4.0.8",
-    "markdown-it": "^12.0.2",
-    "vscode-nls": "^5.0.0"
-  },
-  "devDependencies": {
-    "@types/js-yaml": "^3.12.2",
-    "@types/lodash.debounce": "^4.0.6",
-    "@types/markdown-it": "^12.0.2",
-    "@types/node": "^8.10.25",
-    "@types/vscode": "^1.55.0",
-    "esbuild": "^0.14.21",
-    "js-yaml": "^4.1.0",
-    "plist": "^3.0.1",
-    "typescript": "^4.5.5"
   }
 }
