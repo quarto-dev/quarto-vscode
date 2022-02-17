@@ -36,7 +36,7 @@
     "build-lang": "node build-lang"
   },
   "engines": {
-    "vscode": "^1.55.0"
+    "vscode": "^1.63.0"
   },
   "main": "./out/main.js",
   "activationEvents": [
@@ -118,10 +118,11 @@
       }
     ],
     "configurationDefaults": {
+      "editor.wordWrap": "on",
+      "editor.quickSuggestions": true,
+      "editor.quickSuggestionsDelay": 10,
+      "editor.wordBasedSuggestions": false,
       "[quarto]": {
-        "editor.wordWrap": "on",
-        "editor.quickSuggestions": true,
-        "editor.quickSuggestionsDelay": 10,
         "editor.snippetSuggestions": "none",
         "editor.wordBasedSuggestions": false,
         "editor.unicodeHighlight.ambiguousCharacters": false,
