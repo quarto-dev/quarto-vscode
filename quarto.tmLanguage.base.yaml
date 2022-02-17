@@ -49,7 +49,7 @@ repository:
     name: markup.fenced_code.block.markdown
   div: 
     name: markup.div.markdown
-    begin: (^|\G)(\s*)(:{3,})(\s*\{.*$|\s*$)
+    begin: (^|\G)(\s*)(:{3,})(\s*[\{\w].*$|\s*$)
     beginCaptures:
       '3': {name: markup.heading.div.markdown}
       '4': {name: markup.heading.div.markdown}

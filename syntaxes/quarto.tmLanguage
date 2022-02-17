@@ -3246,7 +3246,7 @@
         <key>name</key>
         <string>markup.div.markdown</string>
         <key>begin</key>
-        <string>(^|\G)(\s*)(:{3,})(\s*\{.*$|\s*$)</string>
+        <string>(^|\G)(\s*)(:{3,})(\s*[\{\w].*$|\s*$)</string>
         <key>beginCaptures</key>
         <dict>
           <key>3</key>
