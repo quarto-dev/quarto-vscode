@@ -147,7 +147,7 @@
         "quarto.cells.background.dark": {
           "type": "string",
           "format": "color",
-          "default": "#0A0A0A66",
+          "default": "#60606066",
           "markdownDescription": "CSS color for background of executable code cells on dark themes.\n\n*Note that this color should include an alpha channel so that selections show up against the background.*"
         },
         "quarto.cells.background.delay": {

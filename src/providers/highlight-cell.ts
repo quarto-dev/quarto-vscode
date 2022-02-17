@@ -215,7 +215,7 @@ class HiglightingConfig {
         backgroundColor: config.get("cells.background.light", "#DCDCDC66"),
       },
       dark: {
-        backgroundColor: config.get("cells.background.dark", "#0A0A0A66"),
+        backgroundColor: config.get("cells.background.dark", "#60606066"),
       },
     });
   }
