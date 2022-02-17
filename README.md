@@ -1,6 +1,6 @@
 # quarto-vscode
 
-VS Code extension for the Quarto scientific and technical publshing system (https://quarto.org).
+VS Code extension for the Quarto scientific and technical publishing system (https://quarto.org).
 
 This extension provides language support for Quarto `.qmd` files, including:
 
