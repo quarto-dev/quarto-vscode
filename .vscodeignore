@@ -8,6 +8,6 @@ node_modules/**
 **/*.map
 **/*.ts
 build-lang.js
-quarto.tmLanguage.base.yaml
+syntaxes/*.yaml
 tsconfig.json
 cgmanifest.json
