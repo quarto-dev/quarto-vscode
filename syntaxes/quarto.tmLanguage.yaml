@@ -221,7 +221,7 @@ repository:
       ]{4}|\t)'}
   separator: {match: '(^|\G)[ ]{0,3}([\*\-\_])([ ]{0,2}\2){2,}[ \t]*$\n?', name: meta.separator.markdown}
   frontMatter:
-    begin: (^|\G)-{3}\s*$
+    begin: \A-{3}\s*$
     contentName: meta.embedded.block.frontmatter
     patterns:
     - {include: source.yaml}
