@@ -27,6 +27,7 @@
   ],
   "private": true,
   "scripts": {
+    "postinstall": "cd server && npm install && cd ..",
     "vscode:prepublish": "npm run build-lang && npm run esbuild-server && npm run esbuild-base -- --minify",
     "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild-server": "cd server && esbuild ./src/server.ts --bundle --outfile=out/server.js --external:vscode --format=cjs --platform=node",
