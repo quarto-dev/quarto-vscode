@@ -31,7 +31,7 @@
     "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild-server": "cd server && esbuild ./src/server.ts --bundle --outfile=out/server.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
-    "esbuild-watch": "npm run esbuild-server && npm run esbuild-base -- --sourcemap --watch",
+    "esbuild-watch": "concurrently --kill-others \"npm run esbuild-server -- --sourcemap --watch\" \"npm run esbuild-base -- --sourcemap --watch\"",
     "build-lang": "node build-lang"
   },
   "engines": {
@@ -166,8 +166,8 @@
   "dependencies": {
     "lodash.debounce": "^4.0.8",
     "markdown-it": "^12.0.2",
-    "vscode-nls": "^5.0.0",
-    "vscode-languageclient": "^7.0.0"
+    "vscode-languageclient": "^7.0.0",
+    "vscode-nls": "^5.0.0"
   },
   "devDependencies": {
     "@types/js-yaml": "^3.12.2",
@@ -175,6 +175,7 @@
     "@types/markdown-it": "^12.0.2",
     "@types/node": "^8.10.25",
     "@types/vscode": "^1.55.0",
+    "concurrently": "^7.0.0",
     "esbuild": "^0.14.21",
     "js-yaml": "^4.1.0",
     "plist": "^3.0.1",
