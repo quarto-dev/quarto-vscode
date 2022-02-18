@@ -4419,14 +4419,14 @@
         <key>match</key>
         <string>-?\@[\w\d-]+</string>
         <key>name</key>
-        <string>entity.name.tag.reference</string>
+        <string>storage.type.function.reference</string>
       </dict>
       <key>shortcode</key>
       <dict>
         <key>match</key>
         <string>{{&lt; .*? &gt;}}</string>
         <key>name</key>
-        <string>entity.name.tag.shortcode</string>
+        <string>storage.type.function.reference</string>
       </dict>
       <key>link-email</key>
       <dict>
