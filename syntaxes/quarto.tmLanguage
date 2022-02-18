@@ -4790,7 +4790,7 @@
       </dict>
     </dict>
     <key>scopeName</key>
-    <string>text.html.markdown.quarto</string>
+    <string>text.html.quarto</string>
     <key>uuid</key>
     <string>4EDF8B97-6B11-4D2F-8157-6860113420AD</string>
   </dict>
