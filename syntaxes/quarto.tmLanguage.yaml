@@ -544,5 +544,5 @@ repository:
       '3': {name: punctuation.definition.strikethrough.markdown}
     match: (~+)((?:[^~]|(?!(?<!~)\1(?!~))~)*+)(\1)
     name: markup.strikethrough.markdown
-scopeName: text.html.quarto
+scopeName: text.html.markdown.quarto
 uuid: 4EDF8B97-6B11-4D2F-8157-6860113420AD
