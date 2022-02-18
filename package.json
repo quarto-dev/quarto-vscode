@@ -27,12 +27,11 @@
   ],
   "private": true,
   "scripts": {
-    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "vscode:prepublish": "npm run build-lang && npm run esbuild-server && npm run esbuild-base -- --minify",
     "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild-server": "cd server && esbuild ./src/server.ts --bundle --outfile=out/server.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
-    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-    "test-compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "esbuild-watch": "npm run esbuild-server && npm run esbuild-base -- --sourcemap --watch",
     "build-lang": "node build-lang"
   },
   "engines": {
@@ -167,7 +166,8 @@
   "dependencies": {
     "lodash.debounce": "^4.0.8",
     "markdown-it": "^12.0.2",
-    "vscode-nls": "^5.0.0"
+    "vscode-nls": "^5.0.0",
+    "vscode-languageclient": "^7.0.0"
   },
   "devDependencies": {
     "@types/js-yaml": "^3.12.2",

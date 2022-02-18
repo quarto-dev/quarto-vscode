@@ -15,6 +15,7 @@ import QuartoWorkspaceSymbolProvider from "./providers/symbol-workspace";
 import { MarkdownEngine } from "./markdown/engine";
 import { activateCellHighlighter } from "./providers/highlight-cell";
 import { kQuartoDocumentSelector } from "./core/file";
+import { activateLsp } from "./lsp/client";
 
 export function activate(context: vscode.ExtensionContext) {
   const engine = new MarkdownEngine();
@@ -22,6 +23,8 @@ export function activate(context: vscode.ExtensionContext) {
   const symbolProvider = new QuartoDocumentSymbolProvider(engine);
 
   activateCellHighlighter(context);
+
+  activateLsp(context);
 
   context.subscriptions.push(
     registerMarkdownLanguageFeatures(symbolProvider, engine)
