@@ -1,26 +1,23 @@
 /* --------------------------------------------------------------------------------------------
+ * Copyright (c) RStudio, PBC. All rights reserved.
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
 import * as path from "path";
-import {
-  commands,
-  CompletionList,
-  ExtensionContext,
-  Uri,
-  workspace,
-} from "vscode";
+import { ExtensionContext, workspace } from "vscode";
 import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
 } from "vscode-languageclient/node";
+import { MarkdownEngine } from "../markdown/engine";
+import { embeddedCodeCompletionProvider } from "./embedded";
 
 let client: LanguageClient;
 
-export function activateLsp(context: ExtensionContext) {
+export function activateLsp(context: ExtensionContext, engine: MarkdownEngine) {
   // The server is implemented in node
   const serverModule = context.asAbsolutePath(
     path.join("server", "out", "server.js")
@@ -51,47 +48,9 @@ export function activateLsp(context: ExtensionContext) {
   });
 
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: "file", language: "quarto" }],
+    documentSelector: [{ scheme: "*", language: "quarto" }],
     middleware: {
-      provideCompletionItem: async (
-        document,
-        position,
-        context,
-        token,
-        next
-      ) => {
-        return await next(document, position, context, token);
-
-        /*
-        // If not in `<style>`, do not perform request forwarding
-        if (
-          !isInsideStyleRegion(
-            htmlLanguageService,
-            document.getText(),
-            document.offsetAt(position)
-          )
-        ) {
-          return await next(document, position, context, token);
-        }
-
-        const originalUri = document.uri.toString();
-        virtualDocumentContents.set(
-          originalUri,
-          getCSSVirtualContent(htmlLanguageService, document.getText())
-        );
-
-        const vdocUriString = `embedded-content://css/${encodeURIComponent(
-          originalUri
-        )}.css`;
-        const vdocUri = Uri.parse(vdocUriString);
-        return await commands.executeCommand<CompletionList>(
-          "vscode.executeCompletionItemProvider",
-          vdocUri,
-          position,
-          context.triggerCharacter
-        );
-        */
-      },
+      provideCompletionItem: embeddedCodeCompletionProvider(engine),
     },
   };
 

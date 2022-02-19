@@ -24,7 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   activateCellHighlighter(context);
 
-  activateLsp(context);
+  activateLsp(context, engine);
 
   context.subscriptions.push(
     registerMarkdownLanguageFeatures(symbolProvider, engine)
