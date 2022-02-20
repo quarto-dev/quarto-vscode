@@ -3955,18 +3955,6 @@
             <key>include</key>
             <string>#link-inline</string>
           </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref-literal</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref-shortcut</string>
-          </dict>
         </array>
       </dict>
       <key>ampersand</key>
@@ -4100,18 +4088,6 @@
           <dict>
             <key>include</key>
             <string>#image-ref</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref-literal</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref-shortcut</string>
           </dict>
           <dict>
             <key>include</key>
@@ -4406,18 +4382,6 @@
           </dict>
           <dict>
             <key>include</key>
-            <string>#link-ref-literal</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref-shortcut</string>
-          </dict>
-          <dict>
-            <key>include</key>
             <string>#strikethrough</string>
           </dict>
         </array>
@@ -4427,14 +4391,14 @@
         <key>match</key>
         <string>-?\@[\w\d-]+</string>
         <key>name</key>
-        <string>storage.type.function.reference</string>
+        <string>keyword.control.import.reference</string>
       </dict>
       <key>shortcode</key>
       <dict>
         <key>match</key>
         <string>{{&lt; .*? &gt;}}</string>
         <key>name</key>
-        <string>storage.type.function.reference</string>
+        <string>keyword.control.import.shortcode</string>
       </dict>
       <key>link-email</key>
       <dict>
@@ -4594,106 +4558,6 @@
         <key>name</key>
         <string>meta.link.inline.quarto</string>
       </dict>
-      <key>link-ref</key>
-      <dict>
-        <key>captures</key>
-        <dict>
-          <key>1</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.begin.quarto</string>
-          </dict>
-          <key>2</key>
-          <dict>
-            <key>name</key>
-            <string>string.other.link.title.quarto</string>
-          </dict>
-          <key>4</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.end.quarto</string>
-          </dict>
-          <key>5</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.constant.begin.quarto</string>
-          </dict>
-          <key>6</key>
-          <dict>
-            <key>name</key>
-            <string>constant.other.reference.link.quarto</string>
-          </dict>
-          <key>7</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.constant.end.quarto</string>
-          </dict>
-        </dict>
-        <key>match</key>
-        <string>(\[)((?&lt;square&gt;[^\[\]\\]|\\.|\[\g&lt;square&gt;*+\])*+)(\])(\[)([^\]]*+)(\])</string>
-        <key>name</key>
-        <string>meta.link.reference.quarto</string>
-      </dict>
-      <key>link-ref-literal</key>
-      <dict>
-        <key>captures</key>
-        <dict>
-          <key>1</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.begin.quarto</string>
-          </dict>
-          <key>2</key>
-          <dict>
-            <key>name</key>
-            <string>string.other.link.title.quarto</string>
-          </dict>
-          <key>4</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.end.quarto</string>
-          </dict>
-          <key>5</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.constant.begin.quarto</string>
-          </dict>
-          <key>6</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.constant.end.quarto</string>
-          </dict>
-        </dict>
-        <key>match</key>
-        <string>(\[)((?&lt;square&gt;[^\[\]\\]|\\.|\[\g&lt;square&gt;*+\])*+)(\])[ ]?(\[)(\])</string>
-        <key>name</key>
-        <string>meta.link.reference.literal.quarto</string>
-      </dict>
-      <key>link-ref-shortcut</key>
-      <dict>
-        <key>captures</key>
-        <dict>
-          <key>1</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.begin.quarto</string>
-          </dict>
-          <key>2</key>
-          <dict>
-            <key>name</key>
-            <string>string.other.link.title.quarto</string>
-          </dict>
-          <key>3</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.end.quarto</string>
-          </dict>
-        </dict>
-        <key>match</key>
-        <string>(\[)(\S+?)(\])</string>
-        <key>name</key>
-        <string>meta.link.reference.quarto</string>
-      </dict>
       <key>raw</key>
       <dict>
         <key>captures</key>
@@ -4793,18 +4657,6 @@
               <dict>
                 <key>include</key>
                 <string>#image-ref</string>
-              </dict>
-              <dict>
-                <key>include</key>
-                <string>#link-ref-literal</string>
-              </dict>
-              <dict>
-                <key>include</key>
-                <string>#link-ref</string>
-              </dict>
-              <dict>
-                <key>include</key>
-                <string>#link-ref-shortcut</string>
               </dict>
             </array>
           </dict>

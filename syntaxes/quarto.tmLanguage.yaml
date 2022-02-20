@@ -244,9 +244,6 @@ repository:
     - {include: '#link-email'}
     - {include: '#link-inet'}
     - {include: '#link-inline'}
-    - {include: '#link-ref'}
-    - {include: '#link-ref-literal'}
-    - {include: '#link-ref-shortcut'}
   ampersand:
     comment: "Markdown will convert this for us. We match it so that the HTML grammar will not mark it up as invalid."
     match: '&(?!([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+);)'
@@ -316,9 +313,6 @@ repository:
     - {include: '#link-inet'}
     - {include: '#link-email'}
     - {include: '#image-ref'}
-    - {include: '#link-ref-literal'}
-    - {include: '#link-ref'}
-    - {include: '#link-ref-shortcut'}
     - {include: '#strikethrough'}
   bracket:
     comment: "Markdown will convert this for us. We match it so that the HTML grammar will not mark it up as invalid."
@@ -434,16 +428,13 @@ repository:
     - {include: '#link-inet'}
     - {include: '#link-email'}
     - {include: '#image-ref'}
-    - {include: '#link-ref-literal'}
-    - {include: '#link-ref'}
-    - {include: '#link-ref-shortcut'}
     - {include: '#strikethrough'}
   reference:
     match: "-?\\@[\\w\\d-]+"
-    name: storage.type.function.reference
+    name: keyword.control.import.reference
   shortcode:
     match: "{{< .*? >}}"
-    name: storage.type.function.reference
+    name: keyword.control.import.shortcode
   link-email:
     captures:
       '1': {name: punctuation.definition.link.quarto}
@@ -492,32 +483,6 @@ repository:
           \s*            # Optional whitespace
         (\))
     name: meta.link.inline.quarto
-  link-ref:
-    captures:
-      '1': {name: punctuation.definition.link.title.begin.quarto}
-      '2': {name: string.other.link.title.quarto}
-      '4': {name: punctuation.definition.link.title.end.quarto}
-      '5': {name: punctuation.definition.constant.begin.quarto}
-      '6': {name: constant.other.reference.link.quarto}
-      '7': {name: punctuation.definition.constant.end.quarto}
-    match: (\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])(\[)([^\]]*+)(\])
-    name: meta.link.reference.quarto
-  link-ref-literal:
-    captures:
-      '1': {name: punctuation.definition.link.title.begin.quarto}
-      '2': {name: string.other.link.title.quarto}
-      '4': {name: punctuation.definition.link.title.end.quarto}
-      '5': {name: punctuation.definition.constant.begin.quarto}
-      '6': {name: punctuation.definition.constant.end.quarto}
-    match: (\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])[ ]?(\[)(\])
-    name: meta.link.reference.literal.quarto
-  link-ref-shortcut:
-    captures:
-      '1': {name: punctuation.definition.link.title.begin.quarto}
-      '2': {name: string.other.link.title.quarto}
-      '3': {name: punctuation.definition.link.title.end.quarto}
-    match: (\[)(\S+?)(\])
-    name: meta.link.reference.quarto
   raw:
     captures:
       '1': {name: punctuation.definition.raw.quarto}
@@ -547,9 +512,6 @@ repository:
         - {include: '#link-inet'}
         - {include: '#link-email'}
         - {include: '#image-ref'}
-        - {include: '#link-ref-literal'}
-        - {include: '#link-ref'}
-        - {include: '#link-ref-shortcut'}
       '3': {name: punctuation.definition.strikethrough.quarto}
     match: (~+)((?:[^~]|(?!(?<!~)\1(?!~))~)*+)(\1)
     name: markup.strikethrough.quarto
