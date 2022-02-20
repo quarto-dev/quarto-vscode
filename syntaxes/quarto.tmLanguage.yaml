@@ -554,25 +554,8 @@ repository:
     match: (~+)((?:[^~]|(?!(?<!~)\1(?!~))~)*+)(\1)
     name: markup.strikethrough.quarto
   math_inline:
-    patterns:
-      - include: '#math_inline_double'
-      - include: '#math_inline_single'
-      - include: '#math_inline_block'
-  math_inline_single:
-      name: markup.math.inline.quarto
-      match: '(?<=\s|\W|^)(?<!\$)(\$)(.+?)(\$)(?!\$)(?=\s|\W|$)'
-      captures:
-        '1':
-          name: punctuation.definition.math.begin.quarto
-        '2':
-          name: meta.embedded.math.quarto
-          patterns:
-            - {include: '#math'}
-        '3':
-          name: punctuation.definition.math.end.quarto
-  math_inline_double:
     name: markup.math.inline.quarto
-    match: '(?<=\s|\W|^)(?<!\$)(\$\$)(.+?)(\$\$)(?!\$)(?=\s|\W|$)'
+    match: '(?<=\s|\W|^)(?<!\$)(\$)(.+?)(\$)(?!\$)(?=\s|\W|$)'
     captures:
       '1':
         name: punctuation.definition.math.begin.quarto
@@ -582,22 +565,7 @@ repository:
           - {include: '#math'}
       '3':
         name: punctuation.definition.math.end.quarto
-  math_inline_block:
-    name: markup.math.inline.quarto
-    begin: '(?<=\s|^)(\${2})'
-    beginCaptures:
-      '2':
-        name: punctuation.definition.math.begin.quarto
-    end: '(\${2})(?=\s|$)'
-    endCaptures:
-      '2':
-        name: punctuation.definition.math.end.quarto
-    patterns:
-      - include: '#math'
   math_block:
-    - include: '#double_dollar_math_block'
-    - include: '#single_dollar_math_block'
-  double_dollar_math_block:
     name: markup.math.block.quarto
     contentName: meta.embedded.math.quarto
     begin: '(?<=^\s*)(\${2})(?![^$]*\${2})'
@@ -617,26 +585,6 @@ repository:
         while: '(^|\G)(?!.*(\${2}))'
         patterns:
           - {include: '#math'}
-  single_dollar_math_block:
-    name: markup.math.block.quarto
-    contentName: meta.embedded.math.quarto
-    begin: '(?<=^\s*)(\$)(?![^$]*\$|\d)'
-    beginCaptures:
-      '1':
-        name: punctuation.definition.math.begin.quarto
-      end: '(.*)(\${1})'
-      endCaptures:
-        '1':
-          name: meta.embedded.math.markdown
-          patterns:
-            - {include: '#math'}
-        '2':
-            name: punctuation.definition.math.end.quarto
-      patterns:
-        - begin: (^|\G)
-          while: '(^|\G)(?!.*(\${1}))'
-          patterns:
-            - {include: '#math'}
   math:
     patterns:
       - name: comment.line.math.tex
