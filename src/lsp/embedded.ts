@@ -43,22 +43,21 @@ export function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
     // see if there is a completion virtual doc we should be using
     const virtualDoc = await completionVirtualDoc(document, position, engine);
     if (virtualDoc) {
-      // set virtual doc
-      const originalUri = document.uri.toString();
-      virtualDocumentContents.set(originalUri, virtualDoc.content);
-
-      // request completions
-      const vdocUriString = `${kQmdEmbeddedContent}://${
-        virtualDoc.language
-      }/${encodeURIComponent(originalUri)}.${virtualDoc.extension}`;
-      const vdocUri = Uri.parse(vdocUriString);
-
-      return await commands.executeCommand<CompletionList>(
-        "vscode.executeCompletionItemProvider",
-        vdocUri,
-        position,
-        context.triggerCharacter
+      const vdocUri = vdocUriFromContentProvider(
+        document,
+        virtualDoc,
+        virtualDocumentContents
       );
+      try {
+        return await commands.executeCommand<CompletionList>(
+          "vscode.executeCompletionItemProvider",
+          vdocUri,
+          position,
+          context.triggerCharacter
+        );
+      } finally {
+        vdocUri.dispose();
+      }
     } else {
       return await next(document, position, context, token);
     }
@@ -108,6 +107,29 @@ async function completionVirtualDoc(
     return undefined;
   }
 }
+
+function vdocUriFromContentProvider(
+  document: TextDocument,
+  virtualDoc: VirtualDoc,
+  docContentMap: Map<string, string>
+) {
+  // set virtual doc
+  const originalUri = document.uri.toString();
+  docContentMap.set(originalUri, virtualDoc.content);
+
+  // request completions
+  const vdocUriString = `${kQmdEmbeddedContent}://${
+    virtualDoc.language
+  }/${encodeURIComponent(originalUri)}.${virtualDoc.extension}`;
+  const vdocUri = Uri.parse(vdocUriString);
+
+  return {
+    uri: vdocUri,
+    dispose: () => {},
+  };
+}
+
+function vdocUriFromTempFile(document: TextDocument, virtualDoc: VirtualDoc) {}
 
 function extensionForLanguage(language: string) {
   switch (language) {
