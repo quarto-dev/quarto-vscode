@@ -37,16 +37,6 @@ export function activateLsp(context: ExtensionContext, engine: MarkdownEngine) {
     },
   };
 
-  const virtualDocumentContents = new Map<string, string>();
-
-  workspace.registerTextDocumentContentProvider("embedded-content", {
-    provideTextDocumentContent: (uri) => {
-      const originalUri = uri.path.slice(1).slice(0, -4);
-      const decodedUri = decodeURIComponent(originalUri);
-      return virtualDocumentContents.get(decodedUri);
-    },
-  });
-
   const clientOptions: LanguageClientOptions = {
     documentSelector: [{ scheme: "*", language: "quarto" }],
     middleware: {
