@@ -558,28 +558,28 @@ repository:
     match: '(?<=\s|\W|^)(?<!\$)(\$)(.+?)(\$)(?!\$)(?=\s|\W|$)'
     captures:
       '1':
-        name: punctuation.definition.math.begin.quarto
+        name: keyword.control.import.math.begin.quarto
       '2':
         name: meta.embedded.math.quarto
         patterns:
           - {include: '#math'}
       '3':
-        name: punctuation.definition.math.end.quarto
+        name: keyword.control.import.math.end.quarto
   math_block:
     name: markup.math.block.quarto
     contentName: meta.embedded.math.quarto
     begin: '(?<=^\s*)(\${2})(?![^$]*\${2})'
     beginCaptures:
       '1':
-        name: punctuation.definition.math.begin.quarto
+        name: keyword.control.import.math.begin.quarto
     end: '(.*)(\${2})'
     endCaptures:
       '1':
         name: meta.embedded.math.quarto
         patterns:
           - {include: '#math'}
-        '2':
-            name: punctuation.definition.math.end.quarto
+      '2':
+        name: keyword.control.import.math.end.quarto
     patterns:
       - begin: (^|\G)
         while: '(^|\G)(?!.*(\${2}))'

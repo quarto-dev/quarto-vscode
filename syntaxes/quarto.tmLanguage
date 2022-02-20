@@ -4830,7 +4830,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.math.begin.quarto</string>
+            <string>keyword.control.import.math.begin.quarto</string>
           </dict>
           <key>2</key>
           <dict>
@@ -4847,7 +4847,7 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.math.end.quarto</string>
+            <string>keyword.control.import.math.end.quarto</string>
           </dict>
         </dict>
       </dict>
@@ -4864,7 +4864,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.math.begin.quarto</string>
+            <string>keyword.control.import.math.begin.quarto</string>
           </dict>
         </dict>
         <key>end</key>
@@ -4873,11 +4873,6 @@
         <dict>
           <key>1</key>
           <dict>
-            <key>2</key>
-            <dict>
-              <key>name</key>
-              <string>punctuation.definition.math.end.quarto</string>
-            </dict>
             <key>name</key>
             <string>meta.embedded.math.quarto</string>
             <key>patterns</key>
@@ -4887,6 +4882,11 @@
                 <string>#math</string>
               </dict>
             </array>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.import.math.end.quarto</string>
           </dict>
         </dict>
         <key>patterns</key>
