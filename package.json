@@ -62,7 +62,7 @@
     "grammars": [
       {
         "language": "quarto",
-        "scopeName": "text.html.markdown.quarto",
+        "scopeName": "text.html.quarto",
         "path": "./syntaxes/quarto.tmLanguage",
         "embeddedLanguages": {
           "meta.embedded.block.html": "html",
