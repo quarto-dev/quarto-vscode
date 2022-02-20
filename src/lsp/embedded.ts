@@ -25,9 +25,11 @@ export function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
 
   workspace.registerTextDocumentContentProvider(kQmdEmbeddedContent, {
     provideTextDocumentContent: (uri) => {
-      const originalUri = uri.path.slice(1).slice(0, -4);
+      const path = uri.path.slice(1);
+      const originalUri = path.slice(0, path.lastIndexOf("."));
       const decodedUri = decodeURIComponent(originalUri);
-      return virtualDocumentContents.get(decodedUri);
+      const content = virtualDocumentContents.get(decodedUri);
+      return content;
     },
   });
 
@@ -88,7 +90,7 @@ async function completionVirtualDoc(
       if (fencedCode.map) {
         for (
           let line = fencedCode.map[0] + 1;
-          line <= fencedCode.map[1] && line < document.lineCount;
+          line < fencedCode.map[1] - 1 && line < document.lineCount;
           line++
         ) {
           lines[line] = document.lineAt(line).text;
