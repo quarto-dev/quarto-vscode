@@ -51,7 +51,7 @@ export function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
       try {
         return await commands.executeCommand<CompletionList>(
           "vscode.executeCompletionItemProvider",
-          vdocUri,
+          vdocUri.uri,
           position,
           context.triggerCharacter
         );
