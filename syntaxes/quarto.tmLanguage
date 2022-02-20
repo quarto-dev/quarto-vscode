@@ -27,6 +27,10 @@
         <array>
           <dict>
             <key>include</key>
+            <string>#math_block</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#div</string>
           </dict>
           <dict>
@@ -80,11 +84,11 @@
           <key>2</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.quote.begin.markdown</string>
+            <string>punctuation.definition.quote.begin.quarto</string>
           </dict>
         </dict>
         <key>name</key>
-        <string>markup.quote.markdown</string>
+        <string>markup.quote.quarto</string>
         <key>patterns</key>
         <array>
           <dict>
@@ -104,11 +108,11 @@
           <key>2</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.quote.begin.markdown</string>
+            <string>punctuation.definition.quote.begin.quarto</string>
           </dict>
         </dict>
         <key>name</key>
-        <string>markup.line_block.markdown</string>
+        <string>markup.line_block.quarto</string>
         <key>patterns</key>
         <array>
           <dict>
@@ -3220,7 +3224,7 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.markdown</string>
+            <string>punctuation.definition.quarto</string>
           </dict>
           <key>4</key>
           <dict>
@@ -3235,16 +3239,16 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.markdown</string>
+            <string>punctuation.definition.quarto</string>
           </dict>
         </dict>
         <key>name</key>
-        <string>markup.fenced_code.block.markdown</string>
+        <string>markup.fenced_code.block.quarto</string>
       </dict>
       <key>div</key>
       <dict>
         <key>name</key>
-        <string>markup.div.markdown</string>
+        <string>markup.div.quarto</string>
         <key>begin</key>
         <string>(^|\G)(\s*)(:{3,})(\s*[\{\w].*$|\s*$)</string>
         <key>beginCaptures</key>
@@ -3252,12 +3256,12 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>markup.heading.div.markdown</string>
+            <string>markup.heading.div.quarto</string>
           </dict>
           <key>4</key>
           <dict>
             <key>name</key>
-            <string>markup.heading.div.markdown</string>
+            <string>markup.heading.div.quarto</string>
           </dict>
         </dict>
         <key>patterns</key>
@@ -3274,7 +3278,7 @@
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>markup.heading.div.markdown</string>
+            <string>markup.heading.div.quarto</string>
           </dict>
         </dict>
       </dict>
@@ -3292,18 +3296,18 @@
                 <key>match</key>
                 <string>(#{6})\s+(.*?)(?:\s+(#+))?\s*$</string>
                 <key>name</key>
-                <string>heading.6.markdown</string>
+                <string>heading.6.quarto</string>
                 <key>captures</key>
                 <dict>
                   <key>1</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                   <key>2</key>
                   <dict>
                     <key>name</key>
-                    <string>entity.name.section.markdown</string>
+                    <string>entity.name.section.quarto</string>
                     <key>patterns</key>
                     <array>
                       <dict>
@@ -3319,7 +3323,7 @@
                   <key>3</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                 </dict>
               </dict>
@@ -3327,18 +3331,18 @@
                 <key>match</key>
                 <string>(#{5})\s+(.*?)(?:\s+(#+))?\s*$</string>
                 <key>name</key>
-                <string>heading.5.markdown</string>
+                <string>heading.5.quarto</string>
                 <key>captures</key>
                 <dict>
                   <key>1</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                   <key>2</key>
                   <dict>
                     <key>name</key>
-                    <string>entity.name.section.markdown</string>
+                    <string>entity.name.section.quarto</string>
                     <key>patterns</key>
                     <array>
                       <dict>
@@ -3354,7 +3358,7 @@
                   <key>3</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                 </dict>
               </dict>
@@ -3362,18 +3366,18 @@
                 <key>match</key>
                 <string>(#{4})\s+(.*?)(?:\s+(#+))?\s*$</string>
                 <key>name</key>
-                <string>heading.4.markdown</string>
+                <string>heading.4.quarto</string>
                 <key>captures</key>
                 <dict>
                   <key>1</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                   <key>2</key>
                   <dict>
                     <key>name</key>
-                    <string>entity.name.section.markdown</string>
+                    <string>entity.name.section.quarto</string>
                     <key>patterns</key>
                     <array>
                       <dict>
@@ -3389,7 +3393,7 @@
                   <key>3</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                 </dict>
               </dict>
@@ -3397,18 +3401,18 @@
                 <key>match</key>
                 <string>(#{3})\s+(.*?)(?:\s+(#+))?\s*$</string>
                 <key>name</key>
-                <string>heading.3.markdown</string>
+                <string>heading.3.quarto</string>
                 <key>captures</key>
                 <dict>
                   <key>1</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                   <key>2</key>
                   <dict>
                     <key>name</key>
-                    <string>entity.name.section.markdown</string>
+                    <string>entity.name.section.quarto</string>
                     <key>patterns</key>
                     <array>
                       <dict>
@@ -3424,7 +3428,7 @@
                   <key>3</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                 </dict>
               </dict>
@@ -3432,18 +3436,18 @@
                 <key>match</key>
                 <string>(#{2})\s+(.*?)(?:\s+(#+))?\s*$</string>
                 <key>name</key>
-                <string>heading.2.markdown</string>
+                <string>heading.2.quarto</string>
                 <key>captures</key>
                 <dict>
                   <key>1</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                   <key>2</key>
                   <dict>
                     <key>name</key>
-                    <string>entity.name.section.markdown</string>
+                    <string>entity.name.section.quarto</string>
                     <key>patterns</key>
                     <array>
                       <dict>
@@ -3459,7 +3463,7 @@
                   <key>3</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                 </dict>
               </dict>
@@ -3467,18 +3471,18 @@
                 <key>match</key>
                 <string>(#{1})\s+(.*?)(?:\s+(#+))?\s*$</string>
                 <key>name</key>
-                <string>heading.1.markdown</string>
+                <string>heading.1.quarto</string>
                 <key>captures</key>
                 <dict>
                   <key>1</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                   <key>2</key>
                   <dict>
                     <key>name</key>
-                    <string>entity.name.section.markdown</string>
+                    <string>entity.name.section.quarto</string>
                     <key>patterns</key>
                     <array>
                       <dict>
@@ -3494,7 +3498,7 @@
                   <key>3</key>
                   <dict>
                     <key>name</key>
-                    <string>punctuation.definition.heading.markdown</string>
+                    <string>punctuation.definition.heading.quarto</string>
                   </dict>
                 </dict>
               </dict>
@@ -3502,7 +3506,7 @@
           </dict>
         </dict>
         <key>name</key>
-        <string>markup.heading.markdown</string>
+        <string>markup.heading.quarto</string>
         <key>patterns</key>
         <array>
           <dict>
@@ -3519,13 +3523,13 @@
             <key>match</key>
             <string>^(={3,})(?=[ \t]*$\n?)</string>
             <key>name</key>
-            <string>markup.heading.setext.1.markdown</string>
+            <string>markup.heading.setext.1.quarto</string>
           </dict>
           <dict>
             <key>match</key>
             <string>^(-{3,})(?=[ \t]*$\n?)</string>
             <key>name</key>
-            <string>markup.heading.setext.2.markdown</string>
+            <string>markup.heading.setext.2.quarto</string>
           </dict>
         </array>
       </dict>
@@ -3644,87 +3648,87 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.constant.markdown</string>
+            <string>punctuation.definition.constant.quarto</string>
           </dict>
           <key>2</key>
           <dict>
             <key>name</key>
-            <string>constant.other.reference.link.markdown</string>
+            <string>constant.other.reference.link.quarto</string>
           </dict>
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.constant.markdown</string>
+            <string>punctuation.definition.constant.quarto</string>
           </dict>
           <key>4</key>
           <dict>
             <key>name</key>
-            <string>punctuation.separator.key-value.markdown</string>
+            <string>punctuation.separator.key-value.quarto</string>
           </dict>
           <key>5</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.markdown</string>
+            <string>punctuation.definition.link.quarto</string>
           </dict>
           <key>6</key>
           <dict>
             <key>name</key>
-            <string>markup.underline.link.markdown</string>
+            <string>markup.underline.link.quarto</string>
           </dict>
           <key>7</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.markdown</string>
+            <string>punctuation.definition.link.quarto</string>
           </dict>
           <key>8</key>
           <dict>
             <key>name</key>
-            <string>markup.underline.link.markdown</string>
+            <string>markup.underline.link.quarto</string>
           </dict>
           <key>9</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.description.title.markdown</string>
+            <string>string.other.link.description.title.quarto</string>
           </dict>
           <key>10</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.begin.markdown</string>
+            <string>punctuation.definition.string.begin.quarto</string>
           </dict>
           <key>11</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.end.markdown</string>
+            <string>punctuation.definition.string.end.quarto</string>
           </dict>
           <key>12</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.description.title.markdown</string>
+            <string>string.other.link.description.title.quarto</string>
           </dict>
           <key>13</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.begin.markdown</string>
+            <string>punctuation.definition.string.begin.quarto</string>
           </dict>
           <key>14</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.end.markdown</string>
+            <string>punctuation.definition.string.end.quarto</string>
           </dict>
           <key>15</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.description.title.markdown</string>
+            <string>string.other.link.description.title.quarto</string>
           </dict>
           <key>16</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.begin.markdown</string>
+            <string>punctuation.definition.string.begin.quarto</string>
           </dict>
           <key>17</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.end.markdown</string>
+            <string>punctuation.definition.string.end.quarto</string>
           </dict>
         </dict>
         <key>match</key>
@@ -3743,14 +3747,14 @@
   $
 </string>
         <key>name</key>
-        <string>meta.link.reference.def.markdown</string>
+        <string>meta.link.reference.def.quarto</string>
       </dict>
       <key>list_paragraph</key>
       <dict>
         <key>begin</key>
         <string>(^|\G)(?=\S)(?![*+-&gt;]\s|[0-9]+\.\s)</string>
         <key>name</key>
-        <string>meta.paragraph.markdown</string>
+        <string>meta.paragraph.quarto</string>
         <key>patterns</key>
         <array>
           <dict>
@@ -3781,13 +3785,13 @@
               <key>3</key>
               <dict>
                 <key>name</key>
-                <string>punctuation.definition.list.begin.markdown</string>
+                <string>punctuation.definition.list.begin.quarto</string>
               </dict>
             </dict>
             <key>comment</key>
             <string>Currently does not support un-indented second lines.</string>
             <key>name</key>
-            <string>markup.list.unnumbered.markdown</string>
+            <string>markup.list.unnumbered.quarto</string>
             <key>patterns</key>
             <array>
               <dict>
@@ -3810,11 +3814,11 @@
               <key>3</key>
               <dict>
                 <key>name</key>
-                <string>punctuation.definition.list.begin.markdown</string>
+                <string>punctuation.definition.list.begin.quarto</string>
               </dict>
             </dict>
             <key>name</key>
-            <string>markup.list.numbered.markdown</string>
+            <string>markup.list.numbered.quarto</string>
             <key>patterns</key>
             <array>
               <dict>
@@ -3836,7 +3840,7 @@
         <key>begin</key>
         <string>(^|\G)[ ]{0,3}(?=\S)</string>
         <key>name</key>
-        <string>meta.paragraph.markdown</string>
+        <string>meta.paragraph.quarto</string>
         <key>patterns</key>
         <array>
           <dict>
@@ -3860,7 +3864,7 @@
         <key>begin</key>
         <string>(^|\G)([ ]{4}|\t)</string>
         <key>name</key>
-        <string>markup.raw.block.markdown</string>
+        <string>markup.raw.block.quarto</string>
         <key>while</key>
         <string>(^|\G)([ ]{4}|\t)</string>
       </dict>
@@ -3869,7 +3873,7 @@
         <key>match</key>
         <string>(^|\G)[ ]{0,3}([\*\-\_])([ ]{0,2}\2){2,}[ \t]*$\n?</string>
         <key>name</key>
-        <string>meta.separator.markdown</string>
+        <string>meta.separator.quarto</string>
       </dict>
       <key>frontMatter</key>
       <dict>
@@ -3917,6 +3921,10 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#math_inline</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#raw</string>
           </dict>
           <dict>
@@ -3947,18 +3955,6 @@
             <key>include</key>
             <string>#link-inline</string>
           </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref-literal</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref-shortcut</string>
-          </dict>
         </array>
       </dict>
       <key>ampersand</key>
@@ -3968,7 +3964,7 @@
         <key>match</key>
         <string>&amp;(?!([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+);)</string>
         <key>name</key>
-        <string>meta.other.valid-ampersand.markdown</string>
+        <string>meta.other.valid-ampersand.quarto</string>
       </dict>
       <key>bold</key>
       <dict>
@@ -4017,13 +4013,13 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.bold.markdown</string>
+            <string>punctuation.definition.bold.quarto</string>
           </dict>
         </dict>
         <key>end</key>
         <string>(?&lt;=\S)(\1)</string>
         <key>name</key>
-        <string>markup.bold.markdown</string>
+        <string>markup.bold.quarto</string>
         <key>patterns</key>
         <array>
           <dict>
@@ -4095,18 +4091,6 @@
           </dict>
           <dict>
             <key>include</key>
-            <string>#link-ref-literal</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref-shortcut</string>
-          </dict>
-          <dict>
-            <key>include</key>
             <string>#strikethrough</string>
           </dict>
         </array>
@@ -4118,14 +4102,14 @@
         <key>match</key>
         <string>&lt;(?![a-zA-Z/?\$!])</string>
         <key>name</key>
-        <string>meta.other.valid-bracket.markdown</string>
+        <string>meta.other.valid-bracket.quarto</string>
       </dict>
       <key>escape</key>
       <dict>
         <key>match</key>
         <string>\\[-`*_#+.!(){}\[\]\\&gt;]</string>
         <key>name</key>
-        <string>constant.character.escape.markdown</string>
+        <string>constant.character.escape.quarto</string>
       </dict>
       <key>image-inline</key>
       <dict>
@@ -4134,87 +4118,87 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.description.begin.markdown</string>
+            <string>punctuation.definition.link.description.begin.quarto</string>
           </dict>
           <key>2</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.description.markdown</string>
+            <string>string.other.link.description.quarto</string>
           </dict>
           <key>4</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.description.end.markdown</string>
+            <string>punctuation.definition.link.description.end.quarto</string>
           </dict>
           <key>5</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.metadata.markdown</string>
+            <string>punctuation.definition.metadata.quarto</string>
           </dict>
           <key>6</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.markdown</string>
+            <string>punctuation.definition.link.quarto</string>
           </dict>
           <key>7</key>
           <dict>
             <key>name</key>
-            <string>markup.underline.link.image.markdown</string>
+            <string>markup.underline.link.image.quarto</string>
           </dict>
           <key>8</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.markdown</string>
+            <string>punctuation.definition.link.quarto</string>
           </dict>
           <key>9</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.description.title.markdown</string>
+            <string>string.other.link.description.title.quarto</string>
           </dict>
           <key>10</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.markdown</string>
+            <string>punctuation.definition.string.quarto</string>
           </dict>
           <key>11</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.markdown</string>
+            <string>punctuation.definition.string.quarto</string>
           </dict>
           <key>12</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.description.title.markdown</string>
+            <string>string.other.link.description.title.quarto</string>
           </dict>
           <key>13</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.markdown</string>
+            <string>punctuation.definition.string.quarto</string>
           </dict>
           <key>14</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.markdown</string>
+            <string>punctuation.definition.string.quarto</string>
           </dict>
           <key>15</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.description.title.markdown</string>
+            <string>string.other.link.description.title.quarto</string>
           </dict>
           <key>16</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.markdown</string>
+            <string>punctuation.definition.string.quarto</string>
           </dict>
           <key>17</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.markdown</string>
+            <string>punctuation.definition.string.quarto</string>
           </dict>
           <key>18</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.metadata.markdown</string>
+            <string>punctuation.definition.metadata.quarto</string>
           </dict>
         </dict>
         <key>match</key>
@@ -4233,7 +4217,7 @@
   (\))
 </string>
         <key>name</key>
-        <string>meta.image.inline.markdown</string>
+        <string>meta.image.inline.quarto</string>
       </dict>
       <key>image-ref</key>
       <dict>
@@ -4242,38 +4226,38 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.description.begin.markdown</string>
+            <string>punctuation.definition.link.description.begin.quarto</string>
           </dict>
           <key>2</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.description.markdown</string>
+            <string>string.other.link.description.quarto</string>
           </dict>
           <key>4</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.description.end.markdown</string>
+            <string>punctuation.definition.link.description.end.quarto</string>
           </dict>
           <key>5</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.constant.markdown</string>
+            <string>punctuation.definition.constant.quarto</string>
           </dict>
           <key>6</key>
           <dict>
             <key>name</key>
-            <string>constant.other.reference.link.markdown</string>
+            <string>constant.other.reference.link.quarto</string>
           </dict>
           <key>7</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.constant.markdown</string>
+            <string>punctuation.definition.constant.quarto</string>
           </dict>
         </dict>
         <key>match</key>
         <string>(\!\[)((?&lt;square&gt;[^\[\]\\]|\\.|\[\g&lt;square&gt;*+\])*+)(\])[ ]?(\[)(.*?)(\])</string>
         <key>name</key>
-        <string>meta.image.reference.markdown</string>
+        <string>meta.image.reference.quarto</string>
       </dict>
       <key>italic</key>
       <dict>
@@ -4324,13 +4308,13 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.italic.markdown</string>
+            <string>punctuation.definition.italic.quarto</string>
           </dict>
         </dict>
         <key>end</key>
         <string>(?&lt;=\S)(\1)((?!\1)|(?=\1\1))</string>
         <key>name</key>
-        <string>markup.italic.markdown</string>
+        <string>markup.italic.quarto</string>
         <key>patterns</key>
         <array>
           <dict>
@@ -4398,18 +4382,6 @@
           </dict>
           <dict>
             <key>include</key>
-            <string>#link-ref-literal</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#link-ref-shortcut</string>
-          </dict>
-          <dict>
-            <key>include</key>
             <string>#strikethrough</string>
           </dict>
         </array>
@@ -4419,14 +4391,14 @@
         <key>match</key>
         <string>-?\@[\w\d-]+</string>
         <key>name</key>
-        <string>storage.type.function.reference</string>
+        <string>keyword.control.import.reference</string>
       </dict>
       <key>shortcode</key>
       <dict>
         <key>match</key>
         <string>{{&lt; .*? &gt;}}</string>
         <key>name</key>
-        <string>storage.type.function.reference</string>
+        <string>keyword.control.import.shortcode</string>
       </dict>
       <key>link-email</key>
       <dict>
@@ -4435,23 +4407,23 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.markdown</string>
+            <string>punctuation.definition.link.quarto</string>
           </dict>
           <key>2</key>
           <dict>
             <key>name</key>
-            <string>markup.underline.link.markdown</string>
+            <string>markup.underline.link.quarto</string>
           </dict>
           <key>4</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.markdown</string>
+            <string>punctuation.definition.link.quarto</string>
           </dict>
         </dict>
         <key>match</key>
         <string>(&lt;)((?:mailto:)?[a-zA-Z0-9.!#$%&amp;'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)(&gt;)</string>
         <key>name</key>
-        <string>meta.link.email.lt-gt.markdown</string>
+        <string>meta.link.email.lt-gt.quarto</string>
       </dict>
       <key>link-inet</key>
       <dict>
@@ -4460,23 +4432,23 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.markdown</string>
+            <string>punctuation.definition.link.quarto</string>
           </dict>
           <key>2</key>
           <dict>
             <key>name</key>
-            <string>markup.underline.link.markdown</string>
+            <string>markup.underline.link.quarto</string>
           </dict>
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.markdown</string>
+            <string>punctuation.definition.link.quarto</string>
           </dict>
         </dict>
         <key>match</key>
         <string>(&lt;)((?:https?|ftp)://.*?)(&gt;)</string>
         <key>name</key>
-        <string>meta.link.inet.markdown</string>
+        <string>meta.link.inet.quarto</string>
       </dict>
       <key>link-inline</key>
       <dict>
@@ -4485,87 +4457,87 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.title.begin.markdown</string>
+            <string>punctuation.definition.link.title.begin.quarto</string>
           </dict>
           <key>2</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.title.markdown</string>
+            <string>string.other.link.title.quarto</string>
           </dict>
           <key>4</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.title.end.markdown</string>
+            <string>punctuation.definition.link.title.end.quarto</string>
           </dict>
           <key>5</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.metadata.markdown</string>
+            <string>punctuation.definition.metadata.quarto</string>
           </dict>
           <key>6</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.markdown</string>
+            <string>punctuation.definition.link.quarto</string>
           </dict>
           <key>7</key>
           <dict>
             <key>name</key>
-            <string>markup.underline.link.markdown</string>
+            <string>markup.underline.link.quarto</string>
           </dict>
           <key>9</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.link.markdown</string>
+            <string>punctuation.definition.link.quarto</string>
           </dict>
           <key>10</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.description.title.markdown</string>
+            <string>string.other.link.description.title.quarto</string>
           </dict>
           <key>11</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.begin.markdown</string>
+            <string>punctuation.definition.string.begin.quarto</string>
           </dict>
           <key>12</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.end.markdown</string>
+            <string>punctuation.definition.string.end.quarto</string>
           </dict>
           <key>13</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.description.title.markdown</string>
+            <string>string.other.link.description.title.quarto</string>
           </dict>
           <key>14</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.begin.markdown</string>
+            <string>punctuation.definition.string.begin.quarto</string>
           </dict>
           <key>15</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.end.markdown</string>
+            <string>punctuation.definition.string.end.quarto</string>
           </dict>
           <key>16</key>
           <dict>
             <key>name</key>
-            <string>string.other.link.description.title.markdown</string>
+            <string>string.other.link.description.title.quarto</string>
           </dict>
           <key>17</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.begin.markdown</string>
+            <string>punctuation.definition.string.begin.quarto</string>
           </dict>
           <key>18</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.string.end.markdown</string>
+            <string>punctuation.definition.string.end.quarto</string>
           </dict>
           <key>19</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.metadata.markdown</string>
+            <string>punctuation.definition.metadata.quarto</string>
           </dict>
         </dict>
         <key>match</key>
@@ -4584,107 +4556,7 @@
   (\))
 </string>
         <key>name</key>
-        <string>meta.link.inline.markdown</string>
-      </dict>
-      <key>link-ref</key>
-      <dict>
-        <key>captures</key>
-        <dict>
-          <key>1</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.begin.markdown</string>
-          </dict>
-          <key>2</key>
-          <dict>
-            <key>name</key>
-            <string>string.other.link.title.markdown</string>
-          </dict>
-          <key>4</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.end.markdown</string>
-          </dict>
-          <key>5</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.constant.begin.markdown</string>
-          </dict>
-          <key>6</key>
-          <dict>
-            <key>name</key>
-            <string>constant.other.reference.link.markdown</string>
-          </dict>
-          <key>7</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.constant.end.markdown</string>
-          </dict>
-        </dict>
-        <key>match</key>
-        <string>(\[)((?&lt;square&gt;[^\[\]\\]|\\.|\[\g&lt;square&gt;*+\])*+)(\])(\[)([^\]]*+)(\])</string>
-        <key>name</key>
-        <string>meta.link.reference.markdown</string>
-      </dict>
-      <key>link-ref-literal</key>
-      <dict>
-        <key>captures</key>
-        <dict>
-          <key>1</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.begin.markdown</string>
-          </dict>
-          <key>2</key>
-          <dict>
-            <key>name</key>
-            <string>string.other.link.title.markdown</string>
-          </dict>
-          <key>4</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.end.markdown</string>
-          </dict>
-          <key>5</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.constant.begin.markdown</string>
-          </dict>
-          <key>6</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.constant.end.markdown</string>
-          </dict>
-        </dict>
-        <key>match</key>
-        <string>(\[)((?&lt;square&gt;[^\[\]\\]|\\.|\[\g&lt;square&gt;*+\])*+)(\])[ ]?(\[)(\])</string>
-        <key>name</key>
-        <string>meta.link.reference.literal.markdown</string>
-      </dict>
-      <key>link-ref-shortcut</key>
-      <dict>
-        <key>captures</key>
-        <dict>
-          <key>1</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.begin.markdown</string>
-          </dict>
-          <key>2</key>
-          <dict>
-            <key>name</key>
-            <string>string.other.link.title.markdown</string>
-          </dict>
-          <key>3</key>
-          <dict>
-            <key>name</key>
-            <string>punctuation.definition.link.title.end.markdown</string>
-          </dict>
-        </dict>
-        <key>match</key>
-        <string>(\[)(\S+?)(\])</string>
-        <key>name</key>
-        <string>meta.link.reference.markdown</string>
+        <string>meta.link.inline.quarto</string>
       </dict>
       <key>raw</key>
       <dict>
@@ -4693,18 +4565,18 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.raw.markdown</string>
+            <string>punctuation.definition.raw.quarto</string>
           </dict>
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.raw.markdown</string>
+            <string>punctuation.definition.raw.quarto</string>
           </dict>
         </dict>
         <key>match</key>
         <string>(`+)((?:[^`]|(?!(?&lt;!`)\1(?!`))`)*+)(\1)</string>
         <key>name</key>
-        <string>markup.inline.raw.string.markdown</string>
+        <string>markup.inline.raw.string.quarto</string>
       </dict>
       <key>strikethrough</key>
       <dict>
@@ -4713,7 +4585,7 @@
           <key>1</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.strikethrough.markdown</string>
+            <string>punctuation.definition.strikethrough.quarto</string>
           </dict>
           <key>2</key>
           <dict>
@@ -4786,34 +4658,253 @@
                 <key>include</key>
                 <string>#image-ref</string>
               </dict>
+            </array>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.definition.strikethrough.quarto</string>
+          </dict>
+        </dict>
+        <key>match</key>
+        <string>(~+)((?:[^~]|(?!(?&lt;!~)\1(?!~))~)*+)(\1)</string>
+        <key>name</key>
+        <string>markup.strikethrough.quarto</string>
+      </dict>
+      <key>math_inline</key>
+      <dict>
+        <key>name</key>
+        <string>markup.math.inline.quarto</string>
+        <key>match</key>
+        <string>(?&lt;=\s|\W|^)(?&lt;!\$)(\$)(.+?)(\$)(?!\$)(?=\s|\W|$)</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.import.math.begin.quarto</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>meta.embedded.math.quarto</string>
+            <key>patterns</key>
+            <array>
               <dict>
                 <key>include</key>
-                <string>#link-ref-literal</string>
-              </dict>
-              <dict>
-                <key>include</key>
-                <string>#link-ref</string>
-              </dict>
-              <dict>
-                <key>include</key>
-                <string>#link-ref-shortcut</string>
+                <string>#math</string>
               </dict>
             </array>
           </dict>
           <key>3</key>
           <dict>
             <key>name</key>
-            <string>punctuation.definition.strikethrough.markdown</string>
+            <string>keyword.control.import.math.end.quarto</string>
           </dict>
         </dict>
-        <key>match</key>
-        <string>(~+)((?:[^~]|(?!(?&lt;!~)\1(?!~))~)*+)(\1)</string>
+      </dict>
+      <key>math_block</key>
+      <dict>
         <key>name</key>
-        <string>markup.strikethrough.markdown</string>
+        <string>markup.math.block.quarto</string>
+        <key>contentName</key>
+        <string>meta.embedded.math.quarto</string>
+        <key>begin</key>
+        <string>(?&lt;=^\s*)(\${2})(?![^$]*\${2})</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.import.math.begin.quarto</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(.*)(\${2})</string>
+        <key>endCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>meta.embedded.math.quarto</string>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#math</string>
+              </dict>
+            </array>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.control.import.math.end.quarto</string>
+          </dict>
+        </dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>begin</key>
+            <string>(^|\G)</string>
+            <key>while</key>
+            <string>(^|\G)(?!.*(\${2}))</string>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#math</string>
+              </dict>
+            </array>
+          </dict>
+        </array>
+      </dict>
+      <key>math</key>
+      <dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>name</key>
+            <string>comment.line.math.tex</string>
+            <key>match</key>
+            <string>((?&lt;!\\)%)(.+)$</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.comment.math.tex</string>
+              </dict>
+            </dict>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>line.separator.math.tex</string>
+            <key>match</key>
+            <string>(\\\\)$</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.line.separator.math.tex</string>
+              </dict>
+            </dict>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>meta.function.math.tex</string>
+            <key>begin</key>
+            <string>((\\)([a-zA-Z_]+))\s*(\{)</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>storage.type.function.math.tex</string>
+              </dict>
+              <key>2</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.function.math.tex</string>
+              </dict>
+              <key>3</key>
+              <dict>
+                <key>name</key>
+                <string>entity.name.function.math.tex</string>
+              </dict>
+              <key>4</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.arguments.begin.math.tex</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>\}</string>
+            <key>endCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.arguments.end.math.tex</string>
+              </dict>
+            </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>$self</string>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.constant.math.tex</string>
+              </dict>
+            </dict>
+            <key>match</key>
+            <string>(\\)([a-zA-Z_]+)\b</string>
+            <key>name</key>
+            <string>constant.character.math.tex</string>
+          </dict>
+          <dict>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.constant.math.tex</string>
+              </dict>
+            </dict>
+            <key>match</key>
+            <string>(\\)(?!begin\*\{|verb)([A-Za-z]+)</string>
+            <key>name</key>
+            <string>constant.other.general.math.tex</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>(?&lt;!\\)\{</string>
+            <key>name</key>
+            <string>punctuation.math.begin.bracket.curly</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>(?&lt;!\\)\}</string>
+            <key>name</key>
+            <string>punctuation.math.end.bracket.curly</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>\(</string>
+            <key>name</key>
+            <string>punctuation.math.begin.bracket.round</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>\)</string>
+            <key>name</key>
+            <string>punctuation.math.end.bracket.round</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>(([0-9]*[\.][0-9]+)|[0-9]+)</string>
+            <key>name</key>
+            <string>constant.numeric.math.tex</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>[\+\*/_\^-]</string>
+            <key>name</key>
+            <string>punctuation.math.operator.latex</string>
+          </dict>
+        </array>
       </dict>
     </dict>
     <key>scopeName</key>
-    <string>text.html.markdown.quarto</string>
+    <string>text.html.quarto</string>
     <key>uuid</key>
     <string>4EDF8B97-6B11-4D2F-8157-6860113420AD</string>
   </dict>
