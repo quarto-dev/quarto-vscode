@@ -134,6 +134,7 @@
         "editor.quickSuggestionsDelay": 10,
         "editor.snippetSuggestions": "none",
         "editor.wordBasedSuggestions": false,
+        "editor.suggestOnTriggerCharacters": true,
         "editor.unicodeHighlight.ambiguousCharacters": false,
         "editor.unicodeHighlight.invisibleCharacters": false
       }
