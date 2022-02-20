@@ -128,7 +128,11 @@ function setEditorHighlightDecorations(
     return;
   }
 
-  const executableCodeBlocks: vscode.Range[] = [];
+  const kCodeBlockRegex =
+    /^([\t >]*)(```+)\s*\{([a-zA-Z0-9_]+)(?: *[ ,].*?)?\}[ \t]*$/;
+  const kDisplayMathRegex = /^\$\$\s*$/;
+
+  const highlightedRanges: vscode.Range[] = [];
 
   if (highlightingConfig.enabled()) {
     let currentLine = -1;
@@ -136,14 +140,15 @@ function setEditorHighlightDecorations(
       !token?.isCancellationRequested &&
       ++currentLine < editor.document.lineCount
     ) {
-      let line = editor.document.lineAt(currentLine).text;
-      const match = line.match(
-        /^([\t >]*)(```+)\s*\{([a-zA-Z0-9_]+)(?: *[ ,].*?)?\}[ \t]*$/
-      );
-      if (match) {
+      // next line
+      const line = editor.document.lineAt(currentLine).text;
+
+      // code block
+      const codeBlockMatch = line.match(kCodeBlockRegex);
+      if (codeBlockMatch) {
         // get the match and record the start line
-        const prefix = match[1];
-        const ticks = match[2];
+        const prefix = codeBlockMatch[1];
+        const ticks = codeBlockMatch[2];
         const startLine = currentLine;
 
         // look for the end line
@@ -155,7 +160,7 @@ function setEditorHighlightDecorations(
           const beginCodeMatch = line.match(kBeginCodePattern);
           if (beginCodeMatch) {
             const codeBlockEndPattern = new RegExp(
-              "^" + match[1] + match[2] + "[ \\t]*$"
+              "^" + codeBlockMatch[1] + codeBlockMatch[2] + "[ \\t]*$"
             );
             while (++currentLine < editor.document.lineCount) {
               const line = editor.document.lineAt(currentLine).text;
@@ -164,11 +169,31 @@ function setEditorHighlightDecorations(
               }
             }
           } else if (line.match(endPattern)) {
-            executableCodeBlocks.push(
+            highlightedRanges.push(
               new vscode.Range(startLine, 0, currentLine, line.length)
             );
             break;
           }
+        }
+      }
+
+      // display math
+      const mathMatch = line.match(kDisplayMathRegex);
+      if (mathMatch) {
+        const startLine = currentLine;
+        let foundMath = false;
+        while (++currentLine < editor.document.lineCount) {
+          const line = editor.document.lineAt(currentLine).text;
+          if (line.match(kDisplayMathRegex)) {
+            highlightedRanges.push(
+              new vscode.Range(startLine, 0, currentLine, line.length)
+            );
+            foundMath = true;
+            break;
+          }
+        }
+        if (!foundMath) {
+          currentLine = startLine;
         }
       }
     }
@@ -177,7 +202,7 @@ function setEditorHighlightDecorations(
   // set highlights (could be none if we highlighting isn't enabled)
   editor.setDecorations(
     highlightingConfig.backgroundDecoration(),
-    executableCodeBlocks
+    highlightedRanges
   );
 }
 
