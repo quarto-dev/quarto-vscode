@@ -148,13 +148,13 @@
         "quarto.cells.background.light": {
           "type": "string",
           "format": "color",
-          "default": "#DCDCDC66",
+          "default": "#E1E1E166",
           "markdownDescription": "CSS color for background of executable code cells on light themes.\n\n*Note that this color should include an alpha channel so that selections show up against the background.*"
         },
         "quarto.cells.background.dark": {
           "type": "string",
           "format": "color",
-          "default": "#60606066",
+          "default": "#40404066",
           "markdownDescription": "CSS color for background of executable code cells on dark themes.\n\n*Note that this color should include an alpha channel so that selections show up against the background.*"
         },
         "quarto.cells.background.delay": {

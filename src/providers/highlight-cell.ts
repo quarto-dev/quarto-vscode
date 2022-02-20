@@ -212,10 +212,10 @@ class HiglightingConfig {
     this.backgroundDecoration_ = vscode.window.createTextEditorDecorationType({
       isWholeLine: true,
       light: {
-        backgroundColor: config.get("cells.background.light", "#DCDCDC66"),
+        backgroundColor: config.get("cells.background.light", "#E1E1E166"),
       },
       dark: {
-        backgroundColor: config.get("cells.background.dark", "#60606066"),
+        backgroundColor: config.get("cells.background.dark", "#40404066"),
       },
     });
   }
