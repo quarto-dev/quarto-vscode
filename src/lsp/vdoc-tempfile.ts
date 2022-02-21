@@ -8,7 +8,6 @@ import * as fs from "fs";
 import * as path from "path";
 import * as tmp from "tmp";
 import { Uri, workspace, WorkspaceEdit } from "vscode";
-import { extensionForLanguage } from "./languages";
 import { CompletionVirtualDoc, CompletionVirtualDocUri } from "./vdoc";
 
 export async function virtualDocUriFromTempFile(
@@ -38,7 +37,7 @@ export async function virtualDocUriFromTempFile(
 tmp.setGracefulCleanup();
 const vdocTempDir = tmp.dirSync().name;
 function createVirtualDocTempFile(virtualDoc: CompletionVirtualDoc) {
-  const ext = extensionForLanguage(virtualDoc.language);
+  const ext = virtualDoc.language.extension;
   const dir = path.join(vdocTempDir, ext);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
@@ -47,10 +46,9 @@ function createVirtualDocTempFile(virtualDoc: CompletionVirtualDoc) {
 
   // if this is a python file we write a comment to disable pylance
   // (otherwise issues can flash on and off in the 'Problems' tab)
-  const content =
-    virtualDoc.language === "python"
-      ? virtualDoc.content.replace("\n", "# type: ignore\n")
-      : virtualDoc.content;
+  const content = virtualDoc.language.inject
+    ? virtualDoc.content.replace("\n", `${virtualDoc.language.inject}\n`)
+    : virtualDoc.content;
 
   fs.writeFileSync(tmpPath, content);
 

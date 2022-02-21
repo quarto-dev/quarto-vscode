@@ -29,7 +29,6 @@ import {
   virtualDocUriFromEmbeddedContent,
 } from "./vdoc-content";
 import { virtualDocUriFromTempFile } from "./vdoc-tempfile";
-import { isEmbeddedContentLanguage } from "./languages";
 
 let client: LanguageClient;
 
@@ -93,9 +92,10 @@ function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
     // see if there is a completion virtual doc we should be using
     const virtualDoc = await completionVirtualDoc(document, position, engine);
     if (virtualDoc) {
-      const vdocUri = isEmbeddedContentLanguage(virtualDoc.language)
-        ? virtualDocUriFromEmbeddedContent(document, virtualDoc)
-        : await virtualDocUriFromTempFile(virtualDoc);
+      const vdocUri =
+        virtualDoc.language.type === "content"
+          ? virtualDocUriFromEmbeddedContent(document, virtualDoc)
+          : await virtualDocUriFromTempFile(virtualDoc);
 
       try {
         return await commands.executeCommand<CompletionList>(

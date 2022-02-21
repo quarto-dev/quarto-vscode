@@ -6,11 +6,10 @@
 import Token from "markdown-it/lib/token";
 import { Position, TextDocument, Uri } from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
-import { extensionForLanguage } from "./languages";
+import { embeddedLanguage, EmbeddedLanguage } from "./languages";
 
 export interface CompletionVirtualDoc {
-  language: string;
-  extension: string;
+  language: EmbeddedLanguage;
   content: string;
 }
 
@@ -49,7 +48,6 @@ export async function completionVirtualDoc(
     // return the language and the content
     return {
       language,
-      extension: extensionForLanguage(language),
       content: lines.join("\n"),
     };
   } else {
@@ -71,15 +69,19 @@ export function languageAtPosition(tokens: Token[], position: Position) {
 }
 
 export function languageFromFenceToken(token: Token) {
-  return token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "");
+  const langId = token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "");
+  return embeddedLanguage(langId);
 }
 
 export function isFencedCode(token: Token) {
   return token.type === "fence";
 }
 
-export function isFencedCodeOf(language: string) {
+export function isFencedCodeOf(language: EmbeddedLanguage) {
   return (token: Token) => {
-    return isFencedCode(token) && languageFromFenceToken(token) === language;
+    return (
+      isFencedCode(token) &&
+      languageFromFenceToken(token)?.ids.some((id) => language.ids.includes(id))
+    );
   };
 }
