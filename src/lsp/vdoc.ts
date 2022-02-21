@@ -4,18 +4,13 @@
  * ------------------------------------------------------------------------------------------ */
 
 import Token from "markdown-it/lib/token";
-import { Position, TextDocument, Uri } from "vscode";
+import { Position, TextDocument } from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
 import { embeddedLanguage, EmbeddedLanguage } from "./languages";
 
 export interface CompletionVirtualDoc {
   language: EmbeddedLanguage;
   content: string;
-}
-
-export interface CompletionVirtualDocUri {
-  uri: Uri;
-  dispose: () => Promise<void>;
 }
 
 export async function completionVirtualDoc(

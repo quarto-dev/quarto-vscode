@@ -5,12 +5,12 @@
  * ------------------------------------------------------------------------------------------ */
 
 import { TextDocument, Uri, workspace } from "vscode";
-import { CompletionVirtualDoc, CompletionVirtualDocUri } from "./vdoc";
+import { CompletionVirtualDoc } from "./vdoc";
 
 const kQmdEmbeddedContent = "quarto-qmd-embedded-content";
 const virtualDocumentContents = new Map<string, string>();
 
-export function initVirtualDocEmbeddedContent() {
+export function activateVirtualDocEmbeddedContent() {
   workspace.registerTextDocumentContentProvider(kQmdEmbeddedContent, {
     provideTextDocumentContent: (uri) => {
       const path = uri.path.slice(1);
@@ -25,7 +25,7 @@ export function initVirtualDocEmbeddedContent() {
 export function virtualDocUriFromEmbeddedContent(
   document: TextDocument,
   virtualDoc: CompletionVirtualDoc
-): CompletionVirtualDocUri {
+) {
   // set virtual doc
   const originalUri = document.uri.toString();
   virtualDocumentContents.set(originalUri, virtualDoc.content);
@@ -36,8 +36,6 @@ export function virtualDocUriFromEmbeddedContent(
   }/${encodeURIComponent(originalUri)}.${virtualDoc.language.extension}`;
   const vdocUri = Uri.parse(vdocUriString);
 
-  return {
-    uri: vdocUri,
-    dispose: () => Promise.resolve(),
-  };
+  // return it
+  return vdocUri;
 }

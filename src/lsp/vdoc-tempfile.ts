@@ -7,28 +7,52 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as tmp from "tmp";
-import { Uri, workspace, WorkspaceEdit } from "vscode";
-import { CompletionVirtualDoc, CompletionVirtualDocUri } from "./vdoc";
+import { TextDocument, Uri, workspace, WorkspaceEdit } from "vscode";
+import { CompletionVirtualDoc } from "./vdoc";
+
+// one virtual doc per language file extension
+const languageVirtualDocs = new Map<String, TextDocument>();
 
 export async function virtualDocUriFromTempFile(
   virtualDoc: CompletionVirtualDoc
-): Promise<CompletionVirtualDocUri> {
+) {
+  // do we have an existing document?
+  const langVdoc = languageVirtualDocs.get(virtualDoc.language.extension);
+  if (langVdoc) {
+    if (langVdoc.getText() === virtualDoc.content) {
+      // if its content is identical to what's passed in then just return it
+      return langVdoc.uri;
+    } else {
+      // otherwise remove it (it will get recreated below)
+      await deleteDocument(langVdoc);
+      languageVirtualDocs.delete(virtualDoc.language.extension);
+    }
+  }
+
   // write the virtual doc as a temp file
   const vdocTempFile = createVirtualDocTempFile(virtualDoc);
 
-  // open the document
+  // open the document and save a reference to it
   const vodcUri = Uri.file(vdocTempFile);
-  await workspace.openTextDocument(vodcUri);
+  const doc = await workspace.openTextDocument(vodcUri);
+  languageVirtualDocs.set(virtualDoc.language.extension, doc);
 
-  // return the uri and a dispose method that deletes the doc
-  return {
-    uri: vodcUri,
-    dispose: async () => {
-      const edit = new WorkspaceEdit();
-      edit.deleteFile(vodcUri);
-      await workspace.applyEdit(edit);
-    },
-  };
+  // return the uri
+  return doc.uri;
+}
+
+// delete any vdocs left open
+export async function deactivateVirtualDocTempFiles() {
+  languageVirtualDocs.forEach(async (doc) => {
+    await deleteDocument(doc);
+  });
+}
+
+// delete a document
+async function deleteDocument(doc: TextDocument) {
+  const edit = new WorkspaceEdit();
+  edit.deleteFile(doc.uri);
+  await workspace.applyEdit(edit);
 }
 
 // create temp files for vdocs. use a base directory that has a subdirectory

@@ -25,10 +25,13 @@ import { ProvideCompletionItemsSignature } from "vscode-languageclient";
 import { MarkdownEngine } from "../markdown/engine";
 import { completionVirtualDoc } from "./vdoc";
 import {
-  initVirtualDocEmbeddedContent,
+  activateVirtualDocEmbeddedContent,
   virtualDocUriFromEmbeddedContent,
 } from "./vdoc-content";
-import { virtualDocUriFromTempFile } from "./vdoc-tempfile";
+import {
+  deactivateVirtualDocTempFiles,
+  virtualDocUriFromTempFile,
+} from "./vdoc-tempfile";
 
 let client: LanguageClient;
 
@@ -72,6 +75,8 @@ export function activateLsp(context: ExtensionContext, engine: MarkdownEngine) {
 }
 
 export function deactivate(): Thenable<void> | undefined {
+  deactivateVirtualDocTempFiles();
+
   if (!client) {
     return undefined;
   }
@@ -80,7 +85,7 @@ export function deactivate(): Thenable<void> | undefined {
 
 function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
   // initialize embedded conent
-  initVirtualDocEmbeddedContent();
+  activateVirtualDocEmbeddedContent();
 
   return async (
     document: TextDocument,
@@ -114,14 +119,12 @@ function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
       try {
         return await commands.executeCommand<CompletionList>(
           "vscode.executeCompletionItemProvider",
-          vdocUri.uri,
+          vdocUri,
           position,
           context.triggerCharacter
         );
       } catch (error) {
         return undefined;
-      } finally {
-        await vdocUri.dispose();
       }
     } else {
       return await next(document, position, context, token);
