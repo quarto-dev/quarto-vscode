@@ -16,23 +16,36 @@ export function embeddedLanguage(langauge: string) {
 }
 
 const kEmbededLanguages = [
-  defineLanguage("python", { ext: "py", inject: "# type: ignore" }),
-  defineLanguage("r"),
-  defineLanguage("juila", { ext: "jl" }),
-  defineLanguage(["tex", "latex"]),
-  defineLanguage("html", { type: "content" }),
-  defineLanguage("sql"),
+  // these langauges required creatinga a temp file
+  defineLanguage("python", {
+    ext: "py",
+    inject: "# type: ignore",
+    trigger: ["."],
+  }),
+  defineLanguage("r", { trigger: ["$", "@", ":"] }),
+  defineLanguage("juila", { ext: "jl", trigger: ["."] }),
+  defineLanguage(["tex", "latex"], { trigger: ["\\"] }),
+  defineLanguage("sql", { trigger: ["."] }),
   defineLanguage("bash", { ext: "sh" }),
+  defineLanguage("ruby", { ext: "rb", trigger: ["."] }),
+  defineLanguage("rust", { ext: "rs", trigger: ["."] }),
+  defineLanguage("java", { trigger: ["."] }),
+  defineLanguage(["cpp"], { trigger: [".", ">", ":"] }),
+  defineLanguage("go", { trigger: ["."] }),
+  // these langauges work w/ text document content provider
+  defineLanguage("html", { type: "content" }),
   defineLanguage("css", { type: "content" }),
-  defineLanguage(["cpp"]),
-  defineLanguage(["ts", "typescript"], { ext: "ts", type: "content" }),
-  defineLanguage(["js", "javascript", "d3"], { ext: "js", type: "content" }),
-  defineLanguage("jsx"),
-  defineLanguage("ruby", { ext: "rb" }),
-  defineLanguage("rust", { ext: "rs" }),
-  defineLanguage("java"),
-  defineLanguage("go"),
-  defineLanguage("cpp"),
+  defineLanguage(["ts", "typescript"], {
+    ext: "ts",
+    type: "content",
+    trigger: ["."],
+  }),
+  defineLanguage(["js", "javascript", "d3"], {
+    ext: "js",
+    type: "content",
+    trigger: ["."],
+  }),
+  defineLanguage("jsx", { trigger: ["."], type: "content" }),
 ];
 
 interface LanguageOptions {

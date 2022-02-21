@@ -27,7 +27,9 @@ connection.onInitialize((_params: InitializeParams) => {
       // Tell the client that the server supports code completion
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: [".", "$", "@", ":"],
+        // register a superset of all trigger characters for embedded languages
+        // (languages are responsible for declaring which one they support if any)
+        triggerCharacters: [".", "$", "@", ":", "\\"],
       },
     },
   };

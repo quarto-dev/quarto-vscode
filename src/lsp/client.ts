@@ -91,12 +91,26 @@ function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
   ) => {
     // see if there is a completion virtual doc we should be using
     const virtualDoc = await completionVirtualDoc(document, position, engine);
+
     if (virtualDoc) {
+      // if there is a trigger character make sure the langauge supports it
+      const language = virtualDoc.language;
+      if (context.triggerCharacter) {
+        if (
+          !language.trigger ||
+          !language.trigger.includes(context.triggerCharacter)
+        ) {
+          return undefined;
+        }
+      }
+
+      // get uri for completions
       const vdocUri =
-        virtualDoc.language.type === "content"
+        language.type === "content"
           ? virtualDocUriFromEmbeddedContent(document, virtualDoc)
           : await virtualDocUriFromTempFile(virtualDoc);
 
+      // execute completions
       try {
         return await commands.executeCommand<CompletionList>(
           "vscode.executeCompletionItemProvider",
