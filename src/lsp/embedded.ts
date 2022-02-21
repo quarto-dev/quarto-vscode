@@ -44,7 +44,6 @@ export function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
           context.triggerCharacter
         );
       } catch (error) {
-        console.log(error);
         return undefined;
       } finally {
         await vdocUri.dispose();
