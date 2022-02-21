@@ -169,6 +169,7 @@
   "dependencies": {
     "lodash.debounce": "^4.0.8",
     "markdown-it": "^12.0.2",
+    "tmp": "^0.2.1",
     "vscode-languageclient": "^7.0.0",
     "vscode-nls": "^5.0.0"
   },
@@ -177,6 +178,7 @@
     "@types/lodash.debounce": "^4.0.6",
     "@types/markdown-it": "^12.0.2",
     "@types/node": "^8.10.25",
+    "@types/tmp": "^0.2.3",
     "@types/vscode": "^1.55.0",
     "concurrently": "^7.0.0",
     "esbuild": "^0.14.21",

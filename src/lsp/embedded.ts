@@ -1,8 +1,13 @@
 /* --------------------------------------------------------------------------------------------
  * Copyright (c) RStudio, PBC. All rights reserved.
  * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Copyright (c) 2019 Takashi Tamura
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
+
+import * as fs from "fs";
+import * as path from "path";
+import * as tmp from "tmp";
 
 import Token from "markdown-it/lib/token";
 import {
@@ -14,25 +19,12 @@ import {
   TextDocument,
   Uri,
   workspace,
+  WorkspaceEdit,
 } from "vscode";
 import { ProvideCompletionItemsSignature } from "vscode-languageclient";
 import { MarkdownEngine } from "../markdown/engine";
 
-const kQmdEmbeddedContent = "quarto-qmd-embedded-content";
-
 export function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
-  const virtualDocumentContents = new Map<string, string>();
-
-  workspace.registerTextDocumentContentProvider(kQmdEmbeddedContent, {
-    provideTextDocumentContent: (uri) => {
-      const path = uri.path.slice(1);
-      const originalUri = path.slice(0, path.lastIndexOf("."));
-      const decodedUri = decodeURIComponent(originalUri);
-      const content = virtualDocumentContents.get(decodedUri);
-      return content;
-    },
-  });
-
   return async (
     document: TextDocument,
     position: Position,
@@ -43,11 +35,7 @@ export function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
     // see if there is a completion virtual doc we should be using
     const virtualDoc = await completionVirtualDoc(document, position, engine);
     if (virtualDoc) {
-      const vdocUri = vdocUriFromContentProvider(
-        document,
-        virtualDoc,
-        virtualDocumentContents
-      );
+      const vdocUri = await vdocUriFromTempFile(virtualDoc);
       try {
         return await commands.executeCommand<CompletionList>(
           "vscode.executeCompletionItemProvider",
@@ -55,8 +43,11 @@ export function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
           position,
           context.triggerCharacter
         );
+      } catch (error) {
+        console.log(error);
+        return undefined;
       } finally {
-        vdocUri.dispose();
+        await vdocUri.dispose();
       }
     } else {
       return await next(document, position, context, token);
@@ -108,28 +99,49 @@ async function completionVirtualDoc(
   }
 }
 
-function vdocUriFromContentProvider(
-  document: TextDocument,
-  virtualDoc: VirtualDoc,
-  docContentMap: Map<string, string>
-) {
-  // set virtual doc
-  const originalUri = document.uri.toString();
-  docContentMap.set(originalUri, virtualDoc.content);
+async function vdocUriFromTempFile(virtualDoc: VirtualDoc) {
+  // write the virtual doc as a temp file
+  const vdocTempFile = createVirtualDocTempFile(virtualDoc);
 
-  // request completions
-  const vdocUriString = `${kQmdEmbeddedContent}://${
-    virtualDoc.language
-  }/${encodeURIComponent(originalUri)}.${virtualDoc.extension}`;
-  const vdocUri = Uri.parse(vdocUriString);
+  // open the document
+  const vodcUri = Uri.file(vdocTempFile);
+  await workspace.openTextDocument(vodcUri);
 
+  // return the uri and a dispose method that deletes the doc
   return {
-    uri: vdocUri,
-    dispose: () => {},
+    uri: vodcUri,
+    dispose: async () => {
+      const edit = new WorkspaceEdit();
+      edit.deleteFile(vodcUri);
+      await workspace.applyEdit(edit);
+    },
   };
 }
 
-function vdocUriFromTempFile(document: TextDocument, virtualDoc: VirtualDoc) {}
+// create temp files for vdocs. use a base directory that has a subdirectory
+// for each extension used within the document. this is a no-op if the
+// file already exists
+tmp.setGracefulCleanup();
+const vdocTempDir = tmp.dirSync().name;
+function createVirtualDocTempFile(virtualDoc: VirtualDoc) {
+  const ext = extensionForLanguage(virtualDoc.language);
+  const dir = path.join(vdocTempDir, ext);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  const tmpPath = path.join(vdocTempDir, ext, "intellisense." + ext);
+
+  // if this is a python file we write a comment to disable pylance
+  // (otherwise issues can flash on and off in the 'Problems' tab)
+  const content =
+    virtualDoc.language === "python"
+      ? virtualDoc.content.replace("\n", "# type: ignore\n")
+      : virtualDoc.content;
+
+  fs.writeFileSync(tmpPath, content);
+
+  return tmpPath;
+}
 
 function extensionForLanguage(language: string) {
   switch (language) {
