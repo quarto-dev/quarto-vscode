@@ -129,7 +129,7 @@ function setEditorHighlightDecorations(
   }
 
   const kCodeBlockRegex =
-    /^([\t >]*)(```+)\s*\{([a-zA-Z0-9_]+)(?: *[ ,].*?)?\}[ \t]*$/;
+    /^([\t >]*)(```+)\s*\{=?([a-zA-Z0-9_]+)(?: *[ ,].*?)?\}[ \t]*$/;
   const kDisplayMathRegex = /^\$\$\s*$/;
 
   const highlightedRanges: vscode.Range[] = [];
