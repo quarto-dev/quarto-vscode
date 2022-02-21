@@ -25,6 +25,9 @@ import { ProvideCompletionItemsSignature } from "vscode-languageclient";
 import { MarkdownEngine } from "../markdown/engine";
 
 export function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
+  // initialize embedded conent
+  initVirtualDocEmbeddedContent();
+
   return async (
     document: TextDocument,
     position: Position,
@@ -35,7 +38,25 @@ export function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
     // see if there is a completion virtual doc we should be using
     const virtualDoc = await completionVirtualDoc(document, position, engine);
     if (virtualDoc) {
-      const vdocUri = await vdocUriFromTempFile(virtualDoc);
+      // determine what sort of virtual doc we should be using. the temp file
+      // method always works for all langauges, the embedded content method
+      // is less resource intensive. we explicitliy opt in languages known
+      // to work correctly w/ embedded content
+      let vdocUri: VirtualDocUri | undefined;
+      const kEmbeddedContentLanguages = [
+        "html",
+        "css",
+        "ts",
+        "typescript",
+        "js",
+        "javascript",
+      ];
+      if (kEmbeddedContentLanguages.includes(virtualDoc.language)) {
+        vdocUri = virtualDocUriFromEmbeddedContent(document, virtualDoc);
+      } else {
+        vdocUri = await virtualDocUriFromTempFile(virtualDoc);
+      }
+
       try {
         return await commands.executeCommand<CompletionList>(
           "vscode.executeCompletionItemProvider",
@@ -98,7 +119,14 @@ async function completionVirtualDoc(
   }
 }
 
-async function vdocUriFromTempFile(virtualDoc: VirtualDoc) {
+interface VirtualDocUri {
+  uri: Uri;
+  dispose: () => Promise<void>;
+}
+
+async function virtualDocUriFromTempFile(
+  virtualDoc: VirtualDoc
+): Promise<VirtualDocUri> {
   // write the virtual doc as a temp file
   const vdocTempFile = createVirtualDocTempFile(virtualDoc);
 
@@ -140,6 +168,40 @@ function createVirtualDocTempFile(virtualDoc: VirtualDoc) {
   fs.writeFileSync(tmpPath, content);
 
   return tmpPath;
+}
+
+const kQmdEmbeddedContent = "quarto-qmd-embedded-content";
+const virtualDocumentContents = new Map<string, string>();
+function initVirtualDocEmbeddedContent() {
+  workspace.registerTextDocumentContentProvider(kQmdEmbeddedContent, {
+    provideTextDocumentContent: (uri) => {
+      const path = uri.path.slice(1);
+      const originalUri = path.slice(0, path.lastIndexOf("."));
+      const decodedUri = decodeURIComponent(originalUri);
+      const content = virtualDocumentContents.get(decodedUri);
+      return content;
+    },
+  });
+}
+
+function virtualDocUriFromEmbeddedContent(
+  document: TextDocument,
+  virtualDoc: VirtualDoc
+): VirtualDocUri {
+  // set virtual doc
+  const originalUri = document.uri.toString();
+  virtualDocumentContents.set(originalUri, virtualDoc.content);
+
+  // form uri
+  const vdocUriString = `${kQmdEmbeddedContent}://${
+    virtualDoc.language
+  }/${encodeURIComponent(originalUri)}.${virtualDoc.extension}`;
+  const vdocUri = Uri.parse(vdocUriString);
+
+  return {
+    uri: vdocUri,
+    dispose: () => Promise.resolve(),
+  };
 }
 
 function extensionForLanguage(language: string) {
