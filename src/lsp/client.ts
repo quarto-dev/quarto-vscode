@@ -12,8 +12,24 @@ import {
   ServerOptions,
   TransportKind,
 } from "vscode-languageclient/node";
+
+import {
+  CancellationToken,
+  commands,
+  CompletionContext,
+  CompletionList,
+  Position,
+  TextDocument,
+} from "vscode";
+import { ProvideCompletionItemsSignature } from "vscode-languageclient";
 import { MarkdownEngine } from "../markdown/engine";
-import { embeddedCodeCompletionProvider } from "./embedded";
+import { completionVirtualDoc } from "./vdoc";
+import {
+  initVirtualDocEmbeddedContent,
+  virtualDocUriFromEmbeddedContent,
+} from "./vdoc-content";
+import { virtualDocUriFromTempFile } from "./vdoc-tempfile";
+import { isEmbeddedContentLanguage } from "./languages";
 
 let client: LanguageClient;
 
@@ -61,4 +77,40 @@ export function deactivate(): Thenable<void> | undefined {
     return undefined;
   }
   return client.stop();
+}
+
+function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
+  // initialize embedded conent
+  initVirtualDocEmbeddedContent();
+
+  return async (
+    document: TextDocument,
+    position: Position,
+    context: CompletionContext,
+    token: CancellationToken,
+    next: ProvideCompletionItemsSignature
+  ) => {
+    // see if there is a completion virtual doc we should be using
+    const virtualDoc = await completionVirtualDoc(document, position, engine);
+    if (virtualDoc) {
+      const vdocUri = isEmbeddedContentLanguage(virtualDoc.language)
+        ? virtualDocUriFromEmbeddedContent(document, virtualDoc)
+        : await virtualDocUriFromTempFile(virtualDoc);
+
+      try {
+        return await commands.executeCommand<CompletionList>(
+          "vscode.executeCompletionItemProvider",
+          vdocUri.uri,
+          position,
+          context.triggerCharacter
+        );
+      } catch (error) {
+        return undefined;
+      } finally {
+        await vdocUri.dispose();
+      }
+    } else {
+      return await next(document, position, context, token);
+    }
+  };
 }
