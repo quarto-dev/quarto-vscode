@@ -3,9 +3,6 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import Token from "markdown-it/lib/token";
-import { Position } from "vscode";
-
 export function isEmbeddedContentLanguage(langauge: string) {
   const kEmbeddedContentLanguages = [
     "html",
@@ -51,31 +48,4 @@ export function extensionForLanguage(language: string) {
     default:
       return language;
   }
-}
-
-export function languageAtPosition(tokens: Token[], position: Position) {
-  for (const fencedCode of tokens.filter(isFencedCode)) {
-    if (
-      fencedCode.map &&
-      position.line > fencedCode.map[0] &&
-      position.line <= fencedCode.map[1]
-    ) {
-      return languageFromFenceToken(fencedCode);
-    }
-  }
-  return undefined;
-}
-
-export function languageFromFenceToken(token: Token) {
-  return token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "");
-}
-
-export function isFencedCode(token: Token) {
-  return token.type === "fence";
-}
-
-export function isFencedCodeOf(language: string) {
-  return (token: Token) => {
-    return isFencedCode(token) && languageFromFenceToken(token) === language;
-  };
 }

@@ -3,13 +3,10 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+import Token from "markdown-it/lib/token";
 import { Position, TextDocument, Uri } from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
-import {
-  extensionForLanguage,
-  isFencedCodeOf,
-  languageAtPosition,
-} from "./languages";
+import { extensionForLanguage } from "./languages";
 
 export interface CompletionVirtualDoc {
   language: string;
@@ -58,4 +55,31 @@ export async function completionVirtualDoc(
   } else {
     return undefined;
   }
+}
+
+export function languageAtPosition(tokens: Token[], position: Position) {
+  for (const fencedCode of tokens.filter(isFencedCode)) {
+    if (
+      fencedCode.map &&
+      position.line > fencedCode.map[0] &&
+      position.line <= fencedCode.map[1]
+    ) {
+      return languageFromFenceToken(fencedCode);
+    }
+  }
+  return undefined;
+}
+
+export function languageFromFenceToken(token: Token) {
+  return token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "");
+}
+
+export function isFencedCode(token: Token) {
+  return token.type === "fence";
+}
+
+export function isFencedCodeOf(language: string) {
+  return (token: Token) => {
+    return isFencedCode(token) && languageFromFenceToken(token) === language;
+  };
 }
