@@ -5,6 +5,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import MarkdownIt = require("markdown-it");
+const katex = require("@iktakahiro/markdown-it-katex");
 import Token = require("markdown-it/lib/token");
 import * as vscode from "vscode";
 import { MarkdownTextDocument } from "./document";
@@ -20,7 +21,8 @@ export class MarkdownEngine {
 
   public async parse(document: MarkdownTextDocument): Promise<Token[]> {
     const engine = await this.getEngine();
-    return this.tokenizeDocument(document, engine);
+    const tokens = this.tokenizeDocument(document, engine);
+    return tokens;
   }
 
   public cleanCache(): void {
@@ -31,11 +33,11 @@ export class MarkdownEngine {
     if (!this.md) {
       this.md = (async () => {
         const markdownIt = await import("markdown-it");
-        return markdownIt.default("commonmark");
+        const md = markdownIt.default("commonmark");
+        return md.use(katex, { globalGroup: true });
       })();
     }
-
-    const md = await this.md!;
+    let md = await this.md!;
     return md;
   }
 

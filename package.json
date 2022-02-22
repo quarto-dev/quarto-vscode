@@ -172,6 +172,7 @@
   "dependencies": {
     "lodash.debounce": "^4.0.8",
     "markdown-it": "^12.0.2",
+    "@iktakahiro/markdown-it-katex": "https://github.com/mjbvz/markdown-it-katex.git",
     "tmp": "^0.2.1",
     "vscode-languageclient": "^7.0.0",
     "vscode-nls": "^5.0.0"

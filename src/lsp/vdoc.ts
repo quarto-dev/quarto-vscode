@@ -30,11 +30,11 @@ export async function virtualDoc(
     for (let i = 0; i < document.lineCount; i++) {
       lines.push("");
     }
-    for (const fencedCode of tokens.filter(isFencedCodeOf(language))) {
-      if (fencedCode.map) {
+    for (const languageBlock of tokens.filter(isBlockOfLanguage(language))) {
+      if (languageBlock.map) {
         for (
-          let line = fencedCode.map[0] + 1;
-          line < fencedCode.map[1] - 1 && line < document.lineCount;
+          let line = languageBlock.map[0] + 1;
+          line < languageBlock.map[1] - 1 && line < document.lineCount;
           line++
         ) {
           lines[line] = document.lineAt(line).text;
@@ -64,32 +64,44 @@ export async function virtualDocUri(virtualDoc: VirtualDoc, parentUri: Uri) {
 }
 
 export function languageAtPosition(tokens: Token[], position: Position) {
-  for (const fencedCode of tokens.filter(isFencedCode)) {
+  for (const languageBlock of tokens.filter(isLanguageBlock)) {
     if (
-      fencedCode.map &&
-      position.line > fencedCode.map[0] &&
-      position.line <= fencedCode.map[1]
+      languageBlock.map &&
+      position.line > languageBlock.map[0] &&
+      position.line <= languageBlock.map[1]
     ) {
-      return languageFromFenceToken(fencedCode);
+      return languageFromBlock(languageBlock);
     }
   }
   return undefined;
 }
 
-export function languageFromFenceToken(token: Token) {
-  const langId = token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "");
-  return embeddedLanguage(langId);
+export function languageFromBlock(token: Token) {
+  if (isDisplayMath(token)) {
+    return embeddedLanguage("latex");
+  } else {
+    const langId = token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "");
+    return embeddedLanguage(langId);
+  }
+}
+
+export function isLanguageBlock(token: Token) {
+  return isFencedCode(token) || isDisplayMath(token);
 }
 
 export function isFencedCode(token: Token) {
   return token.type === "fence";
 }
 
-export function isFencedCodeOf(language: EmbeddedLanguage) {
+export function isDisplayMath(token: Token) {
+  return token.type === "math_block";
+}
+
+export function isBlockOfLanguage(language: EmbeddedLanguage) {
   return (token: Token) => {
     return (
-      isFencedCode(token) &&
-      languageFromFenceToken(token)?.ids.some((id) => language.ids.includes(id))
+      isLanguageBlock(token) &&
+      languageFromBlock(token)?.ids.some((id) => language.ids.includes(id))
     );
   };
 }
