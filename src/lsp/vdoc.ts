@@ -4,20 +4,22 @@
  * ------------------------------------------------------------------------------------------ */
 
 import Token from "markdown-it/lib/token";
-import { Position, TextDocument } from "vscode";
+import { Position, TextDocument, Uri } from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
 import { embeddedLanguage, EmbeddedLanguage } from "./languages";
+import { virtualDocUriFromEmbeddedContent } from "./vdoc-content";
+import { virtualDocUriFromTempFile } from "./vdoc-tempfile";
 
-export interface CompletionVirtualDoc {
+export interface VirtualDoc {
   language: EmbeddedLanguage;
   content: string;
 }
 
-export async function completionVirtualDoc(
+export async function virtualDoc(
   document: TextDocument,
   position: Position,
   engine: MarkdownEngine
-): Promise<CompletionVirtualDoc | undefined> {
+): Promise<VirtualDoc | undefined> {
   // check if the cursor is in a fenced code block
   const tokens = await engine.parse(document);
   const language = languageAtPosition(tokens, position);
@@ -40,6 +42,11 @@ export async function completionVirtualDoc(
       }
     }
 
+    // perform inject if necessary
+    if (language.inject) {
+      lines[0] = language.inject;
+    }
+
     // return the language and the content
     return {
       language,
@@ -48,6 +55,12 @@ export async function completionVirtualDoc(
   } else {
     return undefined;
   }
+}
+
+export async function virtualDocUri(virtualDoc: VirtualDoc, parentUri: Uri) {
+  return virtualDoc.language.type === "content"
+    ? virtualDocUriFromEmbeddedContent(virtualDoc, parentUri)
+    : await virtualDocUriFromTempFile(virtualDoc);
 }
 
 export function languageAtPosition(tokens: Token[], position: Position) {

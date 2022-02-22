@@ -5,7 +5,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as path from "path";
-import { ExtensionContext } from "vscode";
+import { ExtensionContext, Hover } from "vscode";
 import {
   LanguageClient,
   LanguageClientOptions,
@@ -21,17 +21,14 @@ import {
   Position,
   TextDocument,
 } from "vscode";
-import { ProvideCompletionItemsSignature } from "vscode-languageclient";
+import {
+  ProvideCompletionItemsSignature,
+  ProvideHoverSignature,
+} from "vscode-languageclient";
 import { MarkdownEngine } from "../markdown/engine";
-import { completionVirtualDoc } from "./vdoc";
-import {
-  activateVirtualDocEmbeddedContent,
-  virtualDocUriFromEmbeddedContent,
-} from "./vdoc-content";
-import {
-  deactivateVirtualDocTempFiles,
-  virtualDocUriFromTempFile,
-} from "./vdoc-tempfile";
+import { virtualDoc, virtualDocUri } from "./vdoc";
+import { activateVirtualDocEmbeddedContent } from "./vdoc-content";
+import { deactivateVirtualDocTempFiles } from "./vdoc-tempfile";
 
 let client: LanguageClient;
 
@@ -59,6 +56,7 @@ export function activateLsp(context: ExtensionContext, engine: MarkdownEngine) {
     documentSelector: [{ scheme: "*", language: "quarto" }],
     middleware: {
       provideCompletionItem: embeddedCodeCompletionProvider(engine),
+      provideHover: embeddedHoverProvider(engine),
     },
   };
 
@@ -95,11 +93,11 @@ function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
     next: ProvideCompletionItemsSignature
   ) => {
     // see if there is a completion virtual doc we should be using
-    const virtualDoc = await completionVirtualDoc(document, position, engine);
+    const vdoc = await virtualDoc(document, position, engine);
 
-    if (virtualDoc) {
+    if (vdoc) {
       // if there is a trigger character make sure the langauge supports it
-      const language = virtualDoc.language;
+      const language = vdoc.language;
       if (context.triggerCharacter) {
         if (
           !language.trigger ||
@@ -110,10 +108,7 @@ function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
       }
 
       // get uri for completions
-      const vdocUri =
-        language.type === "content"
-          ? virtualDocUriFromEmbeddedContent(document, virtualDoc)
-          : await virtualDocUriFromTempFile(virtualDoc);
+      const vdocUri = await virtualDocUri(vdoc, document.uri);
 
       // execute completions
       try {
@@ -128,6 +123,39 @@ function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
       }
     } else {
       return await next(document, position, context, token);
+    }
+  };
+}
+
+function embeddedHoverProvider(engine: MarkdownEngine) {
+  return async (
+    document: TextDocument,
+    position: Position,
+    token: CancellationToken,
+    next: ProvideHoverSignature
+  ) => {
+    const vdoc = await virtualDoc(document, position, engine);
+    if (vdoc) {
+      // get uri for hover
+      const vdocUri = await virtualDocUri(vdoc, document.uri);
+
+      // execute hover
+      try {
+        const hover = await commands.executeCommand<Hover[]>(
+          "vscode.executeHoverProvider",
+          vdocUri,
+          position
+        );
+        if (!hover) {
+          return undefined;
+        } else {
+          return hover[0];
+        }
+      } catch (error) {
+        return undefined;
+      }
+    } else {
+      return await next(document, position, token);
     }
   };
 }

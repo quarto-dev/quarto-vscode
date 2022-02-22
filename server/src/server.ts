@@ -31,11 +31,22 @@ connection.onInitialize((_params: InitializeParams) => {
         // (languages are responsible for declaring which one they support if any)
         triggerCharacters: [".", "$", "@", ":", "\\"],
       },
+      hoverProvider: true,
     },
   };
 });
 
 connection.onCompletion(async (textDocumentPosition, token) => {
+  const document = documents.get(textDocumentPosition.textDocument.uri);
+
+  if (!document) {
+    return null;
+  }
+
+  return null;
+});
+
+connection.onHover(async (textDocumentPosition, position) => {
   const document = documents.get(textDocumentPosition.textDocument.uri);
 
   if (!document) {

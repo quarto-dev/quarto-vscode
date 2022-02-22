@@ -8,14 +8,12 @@ import * as fs from "fs";
 import * as path from "path";
 import * as tmp from "tmp";
 import { TextDocument, Uri, workspace, WorkspaceEdit } from "vscode";
-import { CompletionVirtualDoc } from "./vdoc";
+import { VirtualDoc } from "./vdoc";
 
 // one virtual doc per language file extension
 const languageVirtualDocs = new Map<String, TextDocument>();
 
-export async function virtualDocUriFromTempFile(
-  virtualDoc: CompletionVirtualDoc
-) {
+export async function virtualDocUriFromTempFile(virtualDoc: VirtualDoc) {
   // do we have an existing document?
   const langVdoc = languageVirtualDocs.get(virtualDoc.language.extension);
   if (langVdoc) {
@@ -60,7 +58,7 @@ async function deleteDocument(doc: TextDocument) {
 // file already exists
 tmp.setGracefulCleanup();
 const vdocTempDir = tmp.dirSync().name;
-function createVirtualDocTempFile(virtualDoc: CompletionVirtualDoc) {
+function createVirtualDocTempFile(virtualDoc: VirtualDoc) {
   const ext = virtualDoc.language.extension;
   const dir = path.join(vdocTempDir, ext);
   if (!fs.existsSync(dir)) {
@@ -68,13 +66,7 @@ function createVirtualDocTempFile(virtualDoc: CompletionVirtualDoc) {
   }
   const tmpPath = path.join(vdocTempDir, ext, "intellisense." + ext);
 
-  // if this is a python file we write a comment to disable pylance
-  // (otherwise issues can flash on and off in the 'Problems' tab)
-  const content = virtualDoc.language.inject
-    ? virtualDoc.content.replace("\n", `${virtualDoc.language.inject}\n`)
-    : virtualDoc.content;
-
-  fs.writeFileSync(tmpPath, content);
+  fs.writeFileSync(tmpPath, virtualDoc.content);
 
   return tmpPath;
 }

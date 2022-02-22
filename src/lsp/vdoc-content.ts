@@ -4,8 +4,8 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { TextDocument, Uri, workspace } from "vscode";
-import { CompletionVirtualDoc } from "./vdoc";
+import { Uri, workspace } from "vscode";
+import { VirtualDoc } from "./vdoc";
 
 const kQmdEmbeddedContent = "quarto-qmd-embedded-content";
 const virtualDocumentContents = new Map<string, string>();
@@ -23,11 +23,11 @@ export function activateVirtualDocEmbeddedContent() {
 }
 
 export function virtualDocUriFromEmbeddedContent(
-  document: TextDocument,
-  virtualDoc: CompletionVirtualDoc
+  virtualDoc: VirtualDoc,
+  parentUri: Uri
 ) {
   // set virtual doc
-  const originalUri = document.uri.toString();
+  const originalUri = parentUri.toString();
   virtualDocumentContents.set(originalUri, virtualDoc.content);
 
   // form uri
