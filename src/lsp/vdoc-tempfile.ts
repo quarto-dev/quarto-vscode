@@ -7,7 +7,15 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as tmp from "tmp";
-import { TextDocument, Uri, workspace, WorkspaceEdit } from "vscode";
+import {
+  commands,
+  Hover,
+  Position,
+  TextDocument,
+  Uri,
+  workspace,
+  WorkspaceEdit,
+} from "vscode";
 import { VirtualDoc } from "./vdoc";
 
 // one virtual doc per language file extension
@@ -31,9 +39,19 @@ export async function virtualDocUriFromTempFile(virtualDoc: VirtualDoc) {
   const vdocTempFile = createVirtualDocTempFile(virtualDoc);
 
   // open the document and save a reference to it
-  const vodcUri = Uri.file(vdocTempFile);
-  const doc = await workspace.openTextDocument(vodcUri);
+  const vdocUri = Uri.file(vdocTempFile);
+  const doc = await workspace.openTextDocument(vdocUri);
   languageVirtualDocs.set(virtualDoc.language.extension, doc);
+
+  // if this is the first time getting a virtual doc for this
+  // language then execute a dummy request to cause it to load
+  if (!langVdoc) {
+    await commands.executeCommand<Hover[]>(
+      "vscode.executeHoverProvider",
+      vdocUri,
+      new Position(0, 0)
+    );
+  }
 
   // return the uri
   return doc.uri;
