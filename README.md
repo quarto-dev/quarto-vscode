@@ -8,6 +8,7 @@ This extension provides language support for Quarto `.qmd` files, including:
 - Code folding and outline navigation
 - Completion for Python, R, LaTeX, and HTML
 - Completion for link and image paths
+- Symbol provider for quick workspace navigation
 - Code snippets for common markdown constructs
 - Clickable links within documents
 

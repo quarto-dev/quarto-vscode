@@ -123,8 +123,8 @@ class VSCodeWorkspaceQuartoDocumentProvider
     const maxConcurrent = 20;
     const docList: MarkdownTextDocument[] = [];
     const resources = await vscode.workspace.findFiles(
-      "**/*.md",
-      "**/node_modules/**"
+      "**/*.{qmd,md}",
+      "**/{node_modules,renv,packrat,venv,env}/**"
     );
 
     for (let i = 0; i < resources.length; i += maxConcurrent) {
@@ -205,6 +205,7 @@ class VSCodeWorkspaceQuartoDocumentProvider
   private async getQuartoDocument(
     resource: vscode.Uri
   ): Promise<MarkdownTextDocument | undefined> {
+    // try to get the document from those open in the workspace
     const matchingDocuments = vscode.workspace.textDocuments.filter(
       (doc) => doc.uri.toString() === resource.toString()
     );
