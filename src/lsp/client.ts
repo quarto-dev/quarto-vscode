@@ -186,7 +186,6 @@ function embeddedSignatureHelpProvider(engine: MarkdownEngine) {
           context.triggerCharacter
         );
       } catch (error) {
-        console.log(error);
         return undefined;
       }
     } else {

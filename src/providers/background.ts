@@ -8,14 +8,19 @@ import * as vscode from "vscode";
 import debounce from "lodash.debounce";
 
 import { isQuartoFile, kQuartoDocumentSelector } from "../core/file";
+import { MarkdownEngine } from "../markdown/engine";
+import { isExecutableLanguageBlock } from "../markdown/language";
 
-export function activateCellHighlighter(context: vscode.ExtensionContext) {
+export function activateBackgroundHighlighter(
+  context: vscode.ExtensionContext,
+  engine: MarkdownEngine
+) {
   // read config and monitor it for changes
   highlightingConfig.sync();
   vscode.workspace.onDidChangeConfiguration(
     () => {
       highlightingConfig.sync();
-      triggerUpdateAllEditorsDecorations();
+      triggerUpdateAllEditorsDecorations(engine);
     },
     null,
     context.subscriptions
@@ -30,6 +35,7 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
         } else {
           triggerUpdateActiveEditorDecorations(
             vscode.window.activeTextEditor,
+            engine,
             highlightingConfig.delayMs()
           );
         }
@@ -42,7 +48,7 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
   // update highlighting when visible text editors change
   vscode.window.onDidChangeVisibleTextEditors(
     (_editors) => {
-      triggerUpdateAllEditorsDecorations();
+      triggerUpdateAllEditorsDecorations(engine);
     },
     null,
     context.subscriptions
@@ -54,6 +60,7 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
       if (event.document === vscode.window.activeTextEditor?.document) {
         triggerUpdateActiveEditorDecorations(
           vscode.window.activeTextEditor,
+          engine,
           highlightingConfig.delayMs(),
           true,
           event.contentChanges.length == 1
@@ -79,6 +86,7 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
           if (document === vscode.window.activeTextEditor?.document) {
             triggerUpdateActiveEditorDecorations(
               vscode.window.activeTextEditor,
+              engine,
               highlightingConfig.delayMs(),
               true,
               position,
@@ -92,109 +100,54 @@ export function activateCellHighlighter(context: vscode.ExtensionContext) {
   );
 
   // highlight all editors at activation time
-  triggerUpdateAllEditorsDecorations();
+  triggerUpdateAllEditorsDecorations(engine);
 }
 
 function triggerUpdateActiveEditorDecorations(
   editor: vscode.TextEditor,
+  engine: MarkdownEngine,
   delay: number,
   immediate?: boolean,
   pos?: vscode.Position,
   token?: vscode.CancellationToken
 ) {
-  debounce(() => setEditorHighlightDecorations(editor, pos, token), delay, {
-    leading: !!immediate,
-  })();
-}
-
-function triggerUpdateAllEditorsDecorations() {
   debounce(
-    () =>
-      vscode.window.visibleTextEditors.forEach((e) =>
-        setEditorHighlightDecorations(e)
-      ),
-    highlightingConfig.delayMs()
+    () => setEditorHighlightDecorations(editor, engine, pos, token),
+    delay,
+    {
+      leading: !!immediate,
+    }
   )();
 }
 
-const kBeginCodePattern = /^([\t >]*)(```+)\s*.+/;
+function triggerUpdateAllEditorsDecorations(engine: MarkdownEngine) {
+  debounce(async () => {
+    for (const editor of vscode.window.visibleTextEditors) {
+      await setEditorHighlightDecorations(editor, engine);
+    }
+  }, highlightingConfig.delayMs())();
+}
 
-function setEditorHighlightDecorations(
+async function setEditorHighlightDecorations(
   editor: vscode.TextEditor,
+  engine: MarkdownEngine,
   _pos?: vscode.Position,
-  token?: vscode.CancellationToken
+  _token?: vscode.CancellationToken
 ) {
   if (!editor || !isQuartoFile(editor.document)) {
     return;
   }
 
-  const kCodeBlockRegex =
-    /^([\t >]*)(```+)\s*\{=?([a-zA-Z0-9_]+)(?: *[ ,].*?)?\}[ \t]*$/;
-  const kDisplayMathRegex = /^\$\$\s*$/;
-
+  // ranges to highlight
   const highlightedRanges: vscode.Range[] = [];
 
   if (highlightingConfig.enabled()) {
-    let currentLine = -1;
-    while (
-      !token?.isCancellationRequested &&
-      ++currentLine < editor.document.lineCount
-    ) {
-      // next line
-      const line = editor.document.lineAt(currentLine).text;
-
-      // code block
-      const codeBlockMatch = line.match(kCodeBlockRegex);
-      if (codeBlockMatch) {
-        // get the match and record the start line
-        const prefix = codeBlockMatch[1];
-        const ticks = codeBlockMatch[2];
-        const startLine = currentLine;
-
-        // look for the end line
-        const endPattern = new RegExp("^" + prefix + ticks + "[ \\t]*$");
-        while (++currentLine < editor.document.lineCount) {
-          const line = editor.document.lineAt(currentLine).text;
-
-          // if another code block is started we want to read past it
-          const beginCodeMatch = line.match(kBeginCodePattern);
-          if (beginCodeMatch) {
-            const codeBlockEndPattern = new RegExp(
-              "^" + codeBlockMatch[1] + codeBlockMatch[2] + "[ \\t]*$"
-            );
-            while (++currentLine < editor.document.lineCount) {
-              const line = editor.document.lineAt(currentLine).text;
-              if (line.match(codeBlockEndPattern)) {
-                break;
-              }
-            }
-          } else if (line.match(endPattern)) {
-            highlightedRanges.push(
-              new vscode.Range(startLine, 0, currentLine, line.length)
-            );
-            break;
-          }
-        }
-      }
-
-      // display math
-      const mathMatch = line.match(kDisplayMathRegex);
-      if (mathMatch) {
-        const startLine = currentLine;
-        let foundMath = false;
-        while (++currentLine < editor.document.lineCount) {
-          const line = editor.document.lineAt(currentLine).text;
-          if (line.match(kDisplayMathRegex)) {
-            highlightedRanges.push(
-              new vscode.Range(startLine, 0, currentLine, line.length)
-            );
-            foundMath = true;
-            break;
-          }
-        }
-        if (!foundMath) {
-          currentLine = startLine;
-        }
+    const tokens = await engine.parse(editor.document);
+    for (const block of tokens.filter(isExecutableLanguageBlock)) {
+      if (block.map) {
+        highlightedRanges.push(
+          new vscode.Range(block.map[0], 0, block.map[1] - 1, 0)
+        );
       }
     }
   }
@@ -229,7 +182,7 @@ class HiglightingConfig {
     const config = vscode.workspace.getConfiguration("quarto");
 
     this.enabled_ = config.get("cells.background.enabled", true);
-    this.delayMs_ = config.get("cells.background.delay", 200);
+    this.delayMs_ = config.get("cells.background.delay", 250);
 
     if (this.backgroundDecoration_) {
       this.backgroundDecoration_.dispose();
@@ -247,7 +200,7 @@ class HiglightingConfig {
 
   private enabled_ = true;
   private backgroundDecoration_: vscode.TextEditorDecorationType | undefined;
-  private delayMs_ = 200;
+  private delayMs_ = 250;
 }
 
 const highlightingConfig = new HiglightingConfig();

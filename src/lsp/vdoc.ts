@@ -6,6 +6,7 @@
 import Token from "markdown-it/lib/token";
 import { Position, TextDocument, Uri } from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
+import { isDisplayMath, isLanguageBlock } from "../markdown/language";
 import { embeddedLanguage, EmbeddedLanguage } from "./languages";
 import { virtualDocUriFromEmbeddedContent } from "./vdoc-content";
 import { virtualDocUriFromTempFile } from "./vdoc-tempfile";
@@ -83,18 +84,6 @@ export function languageFromBlock(token: Token) {
     const langId = token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "");
     return embeddedLanguage(langId);
   }
-}
-
-export function isLanguageBlock(token: Token) {
-  return isFencedCode(token) || isDisplayMath(token);
-}
-
-export function isFencedCode(token: Token) {
-  return token.type === "fence";
-}
-
-export function isDisplayMath(token: Token) {
-  return token.type === "math_block";
 }
 
 export function isBlockOfLanguage(language: EmbeddedLanguage) {

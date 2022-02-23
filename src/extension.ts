@@ -13,7 +13,7 @@ import { PathCompletionProvider } from "./completion/path";
 import QuartoSelectionRangeProvider from "./providers/selection-range";
 import QuartoWorkspaceSymbolProvider from "./providers/symbol-workspace";
 import { MarkdownEngine } from "./markdown/engine";
-import { activateCellHighlighter } from "./providers/highlight-cell";
+import { activateBackgroundHighlighter } from "./providers/background";
 import { kQuartoDocumentSelector } from "./core/file";
 import { activateLsp } from "./lsp/client";
 
@@ -22,9 +22,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   const symbolProvider = new QuartoDocumentSymbolProvider(engine);
 
-  activateCellHighlighter(context);
-
   activateLsp(context, engine);
+  activateBackgroundHighlighter(context, engine);
 
   context.subscriptions.push(
     registerMarkdownLanguageFeatures(symbolProvider, engine)

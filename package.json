@@ -164,7 +164,7 @@
         },
         "quarto.cells.background.delay": {
           "type": "integer",
-          "default": 200,
+          "default": 250,
           "markdownDescription": "Millisecond delay between background color updates."
         }
       }
