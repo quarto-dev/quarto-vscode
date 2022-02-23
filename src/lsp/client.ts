@@ -5,7 +5,12 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as path from "path";
-import { ExtensionContext, Hover } from "vscode";
+import {
+  ExtensionContext,
+  Hover,
+  SignatureHelp,
+  SignatureHelpContext,
+} from "vscode";
 import {
   LanguageClient,
   LanguageClientOptions,
@@ -24,6 +29,7 @@ import {
 import {
   ProvideCompletionItemsSignature,
   ProvideHoverSignature,
+  ProvideSignatureHelpSignature,
 } from "vscode-languageclient";
 import { MarkdownEngine } from "../markdown/engine";
 import { virtualDoc, virtualDocUri } from "./vdoc";
@@ -57,6 +63,7 @@ export function activateLsp(context: ExtensionContext, engine: MarkdownEngine) {
     middleware: {
       provideCompletionItem: embeddedCodeCompletionProvider(engine),
       provideHover: embeddedHoverProvider(engine),
+      provideSignatureHelp: embeddedSignatureHelpProvider(engine),
     },
   };
 
@@ -156,6 +163,34 @@ function embeddedHoverProvider(engine: MarkdownEngine) {
       }
     } else {
       return await next(document, position, token);
+    }
+  };
+}
+
+function embeddedSignatureHelpProvider(engine: MarkdownEngine) {
+  return async (
+    document: TextDocument,
+    position: Position,
+    context: SignatureHelpContext,
+    token: CancellationToken,
+    next: ProvideSignatureHelpSignature
+  ) => {
+    const vdoc = await virtualDoc(document, position, engine);
+    if (vdoc) {
+      const vdocUri = await virtualDocUri(vdoc, document.uri);
+      try {
+        return await commands.executeCommand<SignatureHelp>(
+          "vscode.executeSignatureHelpProvider",
+          vdocUri,
+          position,
+          context.triggerCharacter
+        );
+      } catch (error) {
+        console.log(error);
+        return undefined;
+      }
+    } else {
+      return await next(document, position, context, token);
     }
   };
 }

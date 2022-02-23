@@ -32,6 +32,12 @@ connection.onInitialize((_params: InitializeParams) => {
         triggerCharacters: [".", "$", "@", ":", "\\"],
       },
       hoverProvider: true,
+      signatureHelpProvider: {
+        // assume for now that these cover all languages (we can introduce
+        // a refinement system like we do for completion triggers if necessary)
+        triggerCharacters: ["(", ","],
+        retriggerCharacters: [")"],
+      },
     },
   };
 });
@@ -47,6 +53,16 @@ connection.onCompletion(async (textDocumentPosition, token) => {
 });
 
 connection.onHover(async (textDocumentPosition, position) => {
+  const document = documents.get(textDocumentPosition.textDocument.uri);
+
+  if (!document) {
+    return null;
+  }
+
+  return null;
+});
+
+connection.onSignatureHelp(async (textDocumentPosition, position) => {
   const document = documents.get(textDocumentPosition.textDocument.uri);
 
   if (!document) {
