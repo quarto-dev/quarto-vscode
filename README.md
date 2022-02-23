@@ -19,22 +19,20 @@ You can also install from the [VS Code Extension Marketplace](https://marketplac
 
 To enable completions for embedded languages, you may want to install one or more of these other extensions:
 
-| Language | Extension                                                                                     |
-| -------- | --------------------------------------------------------------------------------------------- | --- |
-| Python   | [Python Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python)      |
-| R        | [R Extension](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r)                 |
-| LaTeX    | [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) |     |
+- [Python Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+- [R Extension](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r)
+- [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)
 
 #### VISX Install
 
 You ou can alternatively download and install the extension from the command line as follows:
 
-1. Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/dist/quarto-1.4.0.vsix)
+1. Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/dist/quarto-1.4.1.vsix)
 
 2. Install from the command line with:
 
    ```bash
-   code --install-extension quarto-1.4.0.vsix
+   code --install-extension quarto-1.4.1.vsix
    ```
 
 Note that in order to use the `code` command to perform the installation you may need to open the VS Code
