@@ -272,6 +272,12 @@ const languages = [
     source: "source.powershell",
   },
   {
+    name: "stan",
+    language: "stan",
+    identifiers: ["stan"],
+    source: "source.stan",
+  },
+  {
     name: "python",
     language: "python",
     identifiers: [

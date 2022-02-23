@@ -108,6 +108,7 @@
           "meta.embedded.block.typescriptreact": "typescriptreact",
           "meta.embedded.block.csharp": "csharp",
           "meta.embedded.block.fsharp": "fsharp",
+          "meta.embedded.block.stan": "stan",
           "meta.embedded.math.quarto": "latex"
         }
       }
