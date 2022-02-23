@@ -6,9 +6,10 @@ This extension provides language support for Quarto `.qmd` files, including:
 
 - Syntax highlighting
 - Code folding and outline navigation
-- Code snippets
+- Completion for Python, R, LaTeX, and HTML
+- Completion for link and image paths
+- Code snippets for common markdown constructs
 - Clickable links within documents
-- Code completion for link and image paths
 
 ### Installation
 
@@ -16,14 +17,24 @@ The easiest way to install is directly from within VS Code (search extensions fo
 
 You can also install from the [VS Code Extension Marketplace](https://marketplace.visualstudio.com/items?itemName=quarto.quarto).
 
-Alternatively, you can download and install the extension from the command line as follows:
+To enable completions for embedded languages, you may want to install one or more of these other extensions:
 
-1. Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/dist/quarto-1.3.0.vsix)
+| Language | Extension                                                                                     |
+| -------- | --------------------------------------------------------------------------------------------- | --- |
+| Python   | [Python Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python)      |
+| R        | [R Extension](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r)                 |
+| LaTeX    | [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) |     |
+
+#### VISX Install
+
+You ou can alternatively download and install the extension from the command line as follows:
+
+1. Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/dist/quarto-1.4.0.vsix)
 
 2. Install from the command line with:
 
    ```bash
-   code --install-extension quarto-1.3.0.vsix
+   code --install-extension quarto-1.4.0.vsix
    ```
 
 Note that in order to use the `code` command to perform the installation you may need to open the VS Code

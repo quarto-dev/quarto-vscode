@@ -4,6 +4,7 @@
 .vscode-test/**
 test/**
 src/**
+dist/**
 node_modules/**
 **/*.map
 **/*.ts
@@ -11,3 +12,6 @@ build-lang.js
 syntaxes/*.yaml
 tsconfig.json
 cgmanifest.json
+server/src/**
+server/node_modules/**
+server/*.json

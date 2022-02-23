@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0 (Release on 23 February 2022)
+
+- Completion, hover, and signature help for embedded languages, including
+  Python, R, LaTeX, and HTML
+
 ## 1.3.0 (Release on 17 February 2022)
 
 - Background highlighting for code cells
