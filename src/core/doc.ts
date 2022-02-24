@@ -16,6 +16,10 @@ export function isQuartoDoc(document: vscode.TextDocument) {
   return document.languageId === "quarto";
 }
 
+export function isMarkdownDoc(document: vscode.TextDocument) {
+  return isQuartoDoc(document) || document.languageId === "markdown";
+}
+
 export async function resolveQuartoDocUri(
   resource: vscode.Uri
 ): Promise<vscode.TextDocument | undefined> {

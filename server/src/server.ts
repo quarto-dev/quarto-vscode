@@ -5,14 +5,12 @@
 
 import {
   createConnection,
-  HandlerResult,
   InitializeParams,
   ProposedFeatures,
   TextDocuments,
   TextDocumentSyncKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { CompletionItem, CompletionItemKind, CompletionList } from "vscode";
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -52,7 +50,7 @@ function isQuartoDoc(doc: TextDocument) {
 }
 
 function isQuartoYaml(doc: TextDocument) {
-  return doc.languageId === "yaml" && doc.uri.match(/_quarto\.ya?ml$/);
+  return doc.languageId === kYamlLanguageId && doc.uri.match(/_quarto\.ya?ml$/);
 }
 
 connection.onCompletion(async (textDocumentPosition, token) => {

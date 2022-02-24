@@ -7,7 +7,7 @@
 import * as vscode from "vscode";
 import { MarkdownTextDocument, MarkdownTextLine } from "../markdown/document";
 import { Disposable } from "../core/dispose";
-import { isQuartoDoc } from "../core/doc";
+import { isMarkdownDoc } from "../core/doc";
 import { Lazy, lazy } from "../core/lazy";
 import QuartoDocumentSymbolProvider from "./symbol-document";
 
@@ -114,10 +114,10 @@ class VSCodeWorkspaceQuartoDocumentProvider
   private readonly utf8Decoder = new TextDecoder("utf-8");
 
   /**
-   * Reads and parses all .qmd documents in the workspace.
+   * Reads and parses all mardkown documents in the workspace.
    * Files are processed in batches, to keep the number of open files small.
    *
-   * @returns Array of processed .qmd files.
+   * @returns Array of processed markdown files.
    */
   async getAllQuartoDocuments(): Promise<MarkdownTextDocument[]> {
     const maxConcurrent = 20;
@@ -193,7 +193,7 @@ class VSCodeWorkspaceQuartoDocumentProvider
 
     vscode.workspace.onDidChangeTextDocument(
       (e) => {
-        if (isQuartoDoc(e.document)) {
+        if (isMarkdownDoc(e.document)) {
           this._onDidChangeQuartoDocumentEmitter.fire(e.document);
         }
       },
