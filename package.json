@@ -40,7 +40,8 @@
   },
   "main": "./out/main.js",
   "activationEvents": [
-    "onLanguage:quarto"
+    "onLanguage:quarto",
+    "workspaceContains:**/_quarto.{yml,yaml}"
   ],
   "capabilities": {
     "virtualWorkspaces": true
@@ -130,6 +131,11 @@
         "editor.wordBasedSuggestions": false
       },
       "[latex]": {
+        "editor.wordBasedSuggestions": false
+      },
+      "[yaml]": {
+        "editor.quickSuggestions": true,
+        "editor.quickSuggestionsDelay": 250,
         "editor.wordBasedSuggestions": false
       },
       "[quarto]": {

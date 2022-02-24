@@ -74,7 +74,10 @@ export function activateLsp(context: ExtensionContext, engine: MarkdownEngine) {
 
   // create client options
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: "*", language: "quarto" }],
+    documentSelector: [
+      { scheme: "*", language: "quarto" },
+      { scheme: "*", language: "yaml" },
+    ],
     middleware,
   };
 

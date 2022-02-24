@@ -5,12 +5,14 @@
 
 import {
   createConnection,
+  HandlerResult,
   InitializeParams,
   ProposedFeatures,
   TextDocuments,
   TextDocumentSyncKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
+import { CompletionItem, CompletionItemKind, CompletionList } from "vscode";
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -42,31 +44,54 @@ connection.onInitialize((_params: InitializeParams) => {
   };
 });
 
-connection.onCompletion(async (textDocumentPosition, token) => {
-  const document = documents.get(textDocumentPosition.textDocument.uri);
+const kQuartoLanguageId = "quarto";
+const kYamlLanguageId = "yaml";
 
-  if (!document) {
+function isQuartoDoc(doc: TextDocument) {
+  return doc.languageId === kQuartoLanguageId;
+}
+
+function isQuartoYaml(doc: TextDocument) {
+  return doc.languageId === "yaml" && doc.uri.match(/_quarto\.ya?ml$/);
+}
+
+connection.onCompletion(async (textDocumentPosition, token) => {
+  const doc = documents.get(textDocumentPosition.textDocument.uri);
+  if (!doc) {
     return null;
+  }
+  if (isQuartoDoc(doc)) {
+    // quarto
+  } else if (isQuartoYaml(doc)) {
+    // yaml
   }
 
   return null;
 });
 
 connection.onHover(async (textDocumentPosition, position) => {
-  const document = documents.get(textDocumentPosition.textDocument.uri);
-
-  if (!document) {
+  const doc = documents.get(textDocumentPosition.textDocument.uri);
+  if (!doc) {
     return null;
+  }
+  if (isQuartoDoc(doc)) {
+    // quarto
+  } else if (isQuartoYaml(doc)) {
+    // yaml
   }
 
   return null;
 });
 
 connection.onSignatureHelp(async (textDocumentPosition, position) => {
-  const document = documents.get(textDocumentPosition.textDocument.uri);
-
-  if (!document) {
+  const doc = documents.get(textDocumentPosition.textDocument.uri);
+  if (!doc) {
     return null;
+  }
+  if (isQuartoDoc(doc)) {
+    // quarto
+  } else if (isQuartoYaml(doc)) {
+    // yaml
   }
 
   return null;
