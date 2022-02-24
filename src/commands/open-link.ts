@@ -97,7 +97,7 @@ export async function openDocumentLink(
   }
 
   if (typeof targetResourceStat === "undefined") {
-    // We don't think the file exists. If it doesn't already have an extension, try tacking on a `.md` and using that instead
+    // We don't think the file exists. If it doesn't already have an extension, try tacking on a `.qmd` and using that instead
     if (extname(targetResource.path) === "") {
       const dotMdResource = targetResource.with({
         path: targetResource.path + ".md",
