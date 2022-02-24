@@ -145,6 +145,16 @@
     },
     "configuration": {
       "properties": {
+        "quarto.cells.hoverHelp.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show help when hovering over functions."
+        },
+        "quarto.cells.signatureHelp.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show parameter help when editing function calls."
+        },
         "quarto.cells.background.enabled": {
           "type": "boolean",
           "default": true,

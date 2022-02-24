@@ -10,6 +10,7 @@ import {
   Hover,
   SignatureHelp,
   SignatureHelpContext,
+  workspace,
 } from "vscode";
 import {
   LanguageClient,
@@ -27,6 +28,7 @@ import {
   TextDocument,
 } from "vscode";
 import {
+  Middleware,
   ProvideCompletionItemsSignature,
   ProvideHoverSignature,
   ProvideSignatureHelpSignature,
@@ -58,13 +60,22 @@ export function activateLsp(context: ExtensionContext, engine: MarkdownEngine) {
     },
   };
 
+  // create middleware (respect disabling of selected features in config)
+  const config = workspace.getConfiguration("quarto");
+  const middleware: Middleware = {
+    provideCompletionItem: embeddedCodeCompletionProvider(engine),
+  };
+  if (config.get("cells.hoverHelp.enabled", true)) {
+    middleware.provideHover = embeddedHoverProvider(engine);
+  }
+  if (config.get("cells.signatureHelp.enabled", true)) {
+    middleware.provideSignatureHelp = embeddedSignatureHelpProvider(engine);
+  }
+
+  // create client options
   const clientOptions: LanguageClientOptions = {
     documentSelector: [{ scheme: "*", language: "quarto" }],
-    middleware: {
-      provideCompletionItem: embeddedCodeCompletionProvider(engine),
-      provideHover: embeddedHoverProvider(engine),
-      provideSignatureHelp: embeddedSignatureHelpProvider(engine),
-    },
+    middleware,
   };
 
   // Create the language client and start the client.
