@@ -6,7 +6,7 @@
 
 import * as vscode from "vscode";
 import { MarkdownEngine } from "./engine";
-import { isQuartoFile } from "../core/file";
+import { isQuartoDoc } from "../core/doc";
 import { pandocAutoIdentifier } from "./auto-id";
 import { MarkdownTextDocument } from "./document";
 
@@ -42,7 +42,7 @@ export class MarkdownTableOfContents {
         for (const cell of notebook.getCells()) {
           if (
             cell.kind === vscode.NotebookCellKind.Markup &&
-            isQuartoFile(cell.document)
+            isQuartoDoc(cell.document)
           ) {
             entries.push(...(await this.buildToc(engine, cell.document)));
           }

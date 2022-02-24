@@ -5,22 +5,22 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import { extname } from "../core/path";
+import { extname } from "./path";
 
-export const kQuartoDocumentSelector: vscode.DocumentSelector = {
+export const kQuartoDocSelector: vscode.DocumentSelector = {
   language: "quarto",
   scheme: "*",
 };
 
-export function isQuartoFile(document: vscode.TextDocument) {
+export function isQuartoDoc(document: vscode.TextDocument) {
   return document.languageId === "quarto";
 }
 
-export async function resolveQuartoFileUri(
+export async function resolveQuartoDocUri(
   resource: vscode.Uri
 ): Promise<vscode.TextDocument | undefined> {
   try {
-    const doc = await tryResolveUriToQuartoFile(resource);
+    const doc = await tryResolveUriToQuartoDoc(resource);
     if (doc) {
       return doc;
     }
@@ -30,7 +30,7 @@ export async function resolveQuartoFileUri(
 
   // If no extension, try with `.qmd` extension
   if (extname(resource.path) === "") {
-    return tryResolveUriToQuartoFile(
+    return tryResolveUriToQuartoDoc(
       resource.with({ path: resource.path + ".qmd" })
     );
   }
@@ -38,7 +38,7 @@ export async function resolveQuartoFileUri(
   return undefined;
 }
 
-async function tryResolveUriToQuartoFile(
+async function tryResolveUriToQuartoDoc(
   resource: vscode.Uri
 ): Promise<vscode.TextDocument | undefined> {
   let document: vscode.TextDocument;
@@ -47,7 +47,7 @@ async function tryResolveUriToQuartoFile(
   } catch {
     return undefined;
   }
-  if (isQuartoFile(document)) {
+  if (isQuartoDoc(document)) {
     return document;
   }
   return undefined;

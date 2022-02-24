@@ -14,7 +14,7 @@ import QuartoSelectionRangeProvider from "./providers/selection-range";
 import QuartoWorkspaceSymbolProvider from "./providers/symbol-workspace";
 import { MarkdownEngine } from "./markdown/engine";
 import { activateBackgroundHighlighter } from "./providers/background";
-import { kQuartoDocumentSelector } from "./core/file";
+import { kQuartoDocSelector } from "./core/doc";
 import { activateLsp } from "./lsp/client";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -37,19 +37,19 @@ function registerMarkdownLanguageFeatures(
 ): vscode.Disposable {
   return vscode.Disposable.from(
     vscode.languages.registerDocumentSymbolProvider(
-      kQuartoDocumentSelector,
+      kQuartoDocSelector,
       symbolProvider
     ),
     vscode.languages.registerDocumentLinkProvider(
-      kQuartoDocumentSelector,
+      kQuartoDocSelector,
       new QuartoLinkProvider(engine)
     ),
     vscode.languages.registerFoldingRangeProvider(
-      kQuartoDocumentSelector,
+      kQuartoDocSelector,
       new QuartoFoldingProvider(engine)
     ),
     vscode.languages.registerSelectionRangeProvider(
-      kQuartoDocumentSelector,
+      kQuartoDocSelector,
       new QuartoSelectionRangeProvider(engine)
     ),
     vscode.languages.registerWorkspaceSymbolProvider(

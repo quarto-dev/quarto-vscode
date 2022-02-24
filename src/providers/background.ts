@@ -7,7 +7,7 @@
 import * as vscode from "vscode";
 import debounce from "lodash.debounce";
 
-import { isQuartoFile, kQuartoDocumentSelector } from "../core/file";
+import { isQuartoDoc, kQuartoDocSelector } from "../core/doc";
 import { MarkdownEngine } from "../markdown/engine";
 import { isExecutableLanguageBlock } from "../markdown/language";
 
@@ -30,7 +30,7 @@ export function activateBackgroundHighlighter(
   vscode.workspace.onDidOpenTextDocument(
     (doc) => {
       if (doc === vscode.window.activeTextEditor?.document) {
-        if (!isQuartoFile(doc)) {
+        if (!isQuartoDoc(doc)) {
           clearEditorHighlightDecorations(vscode.window.activeTextEditor);
         } else {
           triggerUpdateActiveEditorDecorations(
@@ -75,28 +75,25 @@ export function activateBackgroundHighlighter(
 
   // update highlighting for ordinary document highlighter callbacks
   context.subscriptions.push(
-    vscode.languages.registerDocumentHighlightProvider(
-      kQuartoDocumentSelector,
-      {
-        provideDocumentHighlights: function (
-          document: vscode.TextDocument,
-          position: vscode.Position,
-          token: vscode.CancellationToken
-        ) {
-          if (document === vscode.window.activeTextEditor?.document) {
-            triggerUpdateActiveEditorDecorations(
-              vscode.window.activeTextEditor,
-              engine,
-              highlightingConfig.delayMs(),
-              true,
-              position,
-              token
-            );
-          }
-          return [];
-        },
-      }
-    )
+    vscode.languages.registerDocumentHighlightProvider(kQuartoDocSelector, {
+      provideDocumentHighlights: function (
+        document: vscode.TextDocument,
+        position: vscode.Position,
+        token: vscode.CancellationToken
+      ) {
+        if (document === vscode.window.activeTextEditor?.document) {
+          triggerUpdateActiveEditorDecorations(
+            vscode.window.activeTextEditor,
+            engine,
+            highlightingConfig.delayMs(),
+            true,
+            position,
+            token
+          );
+        }
+        return [];
+      },
+    })
   );
 
   // highlight all editors at activation time
@@ -134,7 +131,7 @@ async function setEditorHighlightDecorations(
   _pos?: vscode.Position,
   _token?: vscode.CancellationToken
 ) {
-  if (!editor || !isQuartoFile(editor.document)) {
+  if (!editor || !isQuartoDoc(editor.document)) {
     return;
   }
 

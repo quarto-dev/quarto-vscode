@@ -5,7 +5,7 @@
 
 import Token from "markdown-it/lib/token";
 import { Position, TextDocument, Uri } from "vscode";
-import { isQuartoFile } from "../core/file";
+import { isQuartoDoc } from "../core/doc";
 import { MarkdownEngine } from "../markdown/engine";
 import { isDisplayMath, isExecutableLanguageBlock } from "../markdown/language";
 import { embeddedLanguage, EmbeddedLanguage } from "./languages";
@@ -23,7 +23,7 @@ export async function virtualDoc(
   engine: MarkdownEngine
 ): Promise<VirtualDoc | undefined> {
   // make sure this is a quarto doc
-  if (!isQuartoFile(document)) {
+  if (!isQuartoDoc(document)) {
     return undefined;
   }
 

@@ -7,7 +7,7 @@ import { dirname, resolve } from "path";
 import * as vscode from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
 import { MarkdownTableOfContents } from "../markdown/toc";
-import { kQuartoDocumentSelector, resolveQuartoFileUri } from "../core/file";
+import { kQuartoDocSelector, resolveQuartoDocUri } from "../core/doc";
 import QuartoLinkProvider from "../providers/link";
 
 enum CompletionContextKind {
@@ -66,7 +66,7 @@ interface CompletionContext {
 export class PathCompletionProvider implements vscode.CompletionItemProvider {
   public static register(engine: MarkdownEngine): vscode.Disposable {
     return vscode.languages.registerCompletionItemProvider(
-      kQuartoDocumentSelector,
+      kQuartoDocSelector,
       new PathCompletionProvider(engine),
       ".",
       "/",
@@ -129,7 +129,7 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
               context.anchorInfo.beforeAnchor
             );
             if (rawUri) {
-              const otherDoc = await resolveQuartoFileUri(rawUri);
+              const otherDoc = await resolveQuartoDocUri(rawUri);
               if (otherDoc) {
                 const anchorStartPosition = position.translate({
                   characterDelta: -(context.anchorInfo.anchorPrefix.length + 1),

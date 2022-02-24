@@ -9,7 +9,7 @@ import { Command } from "../core/command";
 import { MarkdownEngine } from "../markdown/engine";
 
 import { MarkdownTableOfContents } from "../markdown/toc";
-import { isQuartoFile } from "../core/file";
+import { isQuartoDoc } from "../core/doc";
 import { extname } from "../core/path";
 
 export class OpenLinkCommand implements Command {
@@ -138,7 +138,7 @@ async function tryNavigateToFragmentInActiveEditor(
 ): Promise<boolean> {
   const activeEditor = vscode.window.activeTextEditor;
   if (activeEditor?.document.uri.fsPath === resource.fsPath) {
-    if (isQuartoFile(activeEditor.document)) {
+    if (isQuartoDoc(activeEditor.document)) {
       if (
         await tryRevealLineUsingTocFragment(
           engine,
@@ -234,7 +234,7 @@ async function tryResolveUriToQuartoFile(
   } catch {
     return undefined;
   }
-  if (isQuartoFile(document)) {
+  if (isQuartoDoc(document)) {
     return document;
   }
   return undefined;

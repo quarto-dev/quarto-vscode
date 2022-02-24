@@ -7,7 +7,7 @@
 import * as vscode from "vscode";
 import { MarkdownTextDocument, MarkdownTextLine } from "../markdown/document";
 import { Disposable } from "../core/dispose";
-import { isQuartoFile } from "../core/file";
+import { isQuartoDoc } from "../core/doc";
 import { Lazy, lazy } from "../core/lazy";
 import QuartoDocumentSymbolProvider from "./symbol-document";
 
@@ -193,7 +193,7 @@ class VSCodeWorkspaceQuartoDocumentProvider
 
     vscode.workspace.onDidChangeTextDocument(
       (e) => {
-        if (isQuartoFile(e.document)) {
+        if (isQuartoDoc(e.document)) {
           this._onDidChangeQuartoDocumentEmitter.fire(e.document);
         }
       },
