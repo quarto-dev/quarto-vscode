@@ -8,8 +8,8 @@ dist/**
 node_modules/**
 **/*.map
 **/*.ts
-build-lang.js
 syntaxes/*.yaml
+syntaxes/*.js
 tsconfig.json
 cgmanifest.json
 server/src/**

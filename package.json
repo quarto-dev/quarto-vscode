@@ -33,7 +33,7 @@
     "esbuild-server": "cd server && esbuild ./src/server.ts --bundle --outfile=out/server.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "concurrently --kill-others \"npm run esbuild-server -- --sourcemap --watch\" \"npm run esbuild-base -- --sourcemap --watch\"",
-    "build-lang": "node build-lang"
+    "build-lang": "node syntaxes/build-lang"
   },
   "engines": {
     "vscode": "^1.55.0"

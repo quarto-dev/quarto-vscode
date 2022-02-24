@@ -474,7 +474,7 @@ const fencedCodeBlockIncludes = () =>
 
 const buildGrammar = () => {
   let text = fs.readFileSync(
-    path.join(__dirname, "syntaxes", "quarto.tmLanguage.yaml"),
+    path.join(__dirname, "quarto.tmLanguage.yaml"),
     "utf8"
   );
   text = text.replace(
@@ -489,7 +489,7 @@ const buildGrammar = () => {
   const grammar = yaml.load(text);
   // @ts-ignore
   const out = plist.build(grammar);
-  fs.writeFileSync(path.join(__dirname, "syntaxes", "quarto.tmLanguage"), out);
+  fs.writeFileSync(path.join(__dirname, "quarto.tmLanguage"), out);
 };
 
 buildGrammar();
