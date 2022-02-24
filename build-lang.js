@@ -206,6 +206,7 @@ const languages = [
       "es6",
       "mjs",
       "cjs",
+      "ojs",
       "\\{\\.js.+?\\}",
     ],
     source: "source.js",

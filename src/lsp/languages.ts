@@ -40,7 +40,7 @@ const kEmbededLanguages = [
     type: "content",
     trigger: ["."],
   }),
-  defineLanguage(["js", "javascript", "d3"], {
+  defineLanguage(["js", "javascript", "d3", "ojs"], {
     ext: "js",
     type: "content",
     trigger: ["."],
