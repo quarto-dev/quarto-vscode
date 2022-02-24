@@ -6,7 +6,7 @@
 import Token from "markdown-it/lib/token";
 import { Position, TextDocument, Uri } from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
-import { isDisplayMath, isLanguageBlock } from "../markdown/language";
+import { isDisplayMath, isExecutableLanguageBlock } from "../markdown/language";
 import { embeddedLanguage, EmbeddedLanguage } from "./languages";
 import { virtualDocUriFromEmbeddedContent } from "./vdoc-content";
 import { virtualDocUriFromTempFile } from "./vdoc-tempfile";
@@ -65,7 +65,7 @@ export async function virtualDocUri(virtualDoc: VirtualDoc, parentUri: Uri) {
 }
 
 export function languageAtPosition(tokens: Token[], position: Position) {
-  for (const languageBlock of tokens.filter(isLanguageBlock)) {
+  for (const languageBlock of tokens.filter(isExecutableLanguageBlock)) {
     if (
       languageBlock.map &&
       position.line > languageBlock.map[0] &&
@@ -89,7 +89,7 @@ export function languageFromBlock(token: Token) {
 export function isBlockOfLanguage(language: EmbeddedLanguage) {
   return (token: Token) => {
     return (
-      isLanguageBlock(token) &&
+      isExecutableLanguageBlock(token) &&
       languageFromBlock(token)?.ids.some((id) => language.ids.includes(id))
     );
   };
