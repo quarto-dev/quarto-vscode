@@ -20,6 +20,8 @@ import { isQuartoDoc, isQuartoYaml } from "./doc";
 import { kCompletionCapabilities, onCompletion } from "./providers/completion";
 import { kHoverCapabilities, onHover } from "./providers/hover";
 import { kSignatureCapabilities, onSignatureHelp } from "./providers/signature";
+import { provideDiagnostics } from "./providers/diagnostics";
+
 import { Quarto } from "./quarto";
 
 // import quarto
@@ -96,6 +98,14 @@ connection.onSignatureHelp(async (textDocumentPosition, _token) => {
   } else {
     return null;
   }
+});
+
+documents.onDidChangeContent(async (e) => {
+  connection.sendDiagnostics({
+    uri: e.document.uri,
+    version: e.document.version,
+    diagnostics: await provideDiagnostics(e.document, quarto),
+  });
 });
 
 // listen
