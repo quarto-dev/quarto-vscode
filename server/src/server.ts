@@ -3,6 +3,9 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+import * as child_process from "child_process";
+import * as path from "path";
+
 import {
   createConnection,
   InitializeParams,
@@ -11,6 +14,19 @@ import {
   TextDocumentSyncKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
+
+// import quarto
+let quarto: any | undefined;
+let paths = child_process.execSync("quarto --paths", { encoding: "utf-8" });
+const resources = (paths as unknown as string).split("\n")[1];
+const modulePath = path.join(resources, "editor", "tools", "vs-code.mjs");
+import(modulePath)
+  .then((mod) => {
+    quarto = mod;
+  })
+  .catch((error) => {
+    // no vscode quarto available
+  });
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
