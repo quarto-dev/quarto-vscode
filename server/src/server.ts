@@ -10,11 +10,15 @@ import {
   createConnection,
   InitializeParams,
   ProposedFeatures,
+  TextDocumentIdentifier,
   TextDocuments,
   TextDocumentSyncKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { isQuartoDoc, isQuartoYaml } from "./doc";
+import { kCompletionCapabilities, onCompletion } from "./providers/completion";
+import { kHoverCapabilities, onHover } from "./providers/hover";
+import { kSignatureCapabilities, onSignatureHelp } from "./providers/signature";
 
 // import quarto
 let quarto: any | undefined;
@@ -29,77 +33,62 @@ import(modulePath)
     // no vscode quarto available
   });
 
-// Create a connection for the server. The connection uses Node's IPC as a transport.
-// Also include all preview / proposed LSP features.
-const connection = createConnection(ProposedFeatures.all);
-
 // Create a simple text document manager. The text document manager
 // supports full document sync only
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
+function resolveDoc(docId: TextDocumentIdentifier) {
+  const doc = documents.get(docId.uri);
+  if (!doc) {
+    return null;
+  }
+  if (isQuartoDoc(doc) || isQuartoYaml(doc)) {
+    return doc;
+  } else {
+    return null;
+  }
+}
 
+// Create a connection for the server. The connection uses Node's IPC as a transport.
+// Also include all preview / proposed LSP features.
+const connection = createConnection(ProposedFeatures.all);
 connection.onInitialize((_params: InitializeParams) => {
   return {
     capabilities: {
       textDocumentSync: TextDocumentSyncKind.Full,
-      // Tell the client that the server supports code completion
-      completionProvider: {
-        resolveProvider: false,
-        // register a superset of all trigger characters for embedded languages
-        // (languages are responsible for declaring which one they support if any)
-        triggerCharacters: [".", "$", "@", ":", "\\"],
-      },
-      hoverProvider: true,
-      signatureHelpProvider: {
-        // assume for now that these cover all languages (we can introduce
-        // a refinement system like we do for completion triggers if necessary)
-        triggerCharacters: ["(", ","],
-        retriggerCharacters: [")"],
-      },
+      ...kCompletionCapabilities,
+      ...kHoverCapabilities,
+      ...kSignatureCapabilities,
     },
   };
 });
 
-connection.onCompletion(async (textDocumentPosition, token) => {
-  const doc = documents.get(textDocumentPosition.textDocument.uri);
-  if (!doc) {
+connection.onCompletion(async (textDocumentPosition, _token) => {
+  const doc = resolveDoc(textDocumentPosition.textDocument);
+  if (doc) {
+    return onCompletion(doc, textDocumentPosition.position, quarto);
+  } else {
     return null;
   }
-  if (isQuartoDoc(doc)) {
-    // quarto
-  } else if (isQuartoYaml(doc)) {
-    // yaml
-  }
-
-  return null;
 });
 
-connection.onHover(async (textDocumentPosition, position) => {
-  const doc = documents.get(textDocumentPosition.textDocument.uri);
-  if (!doc) {
+connection.onHover(async (textDocumentPosition, _token) => {
+  const doc = resolveDoc(textDocumentPosition.textDocument);
+  if (doc) {
+    return onHover(doc, textDocumentPosition.position, quarto);
+  } else {
     return null;
   }
-  if (isQuartoDoc(doc)) {
-    // quarto
-  } else if (isQuartoYaml(doc)) {
-    // yaml
-  }
-
-  return null;
 });
 
-connection.onSignatureHelp(async (textDocumentPosition, position) => {
-  const doc = documents.get(textDocumentPosition.textDocument.uri);
-  if (!doc) {
+connection.onSignatureHelp(async (textDocumentPosition, _token) => {
+  const doc = resolveDoc(textDocumentPosition.textDocument);
+  if (doc) {
+    return onSignatureHelp(doc, textDocumentPosition.position, quarto);
+  } else {
     return null;
   }
-  if (isQuartoDoc(doc)) {
-    // quarto
-  } else if (isQuartoYaml(doc)) {
-    // yaml
-  }
-
-  return null;
 });
 
+// listen
 documents.listen(connection);
 connection.listen();
