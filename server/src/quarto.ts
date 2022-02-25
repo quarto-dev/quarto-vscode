@@ -19,6 +19,9 @@ export interface EditorContext {
     column: number;
   };
   explicit: boolean;
+  formats: string[];
+  project_formats: string[];
+  engine: string;
 }
 
 export function editorContext(
@@ -34,7 +37,9 @@ export function editorContext(
     : "markdown"; // should never get here
   const embedded = false;
   const code = doc.getText();
-  const line = doc.getText(Range.create(pos.line, 0, pos.line, code.length));
+  const line = doc
+    .getText(Range.create(pos.line, 0, pos.line, code.length))
+    .trimEnd();
   const position = { row: pos.line, column: pos.character };
   return {
     path,
@@ -44,6 +49,9 @@ export function editorContext(
     code,
     position,
     explicit,
+    formats: ["html"],
+    project_formats: [],
+    engine: "markdown",
   };
 }
 
