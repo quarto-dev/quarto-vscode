@@ -14,6 +14,7 @@ import {
   TextDocumentSyncKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
+import { isQuartoDoc, isQuartoYaml } from "./doc";
 
 // import quarto
 let quarto: any | undefined;
@@ -57,17 +58,6 @@ connection.onInitialize((_params: InitializeParams) => {
     },
   };
 });
-
-const kQuartoLanguageId = "quarto";
-const kYamlLanguageId = "yaml";
-
-function isQuartoDoc(doc: TextDocument) {
-  return doc.languageId === kQuartoLanguageId;
-}
-
-function isQuartoYaml(doc: TextDocument) {
-  return doc.languageId === kYamlLanguageId && doc.uri.match(/_quarto\.ya?ml$/);
-}
 
 connection.onCompletion(async (textDocumentPosition, token) => {
   const doc = documents.get(textDocumentPosition.textDocument.uri);
