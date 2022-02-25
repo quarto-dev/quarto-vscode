@@ -116,7 +116,7 @@ function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
     // see if there is a completion virtual doc we should be using
     const vdoc = await virtualDoc(document, position, engine);
 
-    if (vdoc) {
+    if (vdoc && !isWithinYamlComment(document, position)) {
       // if there is a trigger character make sure the langauge supports it
       const language = vdoc.language;
       if (context.triggerCharacter) {
@@ -206,4 +206,9 @@ function embeddedSignatureHelpProvider(engine: MarkdownEngine) {
       return await next(document, position, context, token);
     }
   };
+}
+
+function isWithinYamlComment(doc: TextDocument, pos: Position) {
+  const line = doc.lineAt(pos.line).text;
+  return !!line.match(/^\s*#\| /);
 }
