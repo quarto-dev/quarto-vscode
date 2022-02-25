@@ -16,6 +16,8 @@ import { MarkdownEngine } from "./markdown/engine";
 import { activateBackgroundHighlighter } from "./providers/background";
 import { kQuartoDocSelector } from "./core/doc";
 import { activateLsp } from "./lsp/client";
+import { CommandManager } from "./core/command";
+import { cellCommands } from "./commands/cell";
 
 export function activate(context: vscode.ExtensionContext) {
   const engine = new MarkdownEngine();
@@ -28,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     registerMarkdownLanguageFeatures(symbolProvider, engine)
   );
-  context.subscriptions.push(registerMarkdownCommands(engine));
+  context.subscriptions.push(registerCommands(engine));
 }
 
 function registerMarkdownLanguageFeatures(
@@ -59,42 +61,12 @@ function registerMarkdownLanguageFeatures(
   );
 }
 
-function registerMarkdownCommands(engine: MarkdownEngine): vscode.Disposable {
+function registerCommands(engine: MarkdownEngine): vscode.Disposable {
   const commandManager = new CommandManager();
   commandManager.register(new OpenLinkCommand(engine));
+  for (const cmd of cellCommands(engine)) {
+    commandManager.register(cmd);
+  }
+
   return commandManager;
-}
-
-export interface Command {
-  readonly id: string;
-
-  execute(...args: any[]): void;
-}
-
-class CommandManager {
-  private readonly commands = new Map<string, vscode.Disposable>();
-
-  public dispose() {
-    for (const registration of this.commands.values()) {
-      registration.dispose();
-    }
-    this.commands.clear();
-  }
-
-  public register<T extends Command>(command: T): T {
-    this.registerCommand(command.id, command.execute, command);
-    return command;
-  }
-
-  private registerCommand(
-    id: string,
-    impl: (...args: any[]) => void,
-    thisArg?: any
-  ) {
-    if (this.commands.has(id)) {
-      return;
-    }
-
-    this.commands.set(id, vscode.commands.registerCommand(id, impl, thisArg));
-  }
 }
