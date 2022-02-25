@@ -7,6 +7,7 @@ import * as child_process from "child_process";
 import * as path from "path";
 
 import {
+  CompletionTriggerKind,
   createConnection,
   InitializeParams,
   ProposedFeatures,
@@ -19,15 +20,16 @@ import { isQuartoDoc, isQuartoYaml } from "./doc";
 import { kCompletionCapabilities, onCompletion } from "./providers/completion";
 import { kHoverCapabilities, onHover } from "./providers/hover";
 import { kSignatureCapabilities, onSignatureHelp } from "./providers/signature";
+import { Quarto } from "./quarto";
 
 // import quarto
-let quarto: any | undefined;
+let quarto: Quarto | undefined;
 let paths = child_process.execSync("quarto --paths", { encoding: "utf-8" });
 const resources = (paths as unknown as string).split("\n")[1];
 const modulePath = path.join(resources, "editor", "tools", "vs-code.mjs");
 import(modulePath)
   .then((mod) => {
-    quarto = mod;
+    quarto = mod as Quarto;
   })
   .catch((error) => {
     // no vscode quarto available
@@ -64,8 +66,15 @@ connection.onInitialize((_params: InitializeParams) => {
 
 connection.onCompletion(async (textDocumentPosition, _token) => {
   const doc = resolveDoc(textDocumentPosition.textDocument);
+  const explicit =
+    textDocumentPosition.context?.triggerKind === CompletionTriggerKind.Invoked;
   if (doc) {
-    return onCompletion(doc, textDocumentPosition.position, quarto);
+    return await onCompletion(
+      doc,
+      textDocumentPosition.position,
+      explicit,
+      quarto
+    );
   } else {
     return null;
   }
@@ -74,7 +83,7 @@ connection.onCompletion(async (textDocumentPosition, _token) => {
 connection.onHover(async (textDocumentPosition, _token) => {
   const doc = resolveDoc(textDocumentPosition.textDocument);
   if (doc) {
-    return onHover(doc, textDocumentPosition.position, quarto);
+    return await onHover(doc, textDocumentPosition.position, quarto);
   } else {
     return null;
   }
@@ -83,7 +92,7 @@ connection.onHover(async (textDocumentPosition, _token) => {
 connection.onSignatureHelp(async (textDocumentPosition, _token) => {
   const doc = resolveDoc(textDocumentPosition.textDocument);
   if (doc) {
-    return onSignatureHelp(doc, textDocumentPosition.position, quarto);
+    return await onSignatureHelp(doc, textDocumentPosition.position, quarto);
   } else {
     return null;
   }

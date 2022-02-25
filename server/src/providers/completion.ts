@@ -5,6 +5,7 @@
 
 import { Position, TextDocument } from "vscode-languageserver-textdocument";
 import { CompletionItem, ServerCapabilities } from "vscode-languageserver/node";
+import { editorContext, Quarto } from "../quarto";
 
 export const kCompletionCapabilities: ServerCapabilities = {
   completionProvider: {
@@ -15,11 +16,18 @@ export const kCompletionCapabilities: ServerCapabilities = {
   },
 };
 
-export function onCompletion(
+export async function onCompletion(
   doc: TextDocument,
   pos: Position,
-  quarto?: any
-): CompletionItem[] | null {
-  console.log("onCompletion");
-  return null;
+  explicit: boolean,
+  quarto?: Quarto
+): Promise<CompletionItem[] | null> {
+  if (quarto) {
+    const context = editorContext(doc, pos, explicit);
+    const result = await quarto.getCompletions(context);
+    console.log(result);
+    return [];
+  } else {
+    return null;
+  }
 }
