@@ -18,6 +18,7 @@ import { kQuartoDocSelector } from "./core/doc";
 import { activateLsp } from "./lsp/client";
 import { CommandManager } from "./core/command";
 import { cellCommands } from "./commands/cell";
+import { quartoCellExecuteCodeLensProvider } from "./providers/cell-execute";
 
 export function activate(context: vscode.ExtensionContext) {
   const engine = new MarkdownEngine();
@@ -56,6 +57,10 @@ function registerMarkdownLanguageFeatures(
     ),
     vscode.languages.registerWorkspaceSymbolProvider(
       new QuartoWorkspaceSymbolProvider(symbolProvider)
+    ),
+    vscode.languages.registerCodeLensProvider(
+      kQuartoDocSelector,
+      quartoCellExecuteCodeLensProvider(engine)
     ),
     PathCompletionProvider.register(engine)
   );

@@ -34,9 +34,9 @@ import {
   ProvideSignatureHelpSignature,
 } from "vscode-languageclient";
 import { MarkdownEngine } from "../markdown/engine";
-import { virtualDoc, virtualDocUri } from "./vdoc";
-import { activateVirtualDocEmbeddedContent } from "./vdoc-content";
-import { deactivateVirtualDocTempFiles } from "./vdoc-tempfile";
+import { virtualDoc, virtualDocUri } from "../vdoc/vdoc";
+import { activateVirtualDocEmbeddedContent } from "../vdoc/vdoc-content";
+import { deactivateVirtualDocTempFiles } from "../vdoc/vdoc-tempfile";
 
 let client: LanguageClient;
 
