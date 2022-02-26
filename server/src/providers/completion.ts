@@ -33,6 +33,16 @@ export async function onCompletion(
     const context = editorContext(doc, pos, explicit);
     const result = await quarto.getCompletions(context);
     if (result) {
+      // if there is one completion and it matches the token
+      // then don't return it
+      if (
+        result.completions.length === 1 &&
+        result.token === result.completions[0].value
+      ) {
+        return null;
+      }
+
+      // mqp our completions to vscode completions
       return result.completions.map((completion) => {
         const completionWord = completion.value.replace(/: $/, "");
         const item: CompletionItem = {
