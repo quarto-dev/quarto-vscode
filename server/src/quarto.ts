@@ -49,9 +49,9 @@ export function editorContext(
     code,
     position,
     explicit,
-    formats: ["html"],
+    formats: [],
     project_formats: [],
-    engine: "markdown",
+    engine: "jupyter",
   };
 }
 
