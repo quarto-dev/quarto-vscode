@@ -9,6 +9,7 @@ import * as path from "path";
 import {
   CompletionTriggerKind,
   createConnection,
+  Diagnostic,
   InitializeParams,
   ProposedFeatures,
   TextDocumentIdentifier,
@@ -100,26 +101,21 @@ connection.onSignatureHelp(async (textDocumentPosition, _token) => {
   }
 });
 
+// diagnostics on open and save (clear on doc modified)
 documents.onDidOpen(async (e) => {
-  handleDiagnostics(e.document);
+  sendDiagnostics(e.document, await provideDiagnostics(e.document, quarto));
 });
 documents.onDidSave(async (e) => {
-  handleDiagnostics(e.document);
+  sendDiagnostics(e.document, await provideDiagnostics(e.document, quarto));
 });
-
 documents.onDidChangeContent(async (e) => {
-  connection.sendDiagnostics({
-    uri: e.document.uri,
-    version: e.document.version,
-    diagnostics: [],
-  });
+  sendDiagnostics(e.document, []);
 });
-
-async function handleDiagnostics(doc: TextDocument) {
+function sendDiagnostics(doc: TextDocument, diagnostics: Diagnostic[]) {
   connection.sendDiagnostics({
     uri: doc.uri,
     version: doc.version,
-    diagnostics: await provideDiagnostics(doc, quarto),
+    diagnostics,
   });
 }
 
