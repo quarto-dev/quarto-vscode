@@ -59,7 +59,7 @@ const connection = createConnection(ProposedFeatures.all);
 connection.onInitialize((_params: InitializeParams) => {
   return {
     capabilities: {
-      textDocumentSync: TextDocumentSyncKind.Full,
+      textDocumentSync: TextDocumentSyncKind.Incremental,
       ...kCompletionCapabilities,
       ...kHoverCapabilities,
       ...kSignatureCapabilities,
