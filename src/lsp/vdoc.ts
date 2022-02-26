@@ -7,7 +7,10 @@ import Token from "markdown-it/lib/token";
 import { Position, TextDocument, Uri } from "vscode";
 import { isQuartoDoc } from "../core/doc";
 import { MarkdownEngine } from "../markdown/engine";
-import { isDisplayMath, isExecutableLanguageBlock } from "../markdown/language";
+import {
+  isExecutableLanguageBlock,
+  languageNameFromBlock,
+} from "../markdown/language";
 import { embeddedLanguage, EmbeddedLanguage } from "./languages";
 import { virtualDocUriFromEmbeddedContent } from "./vdoc-content";
 import { virtualDocUriFromTempFile } from "./vdoc-tempfile";
@@ -84,12 +87,8 @@ export function languageAtPosition(tokens: Token[], position: Position) {
 }
 
 export function languageFromBlock(token: Token) {
-  if (isDisplayMath(token)) {
-    return embeddedLanguage("latex");
-  } else {
-    const langId = token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "");
-    return embeddedLanguage(langId);
-  }
+  const name = languageNameFromBlock(token);
+  return embeddedLanguage(name);
 }
 
 export function isBlockOfLanguage(language: EmbeddedLanguage) {
