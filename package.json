@@ -120,6 +120,33 @@
         "path": "./snippets/quarto.code-snippets"
       }
     ],
+    "commands": [
+      {
+        "command": "quarto.runCurrentCell",
+        "title": "Run Current Cell",
+        "category": "Quarto"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "quarto.runSelection",
+        "key": "Ctrl+enter",
+        "mac": "cmd+enter",
+        "when": "editorTextFocus && editorLangId == 'quarto'"
+      },
+      {
+        "command": "quarto.runCurrentCell",
+        "key": "Ctrl+shift+enter",
+        "mac": "cmd+shift+enter",
+        "when": "editorTextFocus && editorLangId == 'quarto'"
+      },
+      {
+        "command": "quarto.runAboveCells",
+        "key": "Ctrl+alt+p",
+        "mac": "cmd+alt+p",
+        "when": "editorTextFocus && editorLangId == 'quarto'"
+      }
+    ],
     "configurationDefaults": {
       "[r]": {
         "editor.wordBasedSuggestions": false

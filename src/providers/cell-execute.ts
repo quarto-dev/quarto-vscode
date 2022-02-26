@@ -47,8 +47,8 @@ export function quartoCellExecuteCodeLensProvider(
             new CodeLens(new Range(block.map[0], 0, block.map[0], 0), {
               title: "Run Cell",
               tooltip: "Run Cell",
-              command: "jupyter.execSelectionInteractive",
-              arguments: [block.content],
+              command: "quarto.runCurrentCell",
+              arguments: [block.map[0] + 1],
             })
           );
         }
