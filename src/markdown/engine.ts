@@ -13,7 +13,7 @@ import { MarkdownTextDocument } from "./document";
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
 export class MarkdownEngine {
-  private md?: Promise<MarkdownIt>;
+  private md?: MarkdownIt;
 
   private _tokenCache = new TokenCache();
 
@@ -25,20 +25,28 @@ export class MarkdownEngine {
     return tokens;
   }
 
+  // will work only after the engine has been initialized elsewhere
+  // (returns empty set of tokens if it hasn't)
+  public parseSync(document: MarkdownTextDocument): Token[] {
+    if (this.md) {
+      const tokens = this.tokenizeDocument(document, this.md);
+      return tokens;
+    } else {
+      return [];
+    }
+  }
+
   public cleanCache(): void {
     this._tokenCache.clean();
   }
 
   private async getEngine(): Promise<MarkdownIt> {
     if (!this.md) {
-      this.md = (async () => {
-        const markdownIt = await import("markdown-it");
-        const md = markdownIt.default("commonmark");
-        return md.use(katex, { globalGroup: true });
-      })();
+      const markdownIt = await import("markdown-it");
+      const md = markdownIt.default("commonmark");
+      this.md = md.use(katex, { globalGroup: true });
     }
-    let md = await this.md!;
-    return md;
+    return this.md;
   }
 
   private tokenizeDocument(
