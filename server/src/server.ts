@@ -100,13 +100,28 @@ connection.onSignatureHelp(async (textDocumentPosition, _token) => {
   }
 });
 
+documents.onDidOpen(async (e) => {
+  handleDiagnostics(e.document);
+});
+documents.onDidSave(async (e) => {
+  handleDiagnostics(e.document);
+});
+
 documents.onDidChangeContent(async (e) => {
   connection.sendDiagnostics({
     uri: e.document.uri,
     version: e.document.version,
-    diagnostics: await provideDiagnostics(e.document, quarto),
+    diagnostics: [],
   });
 });
+
+async function handleDiagnostics(doc: TextDocument) {
+  connection.sendDiagnostics({
+    uri: doc.uri,
+    version: doc.version,
+    diagnostics: await provideDiagnostics(doc, quarto),
+  });
+}
 
 // listen
 documents.listen(connection);
