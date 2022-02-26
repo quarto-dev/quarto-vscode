@@ -42,14 +42,21 @@ export function quartoCellExecuteCodeLensProvider(
           // ensure python extension is loaded
           pythonLoader.ensureLoaded(document, block.map[0]);
           // push code lens
-          console.log(block);
+          const range = new Range(block.map[0], 0, block.map[0], 0);
           lenses.push(
-            new CodeLens(new Range(block.map[0], 0, block.map[0], 0), {
-              title: "Run Cell",
-              tooltip: "Run Cell",
-              command: "quarto.runCurrentCell",
-              arguments: [block.map[0] + 1],
-            })
+            ...[
+              new CodeLens(range, {
+                title: "Run Cell",
+                tooltip: "Execute the code in this cell",
+                command: "quarto.runCurrentCell",
+                arguments: [block.map[0] + 1],
+              }),
+              new CodeLens(range, {
+                title: "Run Lines",
+                tooltip: "Execute the currently selected line(s)",
+                command: "quarto.runLines",
+              }),
+            ]
           );
         }
       }

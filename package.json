@@ -125,11 +125,16 @@
         "command": "quarto.runCurrentCell",
         "title": "Run Current Cell",
         "category": "Quarto"
+      },
+      {
+        "command": "quarto.runLines",
+        "title": "Run Selected Line(s)",
+        "category": "Quarto"
       }
     ],
     "keybindings": [
       {
-        "command": "quarto.runSelection",
+        "command": "quarto.runLines",
         "key": "Ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && editorLangId == 'quarto'"
