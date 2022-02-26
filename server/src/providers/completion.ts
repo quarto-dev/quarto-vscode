@@ -48,8 +48,14 @@ export async function onCompletion(
         const item: CompletionItem = {
           label: completionWord,
           kind: CompletionItemKind.Field,
-          documentation: completion.description,
         };
+        // strip tags from description
+        if (completion.description) {
+          item.documentation = completion.description.replace(
+            /(<([^>]+)>)/gi,
+            ""
+          );
+        }
         if (
           result.token.length > 0 &&
           completionWord.startsWith(result.token)
