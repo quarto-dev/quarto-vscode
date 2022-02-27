@@ -9,7 +9,7 @@ import { OpenLinkCommand } from "./commands/open-link";
 import QuartoLinkProvider from "./providers/link";
 import QuartoDocumentSymbolProvider from "./providers/symbol-document";
 import QuartoFoldingProvider from "./providers/folding";
-import { PathCompletionProvider } from "./completion/path";
+import { PathCompletionProvider } from "./providers/completion-path";
 import QuartoSelectionRangeProvider from "./providers/selection-range";
 import QuartoWorkspaceSymbolProvider from "./providers/symbol-workspace";
 import { MarkdownEngine } from "./markdown/engine";

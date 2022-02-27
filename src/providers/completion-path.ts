@@ -8,7 +8,7 @@ import * as vscode from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
 import { MarkdownTableOfContents } from "../markdown/toc";
 import { kQuartoDocSelector, resolveQuartoDocUri } from "../core/doc";
-import QuartoLinkProvider from "../providers/link";
+import QuartoLinkProvider from "./link";
 
 enum CompletionContextKind {
   Link, // [...](|)
