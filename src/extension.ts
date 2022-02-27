@@ -16,8 +16,8 @@ import { activateBackgroundHighlighter } from "./providers/background";
 import { kQuartoDocSelector } from "./core/doc";
 import { activateLsp } from "./lsp/client";
 import { CommandManager } from "./core/command";
-import { cellCommands } from "./commands/cell";
-import { quartoCellExecuteCodeLensProvider } from "./providers/cell-execute";
+import { cellCommands } from "./cell/commands";
+import { quartoCellExecuteCodeLensProvider } from "./cell/codelens";
 
 export function activate(context: vscode.ExtensionContext) {
   const engine = new MarkdownEngine();
