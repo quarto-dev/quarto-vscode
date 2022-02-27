@@ -5,8 +5,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import { OpenLinkCommand } from "./commands/open-link";
-import QuartoLinkProvider from "./providers/link";
+import QuartoLinkProvider, { OpenLinkCommand } from "./providers/link";
 import QuartoDocumentSymbolProvider from "./providers/symbol-document";
 import QuartoFoldingProvider from "./providers/folding";
 import { PathCompletionProvider } from "./providers/completion-path";
