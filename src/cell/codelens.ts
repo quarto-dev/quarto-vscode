@@ -3,6 +3,8 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+// icon reference: https://code.visualstudio.com/api/references/icons-in-labels
+
 import {
   CancellationToken,
   CodeLens,
@@ -10,7 +12,6 @@ import {
   ProviderResult,
   TextDocument,
   Range,
-  extensions,
 } from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
 import { languageNameFromBlock } from "../markdown/language";
@@ -55,7 +56,7 @@ export function quartoCellExecuteCodeLensProvider(
           lenses.push(
             ...[
               new CodeLens(range, {
-                title: "Run Cell",
+                title: "$(debug-start) Run Cell",
                 tooltip: "Execute the code in this cell",
                 command: "quarto.runCurrentCell",
                 arguments: [block.map[0] + 1],
