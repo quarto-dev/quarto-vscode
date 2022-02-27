@@ -12,6 +12,7 @@
     "url": "https://github.com/quarto-dev/quarto-vscode/"
   },
   "dependencies": {
+    "file-url": "^4.0.0",
     "vscode-languageserver": "^7.0.0",
     "vscode-languageserver-textdocument": "^1.0.4"
   },

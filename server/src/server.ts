@@ -5,6 +5,7 @@
 
 import * as child_process from "child_process";
 import * as path from "path";
+import fileUrl from "file-url";
 
 import {
   CompletionTriggerKind,
@@ -28,9 +29,9 @@ import { Quarto } from "./quarto";
 // import quarto
 let quarto: Quarto | undefined;
 let paths = child_process.execSync("quarto --paths", { encoding: "utf-8" });
-const resources = (paths as unknown as string).split("\n")[1];
+const resources = (paths as unknown as string).split(/\r?\n/)[1];
 const modulePath = path.join(resources, "editor", "tools", "vs-code.mjs");
-import(modulePath)
+import(fileUrl(modulePath))
   .then((mod) => {
     quarto = mod as Quarto;
   })
