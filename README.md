@@ -26,7 +26,7 @@ To enable completions for embedded languages, you may want to install one or mor
 
 #### VISX Install
 
-You ou can alternatively download and install the extension from the command line as follows:
+You can alternatively download and install the extension from the command line as follows:
 
 1. Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/dist/quarto-1.5.0.vsix)
 
