@@ -3,6 +3,9 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+// TODO: implement some terminal based executors
+// (e.g. see https://github.com/JeepShen/vscode-markdown-code-runner)
+
 import Token from "markdown-it/lib/token";
 import { commands, extensions, Position, TextDocument } from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
