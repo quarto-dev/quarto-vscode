@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import Token from "markdown-it/lib/token";
-import { commands, Position, TextDocument } from "vscode";
+import { commands, extensions, Position, TextDocument } from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
 import {
   isExecutableLanguageBlockOf,
@@ -35,11 +35,20 @@ export async function executeInteractive(
   }
 }
 
+export function validateRequiredExtension(language: string) {
+  const executor = kCellExecutors.find((x) => x.language === language);
+  if (executor?.requiredExtension) {
+    return !!extensions.getExtension(executor?.requiredExtension);
+  } else {
+    return true;
+  }
+}
+
 // ensure language extension is loaded (if required) by creating a
 // virtual doc for the language (under the hood this triggers extension
 // loading by sending a dummy hover-provider request)
 const kLoadedExtensions: string[] = [];
-export async function ensureExtensionLoaded(
+export async function ensureRequiredExtension(
   language: string,
   document: TextDocument,
   engine: MarkdownEngine
@@ -52,7 +61,7 @@ export async function ensureExtensionLoaded(
       kLoadedExtensions.push(executor.language);
 
       // load extension if necessary
-      if (executor.usesExtension) {
+      if (executor.requiredExtension) {
         const tokens = await engine.parse(document);
         const languageBlock = tokens.find(
           isExecutableLanguageBlockOf(language)
@@ -74,13 +83,13 @@ export async function ensureExtensionLoaded(
 
 interface CellExecutor {
   language: string;
-  usesExtension: boolean;
+  requiredExtension?: string;
   execute: (code: string) => Promise<void>;
 }
 
 const pythonCellExecutor: CellExecutor = {
   language: "python",
-  usesExtension: true,
+  requiredExtension: "ms-python.python",
   execute: async (code: string) => {
     await commands.executeCommand("jupyter.execSelectionInteractive", code);
   },
