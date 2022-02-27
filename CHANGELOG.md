@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.5.0 (Release on 27 February 2022)
+
+- Code completion and diagnostics for YAML front matter and cell options
+- Commands and keybindings for running current cell, previous cells, and selected line(s)
+- Code Lens to execute code from Python executable code blocks
+- Workspace symbol provider for quick navigation to documents/headings
+
 ## 1.4.0 (Release on 23 February 2022)
 
 - Completion, hover, and signature help for embedded languages, including

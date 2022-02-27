@@ -28,12 +28,12 @@ To enable completions for embedded languages, you may want to install one or mor
 
 You ou can alternatively download and install the extension from the command line as follows:
 
-1. Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/dist/quarto-1.4.1.vsix)
+1. Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/dist/quarto-1.5.0.vsix)
 
 2. Install from the command line with:
 
    ```bash
-   code --install-extension quarto-1.4.1.vsix
+   code --install-extension quarto-1.5.0.vsix
    ```
 
 Note that in order to use the `code` command to perform the installation you may need to open the VS Code
