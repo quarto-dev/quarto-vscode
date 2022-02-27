@@ -22,7 +22,7 @@ const kEmbededLanguages = [
     inject: "# type: ignore",
     trigger: ["."],
   }),
-  defineLanguage("r", { trigger: ["$", "@", ":"] }),
+  defineLanguage("r", { trigger: ["$", "@", ":", "."] }),
   defineLanguage("julia", { ext: "jl", trigger: ["."] }),
   defineLanguage(["tex", "latex"], { trigger: ["\\"] }),
   defineLanguage("sql", { trigger: ["."] }),
