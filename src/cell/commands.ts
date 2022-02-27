@@ -1,12 +1,10 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) RStudio, PBC. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import Token from "markdown-it/lib/token";
-import {
-  commands,
-  Position,
-  Range,
-  Selection,
-  TextEditor,
-  window,
-} from "vscode";
+import { Position, Range, Selection, TextEditor, window } from "vscode";
 import { Command } from "../core/command";
 import { isQuartoDoc } from "../core/doc";
 import { MarkdownEngine } from "../markdown/engine";
@@ -15,6 +13,7 @@ import {
   languageNameFromBlock,
 } from "../markdown/language";
 import { languageBlockAtPosition } from "../vdoc/vdoc";
+import { blockHasExecutor, executeInteractive } from "./executors";
 
 export function cellCommands(engine: MarkdownEngine): Command[] {
   return [
@@ -24,7 +23,7 @@ export function cellCommands(engine: MarkdownEngine): Command[] {
   ];
 }
 
-class RunCommand {
+abstract class RunCommand {
   constructor(engine: MarkdownEngine) {
     this.engine_ = engine;
   }
@@ -40,14 +39,11 @@ class RunCommand {
         new Position(line, 0),
         this.includeFence()
       );
-      if (
-        !this.blockRequired() ||
-        (block && languageNameFromBlock(block) === "python")
-      ) {
+      if (!this.blockRequired() || blockHasExecutor(block)) {
         this.doExecute(editor, tokens, line, block);
       } else {
         window.showInformationMessage(
-          "Editor selection is not within a Python cell"
+          "Editor selection is not within an executable cell"
         );
       }
     } else {
@@ -63,12 +59,12 @@ class RunCommand {
     return true;
   }
 
-  protected async doExecute(
-    _editor: TextEditor,
-    _tokens: Token[],
-    _line: number,
-    _block?: Token
-  ) {}
+  protected abstract doExecute(
+    editor: TextEditor,
+    tokens: Token[],
+    line: number,
+    block?: Token
+  ): Promise<void>;
 
   private engine_: MarkdownEngine;
 }
@@ -86,10 +82,8 @@ class RunCurrentCellCommand extends RunCommand implements Command {
     _line: number,
     block: Token
   ) {
-    await commands.executeCommand(
-      "jupyter.execSelectionInteractive",
-      block.content
-    );
+    const language = languageNameFromBlock(block);
+    await executeInteractive(language, block.content);
   }
 }
 
@@ -104,7 +98,12 @@ class RunSelectionCommand extends RunCommand implements Command {
     return false;
   }
 
-  override async doExecute(editor: TextEditor) {
+  override async doExecute(
+    editor: TextEditor,
+    _tokens: Token[],
+    _line: number,
+    block: Token
+  ) {
     // determine the selected lines
     const selection = editor.document.getText(
       new Range(
@@ -122,11 +121,9 @@ class RunSelectionCommand extends RunCommand implements Command {
       editor.selection = new Selection(selPos, selPos);
     }
 
-    // run them
-    await commands.executeCommand(
-      "jupyter.execSelectionInteractive",
-      selection
-    );
+    // run code
+    const language = languageNameFromBlock(block);
+    await executeInteractive(language, selection);
   }
 }
 
@@ -141,22 +138,40 @@ class RunCellsAboveCommand extends RunCommand implements Command {
     return false;
   }
 
-  override async doExecute(_editor: TextEditor, tokens: Token[], line: number) {
+  override async doExecute(
+    _editor: TextEditor,
+    tokens: Token[],
+    line: number,
+    block?: Token
+  ) {
     // collect up blocks prior to the active one
-    const code: string[] = [];
-    for (const block of tokens.filter(isExecutableLanguageBlockOf("python"))) {
+    const blocks: Token[] = [];
+    for (const block of tokens.filter(blockHasExecutor)) {
       // if the end of this block is past the line then bail
       if (!block.map || block.map[1] > line) {
         break;
       }
-      code.push(block.content);
+      blocks.push(block);
     }
 
-    if (code.length > 0) {
-      await commands.executeCommand(
-        "jupyter.execSelectionInteractive",
-        code.join("\n")
+    if (blocks.length > 0) {
+      // we need to figure out which language to execute. this is either the language
+      // of the passed block (if any) or the language of the block immediately preceding
+      // the line this is executed from
+      const language = languageNameFromBlock(
+        block || blocks[blocks.length - 1]
       );
+
+      // accumulate code
+      const code: string[] = [];
+      for (const block of blocks.filter(
+        isExecutableLanguageBlockOf(language)
+      )) {
+        code.push(block.content);
+      }
+
+      // execute
+      await executeInteractive(language, code.join("\n"));
     }
   }
 }

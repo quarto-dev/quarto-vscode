@@ -10,18 +10,14 @@ import {
   ProviderResult,
   TextDocument,
   Range,
-  Position,
 } from "vscode";
-import { virtualDoc, virtualDocUri } from "../vdoc/vdoc";
 import { MarkdownEngine } from "../markdown/engine";
-import { isExecutableLanguageBlockOf } from "../markdown/language";
+import { languageNameFromBlock } from "../markdown/language";
+import { blockHasExecutor, ensureExtensionLoaded } from "./executors";
 
 export function quartoCellExecuteCodeLensProvider(
   engine: MarkdownEngine
 ): CodeLensProvider {
-  // one time forced init of python extension
-  const pythonLoader = new PythonExtensionLoader(engine);
-
   return {
     provideCodeLenses(
       document: TextDocument,
@@ -29,18 +25,18 @@ export function quartoCellExecuteCodeLensProvider(
     ): ProviderResult<CodeLens[]> {
       const lenses: CodeLens[] = [];
       const tokens = engine.parseSync(document);
-
-      for (const block of tokens.filter(
-        isExecutableLanguageBlockOf("python")
-      )) {
+      const langauges: string[] = [];
+      for (const block of tokens.filter(blockHasExecutor)) {
         // respect cancellation request
         if (token.isCancellationRequested) {
           return [];
         }
         // create
         if (block.map) {
-          // ensure python extension is loaded
-          pythonLoader.ensureLoaded(document, block.map[0]);
+          // ensure any required extension is loaded
+          const language = languageNameFromBlock(block);
+          ensureExtensionLoaded(language, document, engine);
+
           // push code lens
           const range = new Range(block.map[0], 0, block.map[0], 0);
           lenses.push(
@@ -56,41 +52,22 @@ export function quartoCellExecuteCodeLensProvider(
                 tooltip: "Execute the currently selected line(s)",
                 command: "quarto.runLines",
               }),
+            ]
+          );
+          if (langauges.includes(language)) {
+            lenses.push(
               new CodeLens(range, {
                 title: "Run Above",
                 tooltip: "Execute the cells above this cell",
                 command: "quarto.runCellsAbove",
                 arguments: [block.map[0] + 1],
-              }),
-            ]
-          );
+              })
+            );
+          }
+          langauges.push(language);
         }
       }
       return lenses;
     },
   };
-}
-
-class PythonExtensionLoader {
-  constructor(engine: MarkdownEngine) {
-    this.engine_ = engine;
-  }
-  public ensureLoaded(document: TextDocument, pythonBlockBegin: number) {
-    if (!this.loaded_) {
-      this.loaded_ = true;
-      virtualDoc(
-        document,
-        new Position(pythonBlockBegin + 1, 0),
-        this.engine_
-      ).then((vdoc) => {
-        if (vdoc) {
-          // this function executes a dummy hover request to activate the extension
-          virtualDocUri(vdoc, document.uri).then(() => {});
-        }
-      });
-    }
-  }
-
-  private loaded_ = false;
-  private engine_: MarkdownEngine;
 }

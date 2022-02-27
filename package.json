@@ -142,19 +142,19 @@
         "command": "quarto.runLines",
         "key": "Ctrl+enter",
         "mac": "cmd+enter",
-        "when": "editorTextFocus && editorLangId == 'quarto'"
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       },
       {
         "command": "quarto.runCurrentCell",
         "key": "Ctrl+shift+enter",
         "mac": "cmd+shift+enter",
-        "when": "editorTextFocus && editorLangId == 'quarto'"
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       },
       {
         "command": "quarto.runCellsAbove",
         "key": "Ctrl+alt+p",
         "mac": "cmd+alt+p",
-        "when": "editorTextFocus && editorLangId == 'quarto'"
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       }
     ],
     "configurationDefaults": {
