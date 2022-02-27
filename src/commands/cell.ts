@@ -10,11 +10,18 @@ import {
 import { Command } from "../core/command";
 import { isQuartoDoc } from "../core/doc";
 import { MarkdownEngine } from "../markdown/engine";
-import { languageNameFromBlock } from "../markdown/language";
+import {
+  isExecutableLanguageBlockOf,
+  languageNameFromBlock,
+} from "../markdown/language";
 import { languageBlockAtPosition } from "../vdoc/vdoc";
 
 export function cellCommands(engine: MarkdownEngine): Command[] {
-  return [new RunCurrentCellCommand(engine), new RunSelectionCommand(engine)];
+  return [
+    new RunCurrentCellCommand(engine),
+    new RunSelectionCommand(engine),
+    new RunCellsAboveCommand(engine),
+  ];
 }
 
 class RunCommand {
@@ -28,8 +35,15 @@ class RunCommand {
     if (doc && isQuartoDoc(doc)) {
       const tokens = await this.engine_.parse(doc);
       line = line || editor.selection.start.line;
-      const block = languageBlockAtPosition(tokens, new Position(line, 0));
-      if (block && languageNameFromBlock(block) === "python") {
+      const block = languageBlockAtPosition(
+        tokens,
+        new Position(line, 0),
+        this.includeFence()
+      );
+      if (
+        !this.blockRequired() ||
+        (block && languageNameFromBlock(block) === "python")
+      ) {
         this.doExecute(editor, tokens, line, block);
       } else {
         window.showInformationMessage(
@@ -41,15 +55,19 @@ class RunCommand {
     }
   }
 
-  protected getLine(_arg?: unknown): number | null {
-    return null;
+  protected includeFence() {
+    return true;
+  }
+
+  protected blockRequired() {
+    return true;
   }
 
   protected async doExecute(
     _editor: TextEditor,
     _tokens: Token[],
     _line: number,
-    _block: Token
+    _block?: Token
   ) {}
 
   private engine_: MarkdownEngine;
@@ -82,6 +100,10 @@ class RunSelectionCommand extends RunCommand implements Command {
   private static readonly id = "quarto.runLines";
   public readonly id = RunSelectionCommand.id;
 
+  override includeFence() {
+    return false;
+  }
+
   override async doExecute(editor: TextEditor) {
     // determine the selected lines
     const selection = editor.document.getText(
@@ -105,5 +127,36 @@ class RunSelectionCommand extends RunCommand implements Command {
       "jupyter.execSelectionInteractive",
       selection
     );
+  }
+}
+
+class RunCellsAboveCommand extends RunCommand implements Command {
+  constructor(engine: MarkdownEngine) {
+    super(engine);
+  }
+  private static readonly id = "quarto.runCellsAbove";
+  public readonly id = RunCellsAboveCommand.id;
+
+  override blockRequired(): boolean {
+    return false;
+  }
+
+  override async doExecute(_editor: TextEditor, tokens: Token[], line: number) {
+    // collect up blocks prior to the active one
+    const code: string[] = [];
+    for (const block of tokens.filter(isExecutableLanguageBlockOf("python"))) {
+      // if the end of this block is past the line then bail
+      if (!block.map || block.map[1] > line) {
+        break;
+      }
+      code.push(block.content);
+    }
+
+    if (code.length > 0) {
+      await commands.executeCommand(
+        "jupyter.execSelectionInteractive",
+        code.join("\n")
+      );
+    }
   }
 }

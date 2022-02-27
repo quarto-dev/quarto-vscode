@@ -56,6 +56,12 @@ export function quartoCellExecuteCodeLensProvider(
                 tooltip: "Execute the currently selected line(s)",
                 command: "quarto.runLines",
               }),
+              new CodeLens(range, {
+                title: "Run Above",
+                tooltip: "Execute the cells above this cell",
+                command: "quarto.runCellsAbove",
+                arguments: [block.map[0] + 1],
+              }),
             ]
           );
         }

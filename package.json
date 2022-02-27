@@ -130,6 +130,11 @@
         "command": "quarto.runLines",
         "title": "Run Selected Line(s)",
         "category": "Quarto"
+      },
+      {
+        "command": "quarto.runCellsAbove",
+        "title": "Run Cells Above",
+        "category": "Quarto"
       }
     ],
     "keybindings": [
@@ -146,7 +151,7 @@
         "when": "editorTextFocus && editorLangId == 'quarto'"
       },
       {
-        "command": "quarto.runAboveCells",
+        "command": "quarto.runCellsAbove",
         "key": "Ctrl+alt+p",
         "mac": "cmd+alt+p",
         "when": "editorTextFocus && editorLangId == 'quarto'"

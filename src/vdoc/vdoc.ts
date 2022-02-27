@@ -73,14 +73,21 @@ export async function virtualDocUri(virtualDoc: VirtualDoc, parentUri: Uri) {
     : await virtualDocUriFromTempFile(virtualDoc);
 }
 
-export function languageBlockAtPosition(tokens: Token[], position: Position) {
+export function languageBlockAtPosition(
+  tokens: Token[],
+  position: Position,
+  includeFence = false
+) {
   for (const languageBlock of tokens.filter(isExecutableLanguageBlock)) {
-    if (
-      languageBlock.map &&
-      position.line > languageBlock.map[0] &&
-      position.line <= languageBlock.map[1]
-    ) {
-      return languageBlock;
+    if (languageBlock.map) {
+      let [begin, end] = languageBlock.map;
+      if (includeFence) {
+        begin--;
+        end++;
+      }
+      if (position.line > begin && position.line < end - 1) {
+        return languageBlock;
+      }
     }
   }
   return undefined;
