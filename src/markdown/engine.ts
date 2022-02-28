@@ -43,8 +43,22 @@ export class MarkdownEngine {
   private async getEngine(): Promise<MarkdownIt> {
     if (!this.md) {
       const markdownIt = await import("markdown-it");
-      const md = markdownIt.default("commonmark");
+      const md = markdownIt.default("zero");
       this.md = md.use(katex, { globalGroup: true });
+      // tokenize blocks only
+      this.md.enable([
+        "blockquote",
+        "code",
+        "fence",
+        "heading",
+        "html_block",
+        "list",
+        "paragraph",
+        // exclude some blocks we don't care about
+        // "hr",
+        // "lheading",
+        // "reference",
+      ]);
     }
     return this.md;
   }
@@ -59,6 +73,7 @@ export class MarkdownEngine {
     }
 
     const tokens = this.tokenizeString(document.getText(), engine);
+    console.log(tokens);
     this._tokenCache.update(document, tokens);
     return tokens;
   }
