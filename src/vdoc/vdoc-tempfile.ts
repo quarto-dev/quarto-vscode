@@ -25,14 +25,16 @@ const languageVirtualDocs = new Map<String, TextDocument>();
 export async function virtualDocUriFromTempFile(virtualDoc: VirtualDoc) {
   // do we have an existing document?
   const langVdoc = languageVirtualDocs.get(virtualDoc.language.extension);
-  if (langVdoc) {
+  if (langVdoc && !langVdoc.isClosed) {
     // some lsps require re-use of the vdoc (or else they exit)
     if (virtualDoc.language.reuseVdoc) {
-      const wholeDocRange = getWholeRange(langVdoc);
-      const edit = new WorkspaceEdit();
-      edit.replace(langVdoc.uri, wholeDocRange, virtualDoc.content);
-      await workspace.applyEdit(edit);
-      await langVdoc.save();
+      if (langVdoc.getText() !== virtualDoc.content) {
+        const wholeDocRange = getWholeRange(langVdoc);
+        const edit = new WorkspaceEdit();
+        edit.replace(langVdoc.uri, wholeDocRange, virtualDoc.content);
+        await workspace.applyEdit(edit);
+        await langVdoc.save();
+      }
       return langVdoc.uri;
     } else if (langVdoc.getText() === virtualDoc.content) {
       // if its content is identical to what's passed in then just return it
