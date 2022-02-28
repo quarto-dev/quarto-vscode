@@ -30,7 +30,16 @@ export async function onCompletion(
   quarto?: Quarto
 ): Promise<CompletionItem[] | null> {
   if (quarto) {
+    // get context
     const context = editorContext(doc, pos, explicit);
+
+    // don't ask for completions if there is a ":"
+    // at the end of the line
+    if (context.line.endsWith(":")) {
+      return null;
+    }
+
+    // get completions
     const result = await quarto.getCompletions(context);
     if (result) {
       // if there is one completion and it matches the token

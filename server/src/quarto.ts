@@ -39,7 +39,7 @@ export function editorContext(
   const code = doc.getText();
   const line = doc
     .getText(Range.create(pos.line, 0, pos.line, code.length))
-    .trimEnd();
+    .replace(/[\r\n]+$/, "");
   const position = { row: pos.line, column: pos.character };
   return {
     path,
