@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.1 (Release on 28 February 2023)
+
+- Improved embedded completions for R (keep R LSP alive across requests)
+
 ## 1.5.0 (Release on 27 February 2022)
 
 - Code completion and diagnostics for YAML front matter and cell options
