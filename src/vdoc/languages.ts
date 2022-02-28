@@ -9,6 +9,7 @@ export interface EmbeddedLanguage {
   type: "content" | "tempfile";
   trigger?: string[];
   inject?: string;
+  reuseVdoc?: boolean;
 }
 
 export function embeddedLanguage(langauge: string) {
@@ -22,7 +23,7 @@ const kEmbededLanguages = [
     inject: "# type: ignore",
     trigger: ["."],
   }),
-  defineLanguage("r", { trigger: ["$", "@", ":", "."] }),
+  defineLanguage("r", { trigger: ["$", "@", ":", "."], reuseVdoc: true }),
   defineLanguage("julia", { ext: "jl", trigger: ["."] }),
   defineLanguage(["tex", "latex"], { trigger: ["\\"] }),
   defineLanguage("sql", { trigger: ["."] }),
@@ -53,12 +54,13 @@ interface LanguageOptions {
   type?: "content" | "tempfile";
   trigger?: string[];
   inject?: string;
+  reuseVdoc?: boolean;
 }
 
 function defineLanguage(
   language: string | string[],
   options?: LanguageOptions
-) {
+): EmbeddedLanguage {
   language = Array.isArray(language) ? language : [language];
   return {
     ids: language,
@@ -66,5 +68,6 @@ function defineLanguage(
     type: options?.type || "tempfile",
     trigger: options?.trigger,
     inject: options?.inject,
+    reuseVdoc: options?.reuseVdoc,
   };
 }

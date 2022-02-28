@@ -15,6 +15,7 @@ import {
   Uri,
   workspace,
   WorkspaceEdit,
+  Range,
 } from "vscode";
 import { VirtualDoc } from "./vdoc";
 
@@ -25,7 +26,15 @@ export async function virtualDocUriFromTempFile(virtualDoc: VirtualDoc) {
   // do we have an existing document?
   const langVdoc = languageVirtualDocs.get(virtualDoc.language.extension);
   if (langVdoc) {
-    if (langVdoc.getText() === virtualDoc.content) {
+    // some lsps require re-use of the vdoc (or else they exit)
+    if (virtualDoc.language.reuseVdoc) {
+      const wholeDocRange = getWholeRange(langVdoc);
+      const edit = new WorkspaceEdit();
+      edit.replace(langVdoc.uri, wholeDocRange, virtualDoc.content);
+      await workspace.applyEdit(edit);
+      await langVdoc.save();
+      return langVdoc.uri;
+    } else if (langVdoc.getText() === virtualDoc.content) {
       // if its content is identical to what's passed in then just return it
       return langVdoc.uri;
     } else {
@@ -87,4 +96,10 @@ function createVirtualDocTempFile(virtualDoc: VirtualDoc) {
   fs.writeFileSync(tmpPath, virtualDoc.content);
 
   return tmpPath;
+}
+
+function getWholeRange(doc: TextDocument) {
+  const begin = new Position(0, 0);
+  const end = doc.lineAt(doc.lineCount - 1).range.end;
+  return new Range(begin, end);
 }
