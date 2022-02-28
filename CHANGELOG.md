@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.5.1 (Release on 28 February 2023)
+## 1.5.2 (Release on 28 February 2023)
 
 - Improved embedded completions for R (keep R LSP alive across requests)
 
