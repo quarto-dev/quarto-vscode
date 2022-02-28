@@ -51,9 +51,10 @@ export async function onCompletion(
         };
         // strip tags from description
         if (completion.description) {
-          item.documentation = completion.description.replace(
-            /(<([^>]+)>)/gi,
-            ""
+          item.documentation = decodeEntities(
+            completion.description
+              .replace(/(<([^>]+)>)/gi, "")
+              .replace(/\n/g, " ")
           );
         }
         if (
@@ -88,4 +89,23 @@ export async function onCompletion(
   } else {
     return null;
   }
+}
+
+function decodeEntities(encodedString: string) {
+  var translate_re = /&(nbsp|amp|quot|lt|gt);/g;
+  var translate: Record<string, string> = {
+    nbsp: " ",
+    amp: "&",
+    quot: '"',
+    lt: "<",
+    gt: ">",
+  };
+  return encodedString
+    .replace(translate_re, function (_match, entity: string) {
+      return translate[entity];
+    })
+    .replace(/&#(\d+);/gi, function (_match, numStr) {
+      var num = parseInt(numStr, 10);
+      return String.fromCharCode(num);
+    });
 }
