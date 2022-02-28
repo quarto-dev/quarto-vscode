@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.3 (Unreleased)
+
+- Execute R code cells using vscode-R extension
+
 ## 1.5.2 (Release on 28 February 2023)
 
 - Improved embedded completions for R (keep R LSP alive across requests)
