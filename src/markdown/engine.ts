@@ -73,7 +73,6 @@ export class MarkdownEngine {
     }
 
     const tokens = this.tokenizeString(document.getText(), engine);
-    console.log(tokens);
     this._tokenCache.update(document, tokens);
     return tokens;
   }
