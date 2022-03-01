@@ -21,6 +21,10 @@ import {
   validateRequiredExtension,
 } from "./executors";
 
+// run cell
+// run next
+// run above
+
 export function quartoCellExecuteCodeLensProvider(
   engine: MarkdownEngine
 ): CodeLensProvider {
@@ -32,12 +36,14 @@ export function quartoCellExecuteCodeLensProvider(
       const lenses: CodeLens[] = [];
       const tokens = engine.parseSync(document);
       const langauges: string[] = [];
-      for (const block of tokens.filter(blockHasExecutor)) {
+      const executableBlocks = tokens.filter(blockHasExecutor);
+      for (let i = 0; i < executableBlocks.length; i++) {
         // respect cancellation request
         if (token.isCancellationRequested) {
           return [];
         }
-        // create
+
+        const block = executableBlocks[i];
         if (block.map) {
           // detect the language and see if it requires an extension
           const language = languageNameFromBlock(block);
@@ -61,18 +67,23 @@ export function quartoCellExecuteCodeLensProvider(
                 command: "quarto.runCurrentCell",
                 arguments: [block.map[0] + 1],
               }),
-              new CodeLens(range, {
-                title: "Run Lines",
-                tooltip: "Execute the currently selected line(s)",
-                command: "quarto.runLines",
-              }),
             ]
           );
-          if (langauges.includes(language)) {
+          if (i < executableBlocks.length - 1) {
+            lenses.push(
+              new CodeLens(range, {
+                title: "Run Next Cell",
+                tooltip: "Execute the next code cell",
+                command: "quarto.runNextCell",
+                arguments: [block.map[0] + 1],
+              })
+            );
+          }
+          if (i > 0) {
             lenses.push(
               new CodeLens(range, {
                 title: "Run Above",
-                tooltip: "Execute the cells above this cell",
+                tooltip: "Execute the cells above this one",
                 command: "quarto.runCellsAbove",
                 arguments: [block.map[0] + 1],
               })

@@ -122,38 +122,92 @@
     ],
     "commands": [
       {
+        "command": "quarto.runSelection",
+        "title": "Run Selected Line(s)",
+        "category": "Quarto"
+      },
+      {
         "command": "quarto.runCurrentCell",
         "title": "Run Current Cell",
         "category": "Quarto"
       },
       {
-        "command": "quarto.runLines",
-        "title": "Run Selected Line(s)",
+        "command": "quarto.runPreviousCell",
+        "title": "Run Previous Cell",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.runNextCell",
+        "title": "Run Next Cell",
         "category": "Quarto"
       },
       {
         "command": "quarto.runCellsAbove",
         "title": "Run Cells Above",
         "category": "Quarto"
+      },
+      {
+        "command": "quarto.runCellsBelow",
+        "title": "Run Cells Below",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.runAllCells",
+        "title": "Run All Cells",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.goToNextCell",
+        "title": "Go to Next Cell",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.goToPreviousCell",
+        "title": "Go to Previous Cell",
+        "category": "Quarto"
       }
     ],
     "keybindings": [
       {
-        "command": "quarto.runLines",
-        "key": "Ctrl+enter",
+        "command": "quarto.runSelection",
+        "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       },
       {
         "command": "quarto.runCurrentCell",
-        "key": "Ctrl+shift+enter",
+        "key": "ctrl+shift+enter",
         "mac": "cmd+shift+enter",
         "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       },
       {
-        "command": "quarto.runCellsAbove",
-        "key": "Ctrl+alt+p",
+        "command": "quarto.runPreviousCell",
+        "key": "ctrl+alt+p",
         "mac": "cmd+alt+p",
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+      },
+      {
+        "command": "quarto.runNextCell",
+        "key": "ctrl+alt+n",
+        "mac": "cmd+alt+n",
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+      },
+      {
+        "command": "quarto.runCellsBelow",
+        "key": "ctrl+shift+alt+n",
+        "mac": "cmd+shift+alt+n",
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+      },
+      {
+        "command": "quarto.runCellsAbove",
+        "key": "ctrl+shift+alt+p",
+        "mac": "cmd+shift+alt+p",
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+      },
+      {
+        "command": "quarto.runAllCells",
+        "key": "ctrl+alt+r",
+        "mac": "cmd+alt+r",
         "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       }
     ],
