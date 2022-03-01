@@ -19,7 +19,10 @@ import {
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { isQuartoDoc, isQuartoYaml } from "./doc";
-import { kCompletionCapabilities, onCompletion } from "./providers/completion";
+import {
+  kCompletionCapabilities,
+  onCompletion,
+} from "./providers/completion/completion";
 import { kHoverCapabilities, onHover } from "./providers/hover";
 import { kSignatureCapabilities, onSignatureHelp } from "./providers/signature";
 import { provideDiagnostics } from "./providers/diagnostics";
