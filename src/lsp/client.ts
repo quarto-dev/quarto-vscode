@@ -170,7 +170,9 @@ function embeddedHoverProvider(engine: MarkdownEngine) {
         if (!hover) {
           return undefined;
         } else {
-          return hover[0];
+          // reutrn the last hover (arbitrary, but it seems like the
+          // LSP results are returned second)
+          return hover[hover.length - 1];
         }
       } catch (error) {
         return undefined;
