@@ -52,6 +52,7 @@ export function editorContext(
     formats: [],
     project_formats: [],
     engine: "jupyter",
+    client: "lsp",
   };
 }
 
