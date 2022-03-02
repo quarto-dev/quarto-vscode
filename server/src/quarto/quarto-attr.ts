@@ -60,11 +60,12 @@ export function initializeAttrCompletionProvider(resourcesPath: string) {
       fs.readFileSync(attrYamlPath, "utf-8")
     ) as AttrGroup[];
     for (const group of attrGroups) {
+      const filter = group.filter ? new RegExp(group.filter) : undefined;
       group.completions.forEach((completion) => {
         attrs.push({
           contexts: group.contexts,
           formats: group.formats || [],
-          filter: group.filter,
+          filter,
           ...completion,
         });
       });
@@ -79,7 +80,21 @@ export function initializeAttrCompletionProvider(resourcesPath: string) {
   ): Promise<CompletionItem[]> => {
     const completions: CompletionItem[] = attrs
       .filter((attr) => {
-        return attr.value.startsWith(token.token);
+        if (attr.filter && !token.attr.match(attr.filter)) {
+          // check filter
+          return false;
+        } else if (
+          attr.formats.length > 0 &&
+          !attr.formats.some((format) => token.formats.includes(format))
+        ) {
+          // check formats
+          return false;
+        } else if (!attr.contexts.includes(token.context)) {
+          // check context
+          return false;
+        } else {
+          return attr.value.startsWith(token.token);
+        }
       })
       .map((attr) => {
         const edit = TextEdit.replace(
