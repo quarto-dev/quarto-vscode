@@ -4,15 +4,15 @@ import {
   Range,
   TextEdit,
 } from "vscode-languageserver/node";
-import { EditorContext } from "../../quarto";
-
-interface AttrToken {
-  type: "heading" | "div" | "div-simple" | "codeblock" | "figure";
-  attr: string;
-  token: string;
-}
+import { EditorContext, quarto } from "../../quarto/quarto";
+import { AttrToken } from "../../quarto/quarto-attr";
 
 export async function attrCompletions(context: EditorContext) {
+  // bail if no quarto connection
+  if (!quarto) {
+    return null;
+  }
+
   // validate trigger
   if (context.trigger && !["-", "="].includes(context.trigger)) {
     return null;
@@ -32,7 +32,7 @@ export async function attrCompletions(context: EditorContext) {
   token =
     token || blockCompletionToken(context) || figureCompletionToken(context);
   if (token) {
-    return resolveCompletions(token, context);
+    return quarto.getAttrCompletions(token, context);
   } else {
     return null;
   }
@@ -50,7 +50,7 @@ function resolveCompletions(
     ".callout-caution",
     ".callout-warning",
   ];
-  if (token.type === "div") {
+  if (token.context === "div") {
     return kDivCompletions
       .filter(
         (completion) =>
@@ -97,7 +97,8 @@ function simpleDivToken(context: EditorContext): AttrToken | undefined {
   if (context.line.slice(context.position.column).trim() === "") {
     if (match) {
       return {
-        type: "div-simple",
+        formats: [],
+        context: "div-simple",
         attr: match[2],
         token: match[2],
       };
@@ -136,7 +137,7 @@ function matchCompletionToken(
 
         // return scope & token
         return {
-          type: type(match[2]),
+          context: type(match[2]),
           attr: match[3],
           token,
         } as AttrToken;

@@ -11,7 +11,7 @@ import {
   CompletionTriggerKind,
   ServerCapabilities,
 } from "vscode-languageserver/node";
-import { editorContext, Quarto } from "../../quarto";
+import { editorContext, Quarto } from "../../quarto/quarto";
 import { attrCompletions } from "./completion-attrs";
 import { yamlCompletions } from "./completion-yaml";
 
@@ -27,19 +27,13 @@ export const kCompletionCapabilities: ServerCapabilities = {
 export async function onCompletion(
   doc: TextDocument,
   pos: Position,
-  completionContext?: CompletionContext,
-  quarto?: Quarto
+  completionContext?: CompletionContext
 ): Promise<CompletionItem[] | null> {
-  if (quarto) {
-    const explicit =
-      completionContext?.triggerKind === CompletionTriggerKind.TriggerCharacter;
-    const trigger = completionContext?.triggerCharacter;
-    const context = editorContext(doc, pos, explicit, trigger);
-    return (
-      (await attrCompletions(context)) ||
-      (await yamlCompletions(context, quarto))
-    );
-  } else {
-    return null;
-  }
+  const explicit =
+    completionContext?.triggerKind === CompletionTriggerKind.TriggerCharacter;
+  const trigger = completionContext?.triggerCharacter;
+  const context = editorContext(doc, pos, explicit, trigger);
+  return (
+    (await attrCompletions(context)) || (await yamlCompletions(context)) || null
+  );
 }

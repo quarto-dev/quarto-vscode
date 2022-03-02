@@ -3,12 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import * as child_process from "child_process";
-import * as path from "path";
-import fileUrl from "file-url";
-
 import {
-  CompletionTriggerKind,
   createConnection,
   Diagnostic,
   InitializeParams,
@@ -27,20 +22,10 @@ import { kHoverCapabilities, onHover } from "./providers/hover";
 import { kSignatureCapabilities, onSignatureHelp } from "./providers/signature";
 import { provideDiagnostics } from "./providers/diagnostics";
 
-import { Quarto } from "./quarto";
+import { initializeQuarto } from "./quarto/quarto";
 
-// import quarto
-let quarto: Quarto | undefined;
-let paths = child_process.execSync("quarto --paths", { encoding: "utf-8" });
-const resources = (paths as unknown as string).split(/\r?\n/)[1];
-const modulePath = path.join(resources, "editor", "tools", "vs-code.mjs");
-import(fileUrl(modulePath))
-  .then((mod) => {
-    quarto = mod as Quarto;
-  })
-  .catch((error) => {
-    // no vscode quarto available
-  });
+// initialize connection to quarto
+initializeQuarto();
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
@@ -77,8 +62,7 @@ connection.onCompletion(async (textDocumentPosition, _token) => {
     return await onCompletion(
       doc,
       textDocumentPosition.position,
-      textDocumentPosition.context,
-      quarto
+      textDocumentPosition.context
     );
   } else {
     return null;
@@ -88,7 +72,7 @@ connection.onCompletion(async (textDocumentPosition, _token) => {
 connection.onHover(async (textDocumentPosition, _token) => {
   const doc = resolveDoc(textDocumentPosition.textDocument);
   if (doc) {
-    return await onHover(doc, textDocumentPosition.position, quarto);
+    return await onHover(doc, textDocumentPosition.position);
   } else {
     return null;
   }
@@ -97,7 +81,7 @@ connection.onHover(async (textDocumentPosition, _token) => {
 connection.onSignatureHelp(async (textDocumentPosition, _token) => {
   const doc = resolveDoc(textDocumentPosition.textDocument);
   if (doc) {
-    return await onSignatureHelp(doc, textDocumentPosition.position, quarto);
+    return await onSignatureHelp(doc, textDocumentPosition.position);
   } else {
     return null;
   }
@@ -105,10 +89,10 @@ connection.onSignatureHelp(async (textDocumentPosition, _token) => {
 
 // diagnostics on open and save (clear on doc modified)
 documents.onDidOpen(async (e) => {
-  sendDiagnostics(e.document, await provideDiagnostics(e.document, quarto));
+  sendDiagnostics(e.document, await provideDiagnostics(e.document));
 });
 documents.onDidSave(async (e) => {
-  sendDiagnostics(e.document, await provideDiagnostics(e.document, quarto));
+  sendDiagnostics(e.document, await provideDiagnostics(e.document));
 });
 documents.onDidChangeContent(async (e) => {
   sendDiagnostics(e.document, []);

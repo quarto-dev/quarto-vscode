@@ -17,17 +17,21 @@ import {
   kStartColumn,
   kStartRow,
   LintItem,
-  Quarto,
-} from "../quarto";
+  quarto,
+} from "../quarto/quarto";
 
 export async function provideDiagnostics(
-  doc: TextDocument,
-  quarto?: Quarto
+  doc: TextDocument
 ): Promise<Diagnostic[]> {
+  // bail if no quarto connection
+  if (!quarto) {
+    return [];
+  }
+
   if (quarto) {
     const context = editorContext(doc, Position.create(0, 0), true);
-    const lint = await quarto.getLint(context);
-    return lint.map((item) => {
+    const diagnostics = await quarto.getYamlDiagnostics(context);
+    return diagnostics.map((item) => {
       return {
         severity: lintSeverity(item),
         range: Range.create(

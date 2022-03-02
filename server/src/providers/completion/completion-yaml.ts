@@ -11,16 +11,21 @@ import {
   CompletionItemKind,
 } from "vscode-languageserver/node";
 
-import { EditorContext, Quarto } from "../../quarto";
+import { EditorContext, quarto } from "../../quarto/quarto";
 
-export async function yamlCompletions(context: EditorContext, quarto: Quarto) {
+export async function yamlCompletions(context: EditorContext) {
+  // bail if no quarto connection
+  if (!quarto) {
+    return null;
+  }
+
   // validate trigger
   if (context.trigger && !["-"].includes(context.trigger)) {
     return null;
   }
 
   // get completions
-  const result = await quarto.getCompletions(context);
+  const result = await quarto.getYamlCompletions(context);
   if (result) {
     // if there is one completion and it matches the token
     // then don't return it

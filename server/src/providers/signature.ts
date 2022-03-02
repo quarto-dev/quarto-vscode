@@ -5,7 +5,6 @@
 
 import { Position, TextDocument } from "vscode-languageserver-textdocument";
 import { ServerCapabilities, SignatureHelp } from "vscode-languageserver/node";
-import { Quarto } from "../quarto";
 
 export const kSignatureCapabilities: ServerCapabilities = {
   signatureHelpProvider: {
@@ -18,8 +17,7 @@ export const kSignatureCapabilities: ServerCapabilities = {
 
 export async function onSignatureHelp(
   doc: TextDocument,
-  pos: Position,
-  quarto?: Quarto
+  pos: Position
 ): Promise<SignatureHelp | null> {
   return null;
 }
