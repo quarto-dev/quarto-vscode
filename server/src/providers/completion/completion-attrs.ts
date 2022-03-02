@@ -90,7 +90,7 @@ function blockCompletionToken(context: EditorContext): AttrToken | undefined {
   });
 }
 
-const kSimpleDivRegex = /(^[\t >]*(?:\:{3,})\s+)(\w+)\s*$/;
+const kSimpleDivRegex = /(^[\t >]*(?:\:{3,})\s+)([\w-]+)\s*$/;
 function simpleDivToken(context: EditorContext): AttrToken | undefined {
   const match = context.line.match(kSimpleDivRegex);
   // if we are at the end then return a token
