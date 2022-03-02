@@ -15,6 +15,12 @@ import {
 } from "vscode-languageserver/node";
 import { EditorContext } from "./quarto-yaml";
 
+export const kContextHeading = "heading";
+export const kContextDiv = "div";
+export const kContextDivSimple = "div-simple";
+export const kContextCodeblock = "codeblock";
+export const kContextFigure = "figure";
+
 export type AttrContext =
   | "heading"
   | "div"
@@ -78,6 +84,9 @@ export function initializeAttrCompletionProvider(resourcesPath: string) {
     token: AttrToken,
     context: EditorContext
   ): Promise<CompletionItem[]> => {
+    const simpleDiv = token.context === kContextDivSimple;
+    token.context =
+      token.context === kContextDivSimple ? kContextDiv : token.context;
     const completions: CompletionItem[] = attrs
       .filter((attr) => {
         if (attr.filter && !token.attr.match(attr.filter)) {
@@ -93,10 +102,13 @@ export function initializeAttrCompletionProvider(resourcesPath: string) {
           // check context
           return false;
         } else {
-          return attr.value.startsWith(token.token);
+          const value = normalizedValue(attr.value, simpleDiv);
+          return value.startsWith(token.token);
         }
       })
       .map((attr) => {
+        // remove leading . if this is a simple div
+        const value = normalizedValue(attr.value, simpleDiv);
         const edit = TextEdit.replace(
           Range.create(
             context.position.row,
@@ -104,10 +116,10 @@ export function initializeAttrCompletionProvider(resourcesPath: string) {
             context.position.row,
             context.position.column
           ),
-          attr.value
+          value
         );
         return {
-          label: attr.value,
+          label: value,
           kind: CompletionItemKind.Field,
           documentation: attr.doc,
           textEdit: edit,
@@ -116,4 +128,8 @@ export function initializeAttrCompletionProvider(resourcesPath: string) {
 
     return completions;
   };
+}
+
+function normalizedValue(value: string, simpleDiv: boolean) {
+  return simpleDiv && value.startsWith(".") ? value.slice(1) : value;
 }
