@@ -19,15 +19,18 @@ export interface EditorContext {
     column: number;
   };
   explicit: boolean;
+  trigger?: string;
   formats: string[];
   project_formats: string[];
   engine: string;
+  client: string;
 }
 
 export function editorContext(
   doc: TextDocument,
   pos: Position,
-  explicit: boolean
+  explicit: boolean,
+  trigger?: string
 ) {
   const path = new URL(doc.uri).pathname;
   const filetype = isQuartoDoc(doc)
@@ -49,6 +52,7 @@ export function editorContext(
     code,
     position,
     explicit,
+    trigger,
     formats: [],
     project_formats: [],
     engine: "jupyter",

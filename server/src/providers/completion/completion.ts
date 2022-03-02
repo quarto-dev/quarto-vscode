@@ -5,7 +5,12 @@
 
 import { Position, TextDocument } from "vscode-languageserver-textdocument";
 
-import { CompletionItem, ServerCapabilities } from "vscode-languageserver/node";
+import {
+  CompletionContext,
+  CompletionItem,
+  CompletionTriggerKind,
+  ServerCapabilities,
+} from "vscode-languageserver/node";
 import { editorContext, Quarto } from "../../quarto";
 import { attrCompletions } from "./completion-attrs";
 import { yamlCompletions } from "./completion-yaml";
@@ -15,18 +20,21 @@ export const kCompletionCapabilities: ServerCapabilities = {
     resolveProvider: false,
     // register a superset of all trigger characters for embedded languages
     // (languages are responsible for declaring which one they support if any)
-    triggerCharacters: [".", "$", "@", ":", "\\", "-"],
+    triggerCharacters: [".", "$", "@", ":", "\\", "-", "="],
   },
 };
 
 export async function onCompletion(
   doc: TextDocument,
   pos: Position,
-  explicit: boolean,
+  completionContext?: CompletionContext,
   quarto?: Quarto
 ): Promise<CompletionItem[] | null> {
   if (quarto) {
-    const context = editorContext(doc, pos, explicit);
+    const explicit =
+      completionContext?.triggerKind === CompletionTriggerKind.TriggerCharacter;
+    const trigger = completionContext?.triggerCharacter;
+    const context = editorContext(doc, pos, explicit, trigger);
     return (
       (await attrCompletions(context)) ||
       (await yamlCompletions(context, quarto))

@@ -73,13 +73,11 @@ connection.onInitialize((_params: InitializeParams) => {
 
 connection.onCompletion(async (textDocumentPosition, _token) => {
   const doc = resolveDoc(textDocumentPosition.textDocument);
-  const explicit =
-    textDocumentPosition.context?.triggerKind === CompletionTriggerKind.Invoked;
   if (doc) {
     return await onCompletion(
       doc,
       textDocumentPosition.position,
-      explicit,
+      textDocumentPosition.context,
       quarto
     );
   } else {

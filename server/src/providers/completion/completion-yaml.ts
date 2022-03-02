@@ -14,9 +14,8 @@ import {
 import { EditorContext, Quarto } from "../../quarto";
 
 export async function yamlCompletions(context: EditorContext, quarto: Quarto) {
-  // don't ask for completions if there is a ":"
-  // at the end of the line
-  if (context.line.endsWith(":")) {
+  // validate trigger
+  if (context.trigger && !["-"].includes(context.trigger)) {
     return null;
   }
 
