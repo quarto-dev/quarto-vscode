@@ -16,6 +16,18 @@
       "port": 6009,
       "restart": true,
       "outFiles": ["${workspaceRoot}/server/out/**/*.js"]
+    },
+    {
+      "type": "pwa-extensionHost",
+      "name": "Run Web Extension in VS Code",
+      "debugWebWorkerHost": true,
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionDevelopmentKind=web"
+      ],
+      "outFiles": ["${workspaceFolder}/dist/web/**/*.js"],
+      "preLaunchTask": "npm: watch-web"
     }
   ]
 }

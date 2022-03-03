@@ -1,10 +1,13 @@
 # Changelog
 
-## 1.5.3 (Unreleased)
+## 1.6.0 (Release on 3 March 2022)
 
-- Execute R code cells using vscode-R extension
+- Completion for Quarto markdown classes and attributes
+- Commands and keyboard shortcuts for cell execution and navigation
+- Improved markdown parsing performance
+- VS code for the web compatibility (synatx highlighting and snippets)
 
-## 1.5.2 (Release on 28 February 2023)
+## 1.5.2 (Release on 28 February 2022)
 
 - Improved embedded completions for R (keep R LSP alive across requests)
 

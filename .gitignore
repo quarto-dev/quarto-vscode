@@ -3,6 +3,7 @@ npm-debug.log
 Thumbs.db
 node_modules/
 .build/
+dist/
 out/
 out-build/
 out-editor/
@@ -15,4 +16,5 @@ coverage/
 test_data/
 yarn-error.log
 .vscode-test
+.vscode-test-web
 
