@@ -6,7 +6,8 @@ patterns:
 repository:
   block:
     patterns:
-    - {include: '#math_block'}
+    - {include: '#double_dollar_math_block'}
+    - {include: '#single_dollar_math_block'}
     - {include: '#div'}
     - {include: '#separator'}
     - {include: '#heading'}
@@ -235,7 +236,9 @@ repository:
     - {include: '#italic'}
     - {include: '#reference'}
     - {include: '#shortcode'}
-    - {include: '#math_inline'}
+    - {include: '#math_inline_double'}
+    - {include: '#math_inline_single'}
+    - {include: '#math_inline_block'}
     - {include: '#raw'}
     - {include: '#strikethrough'}
     - {include: '#escape'}
@@ -515,7 +518,7 @@ repository:
       '3': {name: punctuation.definition.strikethrough.quarto}
     match: (~+)((?:[^~]|(?!(?<!~)\1(?!~))~)*+)(\1)
     name: markup.strikethrough.quarto
-  math_inline:
+  math_inline_single:
     name: markup.math.inline.quarto
     match: '(?<=\s|\W|^)(?<!\$)(\$)(.+?)(\$)(?!\$)(?=\s|\W|$)'
     captures:
@@ -527,7 +530,32 @@ repository:
           - {include: 'text.html.markdown.math#math'}
       '3':
         name: keyword.control.import.math.end.quarto
-  math_block:
+  math_inline_double:
+    name: markup.math.inline.quarto
+    match: '(?<=\s|\W|^)(?<!\$)(\$\$)(.+?)(\$\$)(?!\$)(?=\s|\W|$)'
+    captures:
+        '1':
+            name: keyword.control.import.math.begin.quarto
+        '2':
+            name: meta.embedded.math.markdown
+            patterns:
+                - {include: 'text.html.markdown.math#math'}
+        '3':
+            name: keyword.control.import.math.end.quarto
+  math_inline_block:
+    name: markup.math.inline.quarto
+    contentName: meta.embedded.math.quarto
+    begin: '(?<=\s|^)(\${2})'
+    beginCaptures:
+      '2':
+        name: keyword.control.import.math.begin.quarto
+    end: '(\${2})(?=\s|$)'
+    endCaptures:
+      '2':
+        name: keyword.control.import.math.end.quarto
+    patterns:
+        - {include: 'text.html.markdown.math#math'}
+  double_dollar_math_block:
     name: markup.math.block.quarto
     contentName: meta.embedded.math.quarto
     begin: '(?<=^\s*)(\${2})(?![^$]*\${2})'
@@ -547,5 +575,25 @@ repository:
         while: '(^|\G)(?!.*(\${2}))'
         patterns:
           - {include: 'text.html.markdown.math#math'}
+  single_dollar_math_block:
+    name: markup.math.block.quarto
+    contentName: meta.embedded.math.markdown
+    begin: '(?<=^\s*)(\$)(?![^$]*\$|\d)'
+    beginCaptures:
+        '1':
+            name: keyword.control.import.math.begin.quarto
+    end: '(.*)(\${1})'
+    endCaptures:
+        '1':
+            name: meta.embedded.math.quarto
+            patterns:
+                - {include: 'text.html.markdown.math#math'}
+        '2':
+            name:  keyword.control.import.math.end.quarto
+    patterns:
+        - begin: (^|\G)
+          while: '(^|\G)(?!.*(\${1}))'
+          patterns:
+            - {include: 'text.html.markdown.math#math'}
 scopeName: text.html.quarto
 uuid: 4EDF8B97-6B11-4D2F-8157-6860113420AD
