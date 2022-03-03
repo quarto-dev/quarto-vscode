@@ -8,7 +8,7 @@ import * as child_process from "child_process";
 
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { Position, Range, CompletionItem } from "vscode-languageserver-types";
-import { isQuartoDoc, isQuartoYaml } from "../doc";
+import { isQuartoDoc, isQuartoRevealDoc, isQuartoYaml } from "../core/doc";
 import { initializeAttrCompletionProvider, AttrToken } from "./quarto-attr";
 import { initializeQuartoYamlModule, QuartoYamlModule } from "./quarto-yaml";
 
@@ -48,6 +48,13 @@ export function editorContext(
     .getText(Range.create(pos.line, 0, pos.line, code.length))
     .replace(/[\r\n]+$/, "");
   const position = { row: pos.line, column: pos.character };
+
+  // detect reveal document
+  const formats: string[] = [];
+  if (isQuartoRevealDoc(doc)) {
+    formats.push("revealjs");
+  }
+
   return {
     path,
     filetype,
@@ -57,7 +64,7 @@ export function editorContext(
     position,
     explicit,
     trigger,
-    formats: [],
+    formats,
     project_formats: [],
     engine: "jupyter",
     client: "lsp",

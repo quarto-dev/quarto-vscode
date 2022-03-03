@@ -6,9 +6,6 @@
 import { URL } from "url";
 import * as path from "path";
 
-import { TextDocument } from "vscode-languageserver-textdocument";
-import { Position, Range } from "vscode-languageserver-types";
-import { isQuartoDoc, isQuartoYaml } from "../doc";
 import fileUrl from "file-url";
 
 export interface EditorContext {
@@ -77,38 +74,4 @@ export function initializeQuartoYamlModule(
         reject(error);
       });
   });
-}
-
-export function yamlEditorContext(
-  doc: TextDocument,
-  pos: Position,
-  explicit: boolean,
-  trigger?: string
-) {
-  const path = new URL(doc.uri).pathname;
-  const filetype = isQuartoDoc(doc)
-    ? "markdown"
-    : isQuartoYaml(doc)
-    ? "yaml"
-    : "markdown"; // should never get here
-  const embedded = false;
-  const code = doc.getText();
-  const line = doc
-    .getText(Range.create(pos.line, 0, pos.line, code.length))
-    .replace(/[\r\n]+$/, "");
-  const position = { row: pos.line, column: pos.character };
-  return {
-    path,
-    filetype,
-    embedded,
-    line,
-    code,
-    position,
-    explicit,
-    trigger,
-    formats: [],
-    project_formats: [],
-    engine: "jupyter",
-    client: "lsp",
-  };
 }

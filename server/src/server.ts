@@ -13,7 +13,7 @@ import {
   TextDocumentSyncKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { isQuartoDoc, isQuartoYaml } from "./doc";
+import { isQuartoDoc, isQuartoYaml } from "./core/doc";
 import {
   kCompletionCapabilities,
   onCompletion,

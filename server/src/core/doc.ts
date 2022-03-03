@@ -31,3 +31,24 @@ export function isQuartoDoc(doc: TextDocument) {
 export function isQuartoYaml(doc: TextDocument) {
   return doc.languageId === kYamlLanguageId && doc.uri.match(/_quarto\.ya?ml$/);
 }
+
+const kRegExYAML =
+  /(^)(---[ \t]*[\r\n]+(?![ \t]*[\r\n]+)[\W\w]*?[\r\n]+(?:---|\.\.\.))([ \t]*)$/gm;
+
+export function isQuartoRevealDoc(doc: TextDocument) {
+  if (isQuartoDoc(doc)) {
+    const text = doc.getText();
+    if (text) {
+      const match = doc.getText().match(kRegExYAML);
+      if (match) {
+        const yaml = match[0];
+        return (
+          !!yaml.match(/^format\:\s+revealjs\s*$/gm) ||
+          !!yaml.match(/^[ \t]*revealjs\:\s*(default)?\s*$/gm)
+        );
+      }
+    }
+  } else {
+    return false;
+  }
+}
