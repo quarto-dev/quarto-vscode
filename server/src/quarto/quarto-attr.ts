@@ -10,6 +10,8 @@ import * as fs from "fs";
 import {
   CompletionItem,
   CompletionItemKind,
+  InsertTextFormat,
+  MarkupKind,
   Range,
   TextEdit,
 } from "vscode-languageserver/node";
@@ -41,9 +43,11 @@ interface Attr {
   filter?: RegExp;
   value: string;
   doc?: string;
+  sortText?: string;
 }
 
 interface AttrGroup {
+  group: string;
   contexts: AttrContext[];
   formats?: string[];
   filter?: RegExp;
@@ -67,13 +71,15 @@ export function initializeAttrCompletionProvider(resourcesPath: string) {
     ) as AttrGroup[];
     for (const group of attrGroups) {
       const filter = group.filter ? new RegExp(group.filter) : undefined;
-      group.completions.forEach((completion) => {
-        attrs.push({
+      group.completions.forEach((completion, index) => {
+        const attr: Attr = {
           contexts: group.contexts,
           formats: group.formats || [],
           filter,
           ...completion,
-        });
+        };
+        attr.sortText = group.group + "-" + String.fromCharCode(65 + index);
+        attrs.push(attr);
       });
     }
   } catch (error) {
@@ -109,6 +115,10 @@ export function initializeAttrCompletionProvider(resourcesPath: string) {
       .map((attr) => {
         // remove leading . if this is a simple div
         const value = normalizedValue(attr.value, simpleDiv);
+
+        // handle inserting cursor between ending quotes
+        const quotes = value.endsWith('""');
+
         const edit = TextEdit.replace(
           Range.create(
             context.position.row,
@@ -118,12 +128,17 @@ export function initializeAttrCompletionProvider(resourcesPath: string) {
           ),
           value
         );
-        return {
-          label: value,
+        const item: CompletionItem = {
+          label: value.replace("$0", ""),
           kind: CompletionItemKind.Field,
-          documentation: attr.doc,
           textEdit: edit,
+          insertTextFormat: InsertTextFormat.Snippet,
+          sortText: attr.sortText,
         };
+        if (attr.doc) {
+          item.documentation = { kind: MarkupKind.Markdown, value: attr.doc };
+        }
+        return item;
       });
 
     return completions;
