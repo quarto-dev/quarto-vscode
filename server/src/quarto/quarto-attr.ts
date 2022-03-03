@@ -100,7 +100,7 @@ export function initializeAttrCompletionProvider(resourcesPath: string) {
           return false;
         } else if (
           attr.formats.length > 0 &&
-          !attr.formats.some((format) => token.formats.includes(format))
+          !attr.formats.some((format) => context.formats.includes(format))
         ) {
           // check formats
           return false;
@@ -129,7 +129,7 @@ export function initializeAttrCompletionProvider(resourcesPath: string) {
           value
         );
         const item: CompletionItem = {
-          label: value.replace("$0", ""),
+          label: value.replace('="$0"', "").replace("$0", ""),
           kind: CompletionItemKind.Field,
           textEdit: edit,
           insertTextFormat: InsertTextFormat.Snippet,
