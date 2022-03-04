@@ -5,10 +5,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import MarkdownIt = require("markdown-it");
-const katex = require("@iktakahiro/markdown-it-katex");
 import Token = require("markdown-it/lib/token");
 import * as vscode from "vscode";
 import { MarkdownTextDocument } from "./document";
+import { mathPlugin } from "./math";
 
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
@@ -44,7 +44,7 @@ export class MarkdownEngine {
     if (!this.md) {
       const markdownIt = await import("markdown-it");
       const md = markdownIt.default("zero");
-      this.md = md.use(katex, { globalGroup: true });
+      this.md = md.use(mathPlugin);
       // tokenize blocks only
       this.md.enable([
         "blockquote",

@@ -332,7 +332,6 @@
     }
   },
   "dependencies": {
-    "@iktakahiro/markdown-it-katex": "https://github.com/mjbvz/markdown-it-katex.git",
     "lodash.debounce": "^4.0.8",
     "markdown-it": "^12.0.2",
     "tmp": "^0.2.1",
