@@ -91,6 +91,11 @@ export interface CompletionResult {
   cacheable: boolean;
 }
 
+export interface HoverResult {
+  content: string;
+  range: { start: Position; end: Position };
+}
+
 export interface Completion {
   type: string;
   value: string;
@@ -107,6 +112,7 @@ export interface Quarto {
     context: EditorContext
   ): Promise<CompletionItem[]>;
   getYamlDiagnostics(context: EditorContext): Promise<LintItem[]>;
+  getHover(context: EditorContext): Promise<HoverResult | null>;
 }
 
 export let quarto: Quarto | undefined;
@@ -121,6 +127,7 @@ export function initializeQuarto() {
         getYamlCompletions: quartoModule.getCompletions,
         getAttrCompletions: initializeAttrCompletionProvider(resources),
         getYamlDiagnostics: quartoModule.getLint,
+        getHover: quartoModule.getHover,
       };
     })
     .catch((error) => {
