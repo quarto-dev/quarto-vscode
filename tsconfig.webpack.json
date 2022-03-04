@@ -2,10 +2,10 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es2020",
-    "outDir": "dist",
+    "outDir": "out",
     "lib": ["es6", "WebWorker"],
     "sourceMap": true,
-    "rootDir": "web",
+    "rootDir": "browser",
     "strict": true /* enable all strict type-checking options */
     /* Additional Checks */
     // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */

@@ -43,7 +43,7 @@
     "vscode": "^1.55.0"
   },
   "main": "./out/main.js",
-  "browser": "./dist/web/extension.js",
+  "browser": "./out/browser.js",
   "activationEvents": [
     "onLanguage:quarto",
     "workspaceContains:**/_quarto.{yml,yaml}"

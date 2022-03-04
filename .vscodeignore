@@ -4,6 +4,7 @@
 .vscode-test/**
 test/**
 src/**
+browser/**
 visx/**
 node_modules/**
 **/*.map

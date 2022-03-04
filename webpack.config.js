@@ -7,11 +7,11 @@ const webExtensionConfig = {
   mode: "none", // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
   target: "webworker", // extensions run in a webworker context
   entry: {
-    extension: "./web/extension.ts", // source of the web extension main file
+    extension: "./browser/extension.ts", // source of the web extension main file
   },
   output: {
-    filename: "[name].js",
-    path: path.join(__dirname, "./dist/web"),
+    filename: "browser.js",
+    path: path.join(__dirname, "./out"),
     libraryTarget: "commonjs",
     devtoolModuleFilenameTemplate: "../../[resource-path]",
   },
