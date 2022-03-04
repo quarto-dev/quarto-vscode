@@ -112,7 +112,7 @@ export interface Quarto {
     context: EditorContext
   ): Promise<CompletionItem[]>;
   getYamlDiagnostics(context: EditorContext): Promise<LintItem[]>;
-  getHover(context: EditorContext): Promise<HoverResult | null>;
+  getHover?: (context: EditorContext) => Promise<HoverResult | null>;
 }
 
 export let quarto: Quarto | undefined;

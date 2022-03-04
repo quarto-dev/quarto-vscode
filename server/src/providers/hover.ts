@@ -17,7 +17,7 @@ export async function onHover(
   pos: Position
 ): Promise<Hover | null> {
   // bail if no quarto connection
-  if (!quarto) {
+  if (!quarto?.getHover) {
     return null;
   }
   const context = editorContext(doc, pos, true);

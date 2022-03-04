@@ -3,10 +3,8 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { URL } from "url";
 import * as path from "path";
 
-import { Position } from "vscode-languageserver-types";
 import fileUrl from "file-url";
 import { HoverResult } from "./quarto";
 
@@ -60,7 +58,7 @@ export interface Completion {
 export interface QuartoYamlModule {
   getCompletions(context: EditorContext): Promise<CompletionResult>;
   getLint(context: EditorContext): Promise<Array<LintItem>>;
-  getHover(context: EditorContext): Promise<HoverResult | null>;
+  getHover?: (context: EditorContext) => Promise<HoverResult | null>;
 }
 
 export function initializeQuartoYamlModule(
