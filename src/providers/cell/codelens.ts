@@ -13,8 +13,8 @@ import {
   TextDocument,
   Range,
 } from "vscode";
-import { MarkdownEngine } from "../markdown/engine";
-import { languageNameFromBlock } from "../markdown/language";
+import { MarkdownEngine } from "../../markdown/engine";
+import { languageNameFromBlock } from "../../markdown/language";
 import {
   blockHasExecutor,
   ensureRequiredExtension,
@@ -62,7 +62,7 @@ export function quartoCellExecuteCodeLensProvider(
           lenses.push(
             ...[
               new CodeLens(range, {
-                title: "$(debug-start) Run Cell",
+                title: "$(run) Run Cell",
                 tooltip: "Execute the code in this cell",
                 command: "quarto.runCurrentCell",
                 arguments: [block.map[0] + 1],

@@ -12,14 +12,14 @@ import {
   TextEditorRevealType,
   window,
 } from "vscode";
-import { Command } from "../core/command";
-import { isQuartoDoc } from "../core/doc";
-import { MarkdownEngine } from "../markdown/engine";
+import { Command } from "../../core/command";
+import { isQuartoDoc } from "../../core/doc";
+import { MarkdownEngine } from "../../markdown/engine";
 import {
   isExecutableLanguageBlockOf,
   languageNameFromBlock,
-} from "../markdown/language";
-import { languageBlockAtPosition } from "../vdoc/vdoc";
+} from "../../markdown/language";
+import { languageBlockAtPosition } from "../../vdoc/vdoc";
 import { blockHasExecutor, executeInteractive } from "./executors";
 
 export function cellCommands(engine: MarkdownEngine): Command[] {
@@ -32,7 +32,7 @@ export function cellCommands(engine: MarkdownEngine): Command[] {
     new RunCellsBelowCommand(engine),
     new RunAllCellsCommand(engine),
     new GoToNextCellCommand(engine),
-    new GoToPreviousCellCommand(engine)
+    new GoToPreviousCellCommand(engine),
   ];
 }
 
@@ -298,13 +298,15 @@ class RunAllCellsCommand extends RunCommand implements Command {
 }
 
 class GoToCellCommand {
-  constructor(engine: MarkdownEngine, selector: (line: number, tokens: Token[]) => Token | undefined) {
+  constructor(
+    engine: MarkdownEngine,
+    selector: (line: number, tokens: Token[]) => Token | undefined
+  ) {
     this.engine_ = engine;
     this.selector_ = selector;
   }
- 
+
   async execute(): Promise<void> {
-    
     const editor = window.activeTextEditor;
     const doc = editor?.document;
     if (doc && isQuartoDoc(doc)) {
@@ -317,7 +319,6 @@ class GoToCellCommand {
     }
   }
 
-  
   private engine_: MarkdownEngine;
   private selector_: (line: number, tokens: Token[]) => Token | undefined;
 }
@@ -337,7 +338,6 @@ class GoToPreviousCellCommand extends GoToCellCommand implements Command {
   private static readonly id = "quarto.goToPreviousCell";
   public readonly id = GoToPreviousCellCommand.id;
 }
-
 
 async function runAdjacentBlock(editor: TextEditor, block: Token) {
   if (block.map) {

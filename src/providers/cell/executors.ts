@@ -8,12 +8,12 @@
 
 import Token from "markdown-it/lib/token";
 import { commands, extensions, Position, TextDocument } from "vscode";
-import { MarkdownEngine } from "../markdown/engine";
+import { MarkdownEngine } from "../../markdown/engine";
 import {
   isExecutableLanguageBlockOf,
   languageNameFromBlock,
-} from "../markdown/language";
-import { virtualDoc, virtualDocUri } from "../vdoc/vdoc";
+} from "../../markdown/language";
+import { virtualDoc, virtualDocUri } from "../../vdoc/vdoc";
 
 export function hasExecutor(language: string) {
   return !!kCellExecutors.find((x) => x.language === language);

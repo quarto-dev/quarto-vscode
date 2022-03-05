@@ -16,9 +16,9 @@ import { activateBackgroundHighlighter } from "./providers/background";
 import { kQuartoDocSelector } from "./core/doc";
 import { activateLsp } from "./lsp/client";
 import { CommandManager } from "./core/command";
-import { cellCommands } from "./cell/commands";
-import { quartoCellExecuteCodeLensProvider } from "./cell/codelens";
-import { activateLensPanel } from "./providers/panel-lens";
+import { cellCommands } from "./providers/cell/commands";
+import { quartoCellExecuteCodeLensProvider } from "./providers/cell/codelens";
+import { activateLensPanel } from "./providers/lens/panel-lens";
 
 export function activate(context: vscode.ExtensionContext) {
   const engine = new MarkdownEngine();
@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   activateLsp(context, engine);
   activateBackgroundHighlighter(context, engine);
-  activateLensPanel(context);
+  activateLensPanel(context, engine);
 
   context.subscriptions.push(
     registerMarkdownLanguageFeatures(symbolProvider, engine)
