@@ -126,11 +126,11 @@
       }
     ],
     "viewsContainers": {
-      "panel": [
+      "activitybar": [
         {
           "id": "quarto-lens-panel",
           "title": "Quarto Lens",
-          "icon": "logo/quarto.png"
+          "icon": "logo/quarto.svg"
         }
       ]
     },
