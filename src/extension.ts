@@ -18,7 +18,8 @@ import { activateLsp } from "./lsp/client";
 import { CommandManager } from "./core/command";
 import { cellCommands } from "./providers/cell/commands";
 import { quartoCellExecuteCodeLensProvider } from "./providers/cell/codelens";
-import { activateLensPanel } from "./providers/lens/panel-lens";
+import { activateQuartoLensPanel } from "./providers/lens/panel";
+import { lensCommands } from "./providers/lens/commands";
 
 export function activate(context: vscode.ExtensionContext) {
   const engine = new MarkdownEngine();
@@ -27,7 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   activateLsp(context, engine);
   activateBackgroundHighlighter(context, engine);
-  activateLensPanel(context, engine);
+  activateQuartoLensPanel(context, engine);
 
   context.subscriptions.push(
     registerMarkdownLanguageFeatures(symbolProvider, engine)
@@ -71,6 +72,9 @@ function registerCommands(engine: MarkdownEngine): vscode.Disposable {
   const commandManager = new CommandManager();
   commandManager.register(new OpenLinkCommand(engine));
   for (const cmd of cellCommands(engine)) {
+    commandManager.register(cmd);
+  }
+  for (const cmd of lensCommands(engine)) {
     commandManager.register(cmd);
   }
 
