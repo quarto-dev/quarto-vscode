@@ -4,7 +4,7 @@
   "description": "Official extension for the Quarto scientific and technical publishing system.",
   "author": "quarto",
   "publisher": "quarto",
-  "icon": "logo/quarto.png",
+  "icon": "assets/logo/quarto.png",
   "license": "MIT",
   "keywords": [
     "markdown",
@@ -126,11 +126,11 @@
       }
     ],
     "viewsContainers": {
-      "activitybar": [
+      "panel": [
         {
           "id": "quarto-lens-panel",
           "title": "Quarto Lens",
-          "icon": "logo/quarto.svg"
+          "icon": "assets/logo/quarto.svg"
         }
       ]
     },

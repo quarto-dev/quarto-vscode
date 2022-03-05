@@ -9,6 +9,7 @@ import {
   Uri,
   WebviewViewResolveContext,
   CancellationToken,
+  Webview,
 } from "vscode";
 
 export class QuartoLensViewProvider implements WebviewViewProvider {
@@ -31,11 +32,10 @@ export class QuartoLensViewProvider implements WebviewViewProvider {
     webviewView.webview.options = {
       // Allow scripts in the webview
       enableScripts: true,
-
       localResourceRoots: [this.extensionUri_],
     };
 
-    webviewView.webview.html = this.webviewHtml();
+    webviewView.webview.html = this.webviewHtml(webviewView.webview);
 
     webviewView.webview.onDidReceiveMessage((data) => {
       switch (data.type) {
@@ -46,7 +46,11 @@ export class QuartoLensViewProvider implements WebviewViewProvider {
     });
   }
 
-  private webviewHtml() {
+  private webviewHtml(webview: Webview) {
+    const scriptUri = webview.asWebviewUri(this.assetUri("lens.js"));
+
+    const styleUri = webview.asWebviewUri(this.assetUri("lens.css"));
+
     return `
 <!DOCTYPE html>
 <html lang="en">
@@ -59,5 +63,9 @@ export class QuartoLensViewProvider implements WebviewViewProvider {
 </body>
 </html> 
 `;
+  }
+
+  private assetUri(file: string) {
+    return Uri.joinPath(this.extensionUri_, "assets", "www", "lens", file);
   }
 }
