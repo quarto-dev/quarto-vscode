@@ -125,6 +125,24 @@
         "path": "./snippets/quarto.code-snippets"
       }
     ],
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "quarto-lens-panel",
+          "title": "Quarto Lens",
+          "icon": "logo/quarto.png"
+        }
+      ]
+    },
+    "views": {
+      "quarto-lens-panel": [
+        {
+          "type": "webview",
+          "id": "quarto-lens",
+          "name": "Quarto Lens"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "quarto.runSelection",

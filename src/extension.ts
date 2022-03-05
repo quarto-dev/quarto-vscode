@@ -18,6 +18,7 @@ import { activateLsp } from "./lsp/client";
 import { CommandManager } from "./core/command";
 import { cellCommands } from "./cell/commands";
 import { quartoCellExecuteCodeLensProvider } from "./cell/codelens";
+import { activateLensPanel } from "./providers/panel-lens";
 
 export function activate(context: vscode.ExtensionContext) {
   const engine = new MarkdownEngine();
@@ -26,6 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   activateLsp(context, engine);
   activateBackgroundHighlighter(context, engine);
+  activateLensPanel(context);
 
   context.subscriptions.push(
     registerMarkdownLanguageFeatures(symbolProvider, engine)
