@@ -8,6 +8,10 @@
     </array>
     <key>name</key>
     <string>Quarto</string>
+    <key>information_for_contributors</key>
+    <array>
+      <string>This file includes some grammar rules copied from https://github.com/James-Yu/LaTeX-Workshop/blob/master/syntax/TeX.tmLanguage.json</string>
+    </array>
     <key>patterns</key>
     <array>
       <dict>
@@ -4761,7 +4765,7 @@
             <array>
               <dict>
                 <key>include</key>
-                <string>text.html.markdown.math#math</string>
+                <string>#math</string>
               </dict>
             </array>
           </dict>
@@ -4793,7 +4797,7 @@
             <array>
               <dict>
                 <key>include</key>
-                <string>text.html.markdown.math#math</string>
+                <string>#math</string>
               </dict>
             </array>
           </dict>
@@ -4834,7 +4838,7 @@
         <array>
           <dict>
             <key>include</key>
-            <string>text.html.markdown.math#math</string>
+            <string>#math</string>
           </dict>
         </array>
       </dict>
@@ -4866,7 +4870,7 @@
             <array>
               <dict>
                 <key>include</key>
-                <string>text.html.markdown.math#math</string>
+                <string>#math</string>
               </dict>
             </array>
           </dict>
@@ -4887,7 +4891,7 @@
             <array>
               <dict>
                 <key>include</key>
-                <string>text.html.markdown.math#math</string>
+                <string>#math</string>
               </dict>
             </array>
           </dict>
@@ -4921,7 +4925,7 @@
             <array>
               <dict>
                 <key>include</key>
-                <string>text.html.markdown.math#math</string>
+                <string>#math</string>
               </dict>
             </array>
           </dict>
@@ -4942,9 +4946,153 @@
             <array>
               <dict>
                 <key>include</key>
-                <string>text.html.markdown.math#math</string>
+                <string>#math</string>
               </dict>
             </array>
+          </dict>
+        </array>
+      </dict>
+      <key>math</key>
+      <dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>name</key>
+            <string>comment.line.math.tex</string>
+            <key>match</key>
+            <string>((?&lt;!\\)%)(.+)$</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.comment.math.tex</string>
+              </dict>
+            </dict>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>line.separator.math.tex</string>
+            <key>match</key>
+            <string>(\\\\)$</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.line.separator.math.tex</string>
+              </dict>
+            </dict>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>meta.function.math.tex</string>
+            <key>begin</key>
+            <string>((\\)([a-zA-Z_]+))\s*(\{)</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>storage.type.function.math.tex</string>
+              </dict>
+              <key>2</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.function.math.tex</string>
+              </dict>
+              <key>3</key>
+              <dict>
+                <key>name</key>
+                <string>entity.name.function.math.tex</string>
+              </dict>
+              <key>4</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.arguments.begin.math.tex</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>\}</string>
+            <key>endCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.arguments.end.math.tex</string>
+              </dict>
+            </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>$self</string>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.constant.math.tex</string>
+              </dict>
+            </dict>
+            <key>match</key>
+            <string>(\\)([a-zA-Z_]+)\b</string>
+            <key>name</key>
+            <string>constant.character.math.tex</string>
+          </dict>
+          <dict>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.constant.math.tex</string>
+              </dict>
+            </dict>
+            <key>match</key>
+            <string>(\\)(?!begin\*\{|verb)([A-Za-z]+)</string>
+            <key>name</key>
+            <string>constant.other.general.math.tex</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>(?&lt;!\\)\{</string>
+            <key>name</key>
+            <string>punctuation.math.begin.bracket.curly</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>(?&lt;!\\)\}</string>
+            <key>name</key>
+            <string>punctuation.math.end.bracket.curly</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>\(</string>
+            <key>name</key>
+            <string>punctuation.math.begin.bracket.round</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>\)</string>
+            <key>name</key>
+            <string>punctuation.math.end.bracket.round</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>(([0-9]*[\.][0-9]+)|[0-9]+)</string>
+            <key>name</key>
+            <string>constant.numeric.math.tex</string>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>[\+\*/_\^-]</string>
+            <key>name</key>
+            <string>punctuation.math.operator.latex</string>
           </dict>
         </array>
       </dict>
