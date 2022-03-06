@@ -29,7 +29,7 @@
   "scripts": {
     "postinstall": "cd server && npm install && cd ..",
     "vscode:prepublish": "npm run build-lang && npm run esbuild-server && npm run esbuild-base -- --minify && npm run package-web",
-    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild-base": "esbuild ./src/main.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild-server": "cd server && esbuild ./src/server.ts --bundle --outfile=out/server.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "concurrently --kill-others \"npm run esbuild-server -- --sourcemap --watch\" \"npm run esbuild-base -- --sourcemap --watch\"",

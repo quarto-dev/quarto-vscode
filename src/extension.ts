@@ -14,69 +14,50 @@ import QuartoWorkspaceSymbolProvider from "./providers/symbol-workspace";
 import { MarkdownEngine } from "./markdown/engine";
 import { activateBackgroundHighlighter } from "./providers/background";
 import { kQuartoDocSelector } from "./core/doc";
-import { activateLsp } from "./lsp/client";
-import { CommandManager } from "./core/command";
-import { cellCommands } from "./providers/cell/commands";
-import { quartoCellExecuteCodeLensProvider } from "./providers/cell/codelens";
-import { activateQuartoLensPanel } from "./providers/lens/panel";
-import { lensCommands } from "./providers/lens/commands";
+import { Command, CommandManager } from "./core/command";
 
-export function activate(context: vscode.ExtensionContext) {
-  const engine = new MarkdownEngine();
-
+export function activateCommon(
+  context: vscode.ExtensionContext,
+  engine: MarkdownEngine,
+  commands?: Command[]
+) {
+  // core language features
   const symbolProvider = new QuartoDocumentSymbolProvider(engine);
-
-  activateLsp(context, engine);
-  activateBackgroundHighlighter(context, engine);
-  activateQuartoLensPanel(context, engine);
-
   context.subscriptions.push(
-    registerMarkdownLanguageFeatures(symbolProvider, engine)
+    vscode.Disposable.from(
+      vscode.languages.registerDocumentSymbolProvider(
+        kQuartoDocSelector,
+        symbolProvider
+      ),
+      vscode.languages.registerDocumentLinkProvider(
+        kQuartoDocSelector,
+        new QuartoLinkProvider(engine)
+      ),
+      vscode.languages.registerFoldingRangeProvider(
+        kQuartoDocSelector,
+        new QuartoFoldingProvider(engine)
+      ),
+      vscode.languages.registerSelectionRangeProvider(
+        kQuartoDocSelector,
+        new QuartoSelectionRangeProvider(engine)
+      ),
+      vscode.languages.registerWorkspaceSymbolProvider(
+        new QuartoWorkspaceSymbolProvider(symbolProvider)
+      ),
+      PathCompletionProvider.register(engine)
+    )
   );
-  context.subscriptions.push(registerCommands(engine));
-}
 
-function registerMarkdownLanguageFeatures(
-  symbolProvider: QuartoDocumentSymbolProvider,
-  engine: MarkdownEngine
-): vscode.Disposable {
-  return vscode.Disposable.from(
-    vscode.languages.registerDocumentSymbolProvider(
-      kQuartoDocSelector,
-      symbolProvider
-    ),
-    vscode.languages.registerDocumentLinkProvider(
-      kQuartoDocSelector,
-      new QuartoLinkProvider(engine)
-    ),
-    vscode.languages.registerFoldingRangeProvider(
-      kQuartoDocSelector,
-      new QuartoFoldingProvider(engine)
-    ),
-    vscode.languages.registerSelectionRangeProvider(
-      kQuartoDocSelector,
-      new QuartoSelectionRangeProvider(engine)
-    ),
-    vscode.languages.registerWorkspaceSymbolProvider(
-      new QuartoWorkspaceSymbolProvider(symbolProvider)
-    ),
-    vscode.languages.registerCodeLensProvider(
-      kQuartoDocSelector,
-      quartoCellExecuteCodeLensProvider(engine)
-    ),
-    PathCompletionProvider.register(engine)
-  );
-}
+  // background highlighter
+  activateBackgroundHighlighter(context, engine);
 
-function registerCommands(engine: MarkdownEngine): vscode.Disposable {
+  // commands (common + passed)
   const commandManager = new CommandManager();
   commandManager.register(new OpenLinkCommand(engine));
-  for (const cmd of cellCommands(engine)) {
-    commandManager.register(cmd);
+  if (commands) {
+    for (const cmd of commands) {
+      commandManager.register(cmd);
+    }
   }
-  for (const cmd of lensCommands(engine)) {
-    commandManager.register(cmd);
-  }
-
-  return commandManager;
+  context.subscriptions.push(commandManager);
 }
