@@ -28,7 +28,7 @@ import {
 import { renderActiveLens, renderWebviewHtml } from "./render-lens";
 
 export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
-  public static readonly viewType = "quarto-lens";
+  public static readonly viewType = "quarto-assist";
 
   constructor(context: ExtensionContext, engine: MarkdownEngine) {
     this.extensionUri_ = context.extensionUri;

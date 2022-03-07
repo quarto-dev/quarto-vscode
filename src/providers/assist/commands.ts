@@ -15,6 +15,6 @@ class PreviewMathCommand implements Command {
   private static readonly id = "quarto.previewMath";
   public readonly id = PreviewMathCommand.id;
   execute(_line: number): void {
-    commands.executeCommand("quarto-lens.focus");
+    commands.executeCommand("quarto-assist.focus");
   }
 }

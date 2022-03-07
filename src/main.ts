@@ -10,8 +10,8 @@ import { kQuartoDocSelector } from "./core/doc";
 import { activateLsp } from "./lsp/client";
 import { cellCommands } from "./providers/cell/commands";
 import { quartoCellExecuteCodeLensProvider } from "./providers/cell/codelens";
-import { activateQuartoLensPanel } from "./providers/lens/panel";
-import { lensCommands } from "./providers/lens/commands";
+import { activateQuartoLensPanel } from "./providers/assist/panel";
+import { lensCommands } from "./providers/assist/commands";
 import { activateCommon } from "./extension";
 
 export function activate(context: vscode.ExtensionContext) {

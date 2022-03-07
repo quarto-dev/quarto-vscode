@@ -128,18 +128,18 @@
     "viewsContainers": {
       "panel": [
         {
-          "id": "quarto-lens-panel",
-          "title": "Quarto",
+          "id": "quarto-assist-panel",
+          "title": "Quarto Assist",
           "icon": "assets/logo/quarto.svg"
         }
       ]
     },
     "views": {
-      "quarto-lens-panel": [
+      "quarto-assist-panel": [
         {
           "type": "webview",
-          "id": "quarto-lens",
-          "name": "Lens"
+          "id": "quarto-assist",
+          "name": "Quarto Assist"
         }
       ]
     },
