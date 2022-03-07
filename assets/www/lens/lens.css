@@ -5,6 +5,15 @@ body {
   line-height: 17px;
 }
 
+pre {
+  background: var(--vscode-textCodeBlock-background);
+  padding: 8px;
+}
+
+.vscode-dark pre {
+  background-color: #404040;
+}
+
 pre code {
   word-wrap: break-word;
   white-space: pre-wrap;
@@ -20,7 +29,7 @@ pre code {
   font-style: italic;
 }
 
-#main > hr {
+#main hr {
   display: block;
   border: none;
   border-color: var(--vscode-sideBarSectionHeader-border);
@@ -30,8 +39,12 @@ pre code {
   opacity: 0.5;
 }
 
+#main hr:first-of-type {
+  display: none;
+}
+
 #main .help {
-  max-width: 800px;
+  max-width: 700px;
 }
 
 code {
@@ -61,7 +74,8 @@ ol {
 .vscode-light .hljs-selector-tag,
 .vscode-light .hljs-built_in,
 .vscode-light .hljs-name,
-.vscode-light .hljs-tag {
+.vscode-light .hljs-tag,
+.vscode-light .signature .parameter.active {
   color: #00f;
 }
 
@@ -114,7 +128,8 @@ ol {
 .vscode-dark .hljs-keyword,
 .vscode-dark .hljs-literal,
 .vscode-dark .hljs-symbol,
-.vscode-dark .hljs-name {
+.vscode-dark .hljs-name,
+.vscode-dark .signature .parameter.active {
   color: #569cd6;
 }
 .vscode-dark .hljs-link {

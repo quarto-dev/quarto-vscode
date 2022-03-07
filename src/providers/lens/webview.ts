@@ -125,7 +125,7 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
         );
         const languageBlock = languageBlockAtPosition(
           tokens,
-          window.activeTextEditor.selection.start
+          window.activeTextEditor.selection.active
         );
         if (languageBlock) {
           defaultLanguage = languageNameFromBlock(languageBlock);

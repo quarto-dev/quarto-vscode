@@ -1,7 +1,13 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) RStudio, PBC. All rights reserved.
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+
+// TODO: empty message
+// TODO: hide the signature tip in the editor when lens is visible
+// TODO: render when lens is moved around, render at startup
+// TODO: word range detection doesn't work for signature tip
 
 import MarkdownIt from "markdown-it";
 const hljs = require("highlight.js");
@@ -16,7 +22,10 @@ import {
   commands,
   MarkedString,
   MarkdownString,
+  SignatureHelp,
+  SignatureInformation,
 } from "vscode";
+import { escapeRegExpCharacters } from "../../core/strings";
 
 export function renderWebviewHtml(webview: Webview, extensionUri: Uri) {
   const nonce = scriptNonce();
@@ -64,17 +73,33 @@ export async function renderActiveLens(
   }
 
   const hovers = await getHoversAtCurrentPositionInEditor(editor);
-
   if (token.isCancellationRequested) {
     return undefined;
   }
 
-  return hovers?.length ? getLensFromHovers(hovers, language) : undefined;
+  if (hovers.length) {
+    return getLensFromHovers(hovers, language);
+  } else {
+    const help = await getSignatureHelpAtCurrentPositionInEditor(editor);
+    if (help) {
+      return getLensFromSignatureHelp(help, language);
+    } else {
+      return undefined;
+    }
+  }
 }
 
 function getHoversAtCurrentPositionInEditor(editor: TextEditor) {
   return commands.executeCommand<Hover[]>(
     "vscode.executeHoverProvider",
+    editor.document.uri,
+    editor.selection.active
+  );
+}
+
+function getSignatureHelpAtCurrentPositionInEditor(editor: TextEditor) {
+  return commands.executeCommand<SignatureHelp>(
+    "vscode.executeSignatureHelpProvider",
     editor.document.uri,
     editor.selection.active
   );
@@ -92,6 +117,103 @@ function getLensFromHovers(hovers: Hover[], language?: string) {
 
   const markdown = parts.join("\n---\n");
 
+  return renderMarkdown(markdown, language);
+}
+
+function getLensFromSignatureHelp(help: SignatureHelp, language?: string) {
+  const markdown: string[] = [];
+
+  // build up markdown for signature
+  const signature = help.signatures[help.activeSignature];
+  const activeParameterIndex =
+    signature.activeParameter ?? help.activeParameter;
+
+  if (signature.label) {
+    markdown.push("");
+    const preCode = `<pre class="signature"><code>`;
+    if (signature.parameters.length > 0) {
+      markdown.push(
+        preCode + renderParameters(signature, activeParameterIndex)
+      );
+    } else {
+      markdown.push(preCode + signature.label);
+    }
+    markdown.push(`</code></pre>`);
+  }
+
+  const activeParameter = signature.parameters[activeParameterIndex];
+  if (activeParameter.documentation) {
+    markdown.push("");
+    markdown.push(getMarkdown(activeParameter.documentation));
+  }
+
+  if (signature.documentation) {
+    markdown.push("\n");
+    markdown.push(getMarkdown(signature.documentation));
+  }
+
+  if (markdown.length > 0) {
+    return renderMarkdown(markdown.join("\n"), language);
+  } else {
+    return undefined;
+  }
+}
+
+function renderParameters(
+  signature: SignatureInformation,
+  activeParameterIndex: number
+) {
+  const [start, end] = getParameterLabelOffsets(
+    signature,
+    activeParameterIndex
+  );
+
+  const parameters = `${signature.label.substring(
+    0,
+    start
+  )}<span class="parameter active">${signature.label.substring(
+    start,
+    end
+  )}</span>${signature.label.substring(end)}`;
+
+  return parameters;
+}
+
+function getParameterLabelOffsets(
+  signature: SignatureInformation,
+  paramIdx: number
+): [number, number] {
+  const param = signature.parameters[paramIdx];
+  if (!param) {
+    return [0, 0];
+  } else if (Array.isArray(param.label)) {
+    return param.label;
+  } else if (!param.label.length) {
+    return [0, 0];
+  } else {
+    const regex = new RegExp(
+      `(\\W|^)${escapeRegExpCharacters(param.label)}(?=\\W|$)`,
+      "g"
+    );
+    regex.test(signature.label);
+    const idx = regex.lastIndex - param.label.length;
+    return idx >= 0 ? [idx, regex.lastIndex] : [0, 0];
+  }
+}
+
+function getMarkdown(content: MarkedString | MarkdownString | string): string {
+  if (typeof content === "string") {
+    return content;
+  } else if (content instanceof MarkdownString) {
+    return content.value;
+  } else {
+    const markdown = new MarkdownString();
+    markdown.appendCodeblock(content.value, content.language);
+    return markdown.value;
+  }
+}
+
+function renderMarkdown(markdown: string, language?: string) {
   const md = MarkdownIt("commonmark", {
     html: true,
     linkify: true,
@@ -111,18 +233,6 @@ function getLensFromHovers(hovers: Hover[], language?: string) {
     type: "Help",
     html: md.render(markdown),
   };
-}
-
-function getMarkdown(content: MarkedString | MarkdownString | string): string {
-  if (typeof content === "string") {
-    return content;
-  } else if (content instanceof MarkdownString) {
-    return content.value;
-  } else {
-    const markdown = new MarkdownString();
-    markdown.appendCodeblock(content.value, content.language);
-    return markdown.value;
-  }
 }
 
 function scriptNonce() {
