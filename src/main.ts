@@ -11,26 +11,25 @@ import { activateLsp } from "./lsp/client";
 import { cellCommands } from "./providers/cell/commands";
 import { quartoCellExecuteCodeLensProvider } from "./providers/cell/codelens";
 import { activateQuartoLensPanel } from "./providers/assist/panel";
-import { lensCommands } from "./providers/assist/commands";
 import { activateCommon } from "./extension";
 
 export function activate(context: vscode.ExtensionContext) {
   // create markdown engine
   const engine = new MarkdownEngine();
 
-  // activate providers common to browser/node
-  const commands = [...cellCommands(engine), ...lensCommands(engine)];
-  activateCommon(context, engine, commands);
-
   // activate lsp for node
   activateLsp(context, engine);
 
   // activate lens panel for node
-  activateQuartoLensPanel(context, engine);
+  const lensCommands = activateQuartoLensPanel(context, engine);
 
   // provide code lens for node
   vscode.languages.registerCodeLensProvider(
     kQuartoDocSelector,
     quartoCellExecuteCodeLensProvider(engine)
   );
+
+  // activate providers common to browser/node
+  const commands = [...cellCommands(engine), ...lensCommands];
+  activateCommon(context, engine, commands);
 }

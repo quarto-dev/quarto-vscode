@@ -5,13 +5,8 @@
 
 import { commands } from "vscode";
 import { Command } from "../../core/command";
-import { MarkdownEngine } from "../../markdown/engine";
 
-export function lensCommands(_engine: MarkdownEngine): Command[] {
-  return [new PreviewMathCommand()];
-}
-
-class PreviewMathCommand implements Command {
+export class PreviewMathCommand implements Command {
   private static readonly id = "quarto.previewMath";
   public readonly id = PreviewMathCommand.id;
   execute(_line: number): void {

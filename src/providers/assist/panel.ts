@@ -5,15 +5,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ExtensionContext, window, languages } from "vscode";
+import { Command } from "../../core/command";
 import { kQuartoDocSelector } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
 import { quartoLensCodeLensProvider } from "./codelens";
+import { PreviewMathCommand } from "./commands";
 import { QuartoLensViewProvider } from "./webview";
 
 export function activateQuartoLensPanel(
   context: ExtensionContext,
   engine: MarkdownEngine
-) {
+): Command[] {
   const provider = new QuartoLensViewProvider(context, engine);
   context.subscriptions.push(provider);
 
@@ -30,4 +32,6 @@ export function activateQuartoLensPanel(
       quartoLensCodeLensProvider(engine)
     )
   );
+
+  return [new PreviewMathCommand()];
 }
