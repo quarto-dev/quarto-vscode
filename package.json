@@ -129,7 +129,7 @@
       "panel": [
         {
           "id": "quarto-lens-panel",
-          "title": "Quarto Lens",
+          "title": "Quarto",
           "icon": "assets/logo/quarto.svg"
         }
       ]
@@ -139,7 +139,7 @@
         {
           "type": "webview",
           "id": "quarto-lens",
-          "name": "Quarto Lens"
+          "name": "Lens"
         }
       ]
     },

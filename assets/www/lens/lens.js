@@ -18,7 +18,7 @@
         break;
       }
       case "noContent": {
-        if (!hasUpdated || message.updateMode === "live") {
+        if (!hasUpdated) {
           setNoContent(message.body);
         }
         hasUpdated = true;
