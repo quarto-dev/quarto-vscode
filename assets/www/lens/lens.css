@@ -11,7 +11,11 @@ pre {
 }
 
 .vscode-dark pre {
-  background-color: #404040;
+  background-color: #40404033;
+}
+
+.vscode-light pre {
+  background-color: #e1e1e145;
 }
 
 pre code {
