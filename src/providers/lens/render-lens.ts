@@ -8,6 +8,7 @@
 // TODO: hide the signature tip in the editor when lens is visible
 // TODO: render when lens is moved around, render at startup
 // TODO: word range detection doesn't work for signature tip
+// TODO: show using command that preserves focus (view has a show/focus method)
 
 import MarkdownIt from "markdown-it";
 const hljs = require("highlight.js");
