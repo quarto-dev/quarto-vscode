@@ -6,7 +6,6 @@
 
 // TODO: empty message
 // TODO: hide the signature tip in the editor when lens is visible
-// TODO: render when lens is moved around, render at startup
 // TODO: word range detection doesn't work for signature tip
 // TODO: show using command that preserves focus (view has a show/focus method)
 
@@ -28,10 +27,12 @@ import {
 } from "vscode";
 import { escapeRegExpCharacters } from "../../core/strings";
 
+const kAssistHelp = "Help";
+
 export function renderWebviewHtml(webview: Webview, extensionUri: Uri) {
   const nonce = scriptNonce();
-  const scriptUri = webview.asWebviewUri(assetUri("lens.js", extensionUri));
-  const styleUri = webview.asWebviewUri(assetUri("lens.css", extensionUri));
+  const scriptUri = webview.asWebviewUri(assetUri("assist.js", extensionUri));
+  const styleUri = webview.asWebviewUri(assetUri("assist.css", extensionUri));
 
   return /* html */ `<!DOCTYPE html>
     <html lang="en">
@@ -59,15 +60,15 @@ export function renderWebviewHtml(webview: Webview, extensionUri: Uri) {
     </html>`;
 }
 
-export interface Lens {
+export interface Assist {
   type: string;
   html: string;
 }
 
-export async function renderActiveLens(
+export async function renderActiveAssist(
   token: CancellationToken,
   language?: string
-): Promise<Lens | undefined> {
+): Promise<Assist | undefined> {
   const editor = window.activeTextEditor;
   if (!editor) {
     return undefined;
@@ -79,11 +80,11 @@ export async function renderActiveLens(
   }
 
   if (hovers.length) {
-    return getLensFromHovers(hovers, language);
+    return getAssistFromHovers(hovers, language);
   } else {
     const help = await getSignatureHelpAtCurrentPositionInEditor(editor);
     if (help) {
-      return getLensFromSignatureHelp(help, language);
+      return getAssistFromSignatureHelp(help, language);
     } else {
       return undefined;
     }
@@ -106,7 +107,7 @@ function getSignatureHelpAtCurrentPositionInEditor(editor: TextEditor) {
   );
 }
 
-function getLensFromHovers(hovers: Hover[], language?: string) {
+function getAssistFromHovers(hovers: Hover[], language?: string) {
   const parts = hovers
     .flatMap((hover) => hover.contents)
     .map((content) => getMarkdown(content))
@@ -118,10 +119,10 @@ function getLensFromHovers(hovers: Hover[], language?: string) {
 
   const markdown = parts.join("\n---\n");
 
-  return renderMarkdown(markdown, language);
+  return renderAssist(kAssistHelp, markdown, language);
 }
 
-function getLensFromSignatureHelp(help: SignatureHelp, language?: string) {
+function getAssistFromSignatureHelp(help: SignatureHelp, language?: string) {
   const markdown: string[] = [];
 
   // build up markdown for signature
@@ -154,7 +155,7 @@ function getLensFromSignatureHelp(help: SignatureHelp, language?: string) {
   }
 
   if (markdown.length > 0) {
-    return renderMarkdown(markdown.join("\n"), language);
+    return renderAssist(kAssistHelp, markdown.join("\n"), language);
   } else {
     return undefined;
   }
@@ -214,7 +215,7 @@ function getMarkdown(content: MarkedString | MarkdownString | string): string {
   }
 }
 
-function renderMarkdown(markdown: string, language?: string) {
+function renderAssist(type: string, markdown: string, language?: string) {
   const md = MarkdownIt("commonmark", {
     html: true,
     linkify: true,
@@ -231,7 +232,7 @@ function renderMarkdown(markdown: string, language?: string) {
     },
   });
   return {
-    type: "Help",
+    type,
     html: md.render(markdown),
   };
 }
@@ -247,5 +248,5 @@ function scriptNonce() {
 }
 
 function assetUri(file: string, extensionUri: Uri) {
-  return Uri.joinPath(extensionUri, "assets", "www", "lens", file);
+  return Uri.joinPath(extensionUri, "assets", "www", "assist", file);
 }

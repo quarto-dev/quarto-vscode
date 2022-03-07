@@ -25,7 +25,7 @@ import {
   renderCacheKeyEquals,
   renderCacheKeyNone,
 } from "./render-cache";
-import { renderActiveLens, renderWebviewHtml } from "./render-lens";
+import { renderActiveAssist, renderWebviewHtml } from "./render-assist";
 
 export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
   public static readonly viewType = "quarto-assist";
@@ -79,6 +79,8 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
       webviewView.webview,
       this.extensionUri_
     );
+
+    this.render(true);
   }
 
   public dispose() {
@@ -133,7 +135,7 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
       }
 
       // get html
-      const lens = await renderActiveLens(
+      const assist = await renderActiveAssist(
         renderingEntry.cts.token,
         defaultLanguage
       );
@@ -151,18 +153,20 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
       this.rendering_ = undefined;
 
       // post update to view
-      if (lens) {
+      if (assist) {
         this.view_?.webview.postMessage({
           type: "update",
-          body: `<div class="${lens.type.toLowerCase()}">${lens.html}</div>`,
+          body: `<div class="${assist.type.toLowerCase()}">${
+            assist.html
+          }</div>`,
         });
         if (this.view_) {
-          this.view_.description = lens.type;
+          this.view_.description = assist.type;
         }
       } else {
         this.view_?.webview.postMessage({
           type: "noContent",
-          message: "",
+          body: "",
         });
       }
     })();
