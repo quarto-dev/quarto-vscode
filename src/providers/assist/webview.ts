@@ -162,7 +162,7 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
       } else {
         this.view_?.webview.postMessage({
           type: "noContent",
-          body: "No lens available",
+          message: "",
         });
       }
     })();
