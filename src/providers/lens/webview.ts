@@ -14,7 +14,11 @@ import {
   CancellationToken,
   Disposable,
   CancellationTokenSource,
+  ExtensionContext,
 } from "vscode";
+import { MarkdownEngine } from "../../markdown/engine";
+import { languageNameFromBlock } from "../../markdown/language";
+import { languageBlockAtPosition } from "../../vdoc/vdoc";
 import {
   createRenderCacheKey,
   RenderCacheKey,
@@ -26,8 +30,9 @@ import { renderActiveLens, renderWebviewHtml } from "./render-lens";
 export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
   public static readonly viewType = "quarto-lens";
 
-  constructor(extensionUri: Uri) {
-    this.extensionUri_ = extensionUri;
+  constructor(context: ExtensionContext, engine: MarkdownEngine) {
+    this.extensionUri_ = context.extensionUri;
+    this.engine_ = engine;
 
     window.onDidChangeActiveTextEditor(
       () => {
@@ -112,8 +117,26 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
 
     // promise used to perform updates (this will be raced with a progress indicator)
     const renderPromise = (async () => {
+      // determine default language
+      let defaultLanguage = "";
+      if (window.activeTextEditor?.document) {
+        const tokens = await this.engine_.parse(
+          window.activeTextEditor?.document
+        );
+        const languageBlock = languageBlockAtPosition(
+          tokens,
+          window.activeTextEditor.selection.start
+        );
+        if (languageBlock) {
+          defaultLanguage = languageNameFromBlock(languageBlock);
+        }
+      }
+
       // get html
-      const html = await renderActiveLens(renderingEntry.cts.token);
+      const lens = await renderActiveLens(
+        renderingEntry.cts.token,
+        defaultLanguage
+      );
 
       // check for cancel
       if (renderingEntry.cts.token.isCancellationRequested) {
@@ -128,11 +151,14 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
       this.rendering_ = undefined;
 
       // post update to view
-      if (html.length) {
+      if (lens) {
         this.view_?.webview.postMessage({
           type: "update",
-          body: html,
+          body: `<div class="${lens.type.toLowerCase()}">${lens.html}</div>`,
         });
+        if (this.view_) {
+          this.view_.description = lens.type;
+        }
       } else {
         this.view_?.webview.postMessage({
           type: "noContent",
@@ -163,4 +189,6 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
 
   private currentRenderCacheKey_: RenderCacheKey = renderCacheKeyNone;
   private rendering_?: { cts: CancellationTokenSource };
+
+  private readonly engine_: MarkdownEngine;
 }

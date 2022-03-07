@@ -14,7 +14,7 @@ export function activateQuartoLensPanel(
   context: ExtensionContext,
   engine: MarkdownEngine
 ) {
-  const provider = new QuartoLensViewProvider(context.extensionUri);
+  const provider = new QuartoLensViewProvider(context, engine);
   context.subscriptions.push(provider);
 
   context.subscriptions.push(

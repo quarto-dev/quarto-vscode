@@ -30,6 +30,10 @@ pre code {
   opacity: 0.5;
 }
 
+#main .help {
+  max-width: 800px;
+}
+
 code {
   color: inherit;
   background: var(--vscode-textCodeBlock-background);
@@ -40,4 +44,171 @@ ul,
 ol {
   padding-left: 20px;
   margin: 8px;
+}
+
+.vscode-light .hljs {
+  background: white;
+  color: black;
+}
+
+.vscode-light .hljs-comment,
+.vscode-light .hljs-quote,
+.vscode-light .hljs-variable {
+  color: #008000;
+}
+
+.vscode-light .hljs-keyword,
+.vscode-light .hljs-selector-tag,
+.vscode-light .hljs-built_in,
+.vscode-light .hljs-name,
+.vscode-light .hljs-tag {
+  color: #00f;
+}
+
+.vscode-light .hljs-string,
+.vscode-light .hljs-title,
+.vscode-light .hljs-section,
+.vscode-light .hljs-attribute,
+.vscode-light .hljs-literal,
+.vscode-light .hljs-template-tag,
+.vscode-light .hljs-template-variable,
+.vscode-light .hljs-type,
+.vscode-light .hljs-addition {
+  color: #a31515;
+}
+
+.vscode-light .hljs-deletion,
+.vscode-light .hljs-selector-attr,
+.vscode-light .hljs-selector-pseudo,
+.vscode-light .hljs-meta {
+  color: #2b91af;
+}
+
+.vscode-light .hljs-doctag {
+  color: #808080;
+}
+
+.vscode-light .hljs-attr {
+  color: #f00;
+}
+
+.vscode-light .hljs-symbol,
+.vscode-light .hljs-bullet,
+.vscode-light .hljs-link {
+  color: #00b0e8;
+}
+
+.vscode-light .hljs-emphasis {
+  font-style: italic;
+}
+
+.vscode-light .hljs-strong {
+  font-weight: bold;
+}
+
+.vscode-dark .hljs {
+  background: #1e1e1e;
+  color: #dcdcdc;
+}
+
+.vscode-dark .hljs-keyword,
+.vscode-dark .hljs-literal,
+.vscode-dark .hljs-symbol,
+.vscode-dark .hljs-name {
+  color: #569cd6;
+}
+.vscode-dark .hljs-link {
+  color: #569cd6;
+  text-decoration: underline;
+}
+
+.vscode-dark .hljs-built_in,
+.vscode-dark .hljs-type {
+  color: #4ec9b0;
+}
+
+.vscode-dark .hljs-number,
+.vscode-dark .hljs-class {
+  color: #b8d7a3;
+}
+
+.vscode-dark .hljs-string,
+.vscode-dark .hljs-meta .vscode-dark .hljs-string {
+  color: #d69d85;
+}
+
+.vscode-dark .hljs-regexp,
+.vscode-dark .hljs-template-tag {
+  color: #9a5334;
+}
+
+.vscode-dark .hljs-subst,
+.vscode-dark .hljs-function,
+.vscode-dark .hljs-title,
+.vscode-dark .hljs-params,
+.vscode-dark .hljs-formula {
+  color: #dcdcdc;
+}
+
+.vscode-dark .hljs-comment,
+.vscode-dark .hljs-quote {
+  color: #57a64a;
+  font-style: italic;
+}
+
+.vscode-dark .hljs-doctag {
+  color: #608b4e;
+}
+
+.vscode-dark .hljs-meta,
+.vscode-dark .hljs-meta .vscode-dark .hljs-keyword,
+.vscode-dark .hljs-tag {
+  color: #9b9b9b;
+}
+
+.vscode-dark .hljs-variable,
+.vscode-dark .hljs-template-variable {
+  color: #bd63c5;
+}
+
+.vscode-dark .hljs-attr,
+.vscode-dark .hljs-attribute {
+  color: #9cdcfe;
+}
+
+.vscode-dark .hljs-section {
+  color: gold;
+}
+
+.vscode-dark .hljs-emphasis {
+  font-style: italic;
+}
+
+.vscode-dark .hljs-strong {
+  font-weight: bold;
+}
+
+/*.vscode-dark .hljs-code {
+  font-family:'Monospace';
+}*/
+
+.vscode-dark .hljs-bullet,
+.vscode-dark .hljs-selector-tag,
+.vscode-dark .hljs-selector-id,
+.vscode-dark .hljs-selector-class,
+.vscode-dark .hljs-selector-attr,
+.vscode-dark .hljs-selector-pseudo {
+  color: #d7ba7d;
+}
+
+.vscode-dark .hljs-addition {
+  background-color: #144212;
+  display: inline-block;
+  width: 100%;
+}
+
+.vscode-dark .hljs-deletion {
+  background-color: #600;
+  display: inline-block;
+  width: 100%;
 }

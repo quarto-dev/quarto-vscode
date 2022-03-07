@@ -355,8 +355,10 @@
     }
   },
   "dependencies": {
+    "highlight.js": "^11.4.0",
     "lodash.debounce": "^4.0.8",
     "markdown-it": "^12.0.2",
+    "markdown-it-highlightjs": "^3.6.0",
     "tmp": "^0.2.1",
     "vscode-languageclient": "^7.0.0",
     "vscode-nls": "^5.0.0"

@@ -3,6 +3,9 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import MarkdownIt from "markdown-it";
+const hljs = require("highlight.js");
+
 import {
   Uri,
   window,
@@ -46,23 +49,27 @@ export function renderWebviewHtml(webview: Webview, extensionUri: Uri) {
     </html>`;
 }
 
+export interface Lens {
+  type: string;
+  html: string;
+}
+
 export async function renderActiveLens(
-  token: CancellationToken
-): Promise<string> {
+  token: CancellationToken,
+  language?: string
+): Promise<Lens | undefined> {
   const editor = window.activeTextEditor;
   if (!editor) {
-    return "";
+    return undefined;
   }
 
   const hovers = await getHoversAtCurrentPositionInEditor(editor);
 
   if (token.isCancellationRequested) {
-    return "";
+    return undefined;
   }
 
-  return hovers?.length
-    ? `<pre>${getMarkdown(hovers[0].contents[0])} </pre>`
-    : "";
+  return hovers?.length ? getLensFromHovers(hovers, language) : undefined;
 }
 
 function getHoversAtCurrentPositionInEditor(editor: TextEditor) {
@@ -71,6 +78,39 @@ function getHoversAtCurrentPositionInEditor(editor: TextEditor) {
     editor.document.uri,
     editor.selection.active
   );
+}
+
+function getLensFromHovers(hovers: Hover[], language?: string) {
+  const parts = hovers
+    .flatMap((hover) => hover.contents)
+    .map((content) => getMarkdown(content))
+    .filter((content) => content.length > 0);
+
+  if (!parts.length) {
+    return undefined;
+  }
+
+  const markdown = parts.join("\n---\n");
+
+  const md = MarkdownIt("commonmark", {
+    html: true,
+    linkify: true,
+    highlight: (str, lang) => {
+      lang = lang || language || "";
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          return hljs.highlight(str, { language: lang }).value;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      return undefined; // use external default escaping
+    },
+  });
+  return {
+    type: "Help",
+    html: md.render(markdown),
+  };
 }
 
 function getMarkdown(content: MarkedString | MarkdownString | string): string {
