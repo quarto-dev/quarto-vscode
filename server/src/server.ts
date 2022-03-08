@@ -18,7 +18,7 @@ import {
   kCompletionCapabilities,
   onCompletion,
 } from "./providers/completion/completion";
-import { kHoverCapabilities, onHover } from "./providers/hover";
+import { kHoverCapabilities, onHover } from "./providers/hover/hover";
 import { kSignatureCapabilities, onSignatureHelp } from "./providers/signature";
 import { provideDiagnostics } from "./providers/diagnostics";
 

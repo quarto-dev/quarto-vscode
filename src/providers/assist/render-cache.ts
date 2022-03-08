@@ -60,12 +60,12 @@ export class EditorRenderCacheKey {
       return false;
     }
 
-    if (other.wordRange === this.wordRange) {
-      return true;
-    }
-
     if (!other.wordRange || !this.wordRange) {
       return false;
+    }
+
+    if (other.wordRange === this.wordRange) {
+      return true;
     }
 
     return this.wordRange.isEqual(other.wordRange);

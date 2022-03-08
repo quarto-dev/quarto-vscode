@@ -14,6 +14,8 @@
   "dependencies": {
     "file-url": "^4.0.0",
     "js-yaml": "^4.1.0",
+    "markdown-it": "^12.3.2",
+    "mathjax-full": "^3.2.0",
     "vscode-languageserver": "^7.0.0",
     "vscode-languageserver-textdocument": "^1.0.4"
   },

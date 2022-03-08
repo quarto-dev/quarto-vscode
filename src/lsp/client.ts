@@ -167,19 +167,18 @@ function embeddedHoverProvider(engine: MarkdownEngine) {
           vdocUri,
           position
         );
-        if (!hover) {
-          return undefined;
-        } else {
+        if (hover && hover.length > 0) {
           // reutrn the last hover (arbitrary, but it seems like the
           // LSP results are returned second)
           return hover[hover.length - 1];
         }
       } catch (error) {
-        return undefined;
+        console.log(error);
       }
-    } else {
-      return await next(document, position, token);
     }
+
+    // default to server delegation
+    return await next(document, position, token);
   };
 }
 

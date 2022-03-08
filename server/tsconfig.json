@@ -5,6 +5,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
+    "esModuleInterop": true,
     "strict": true,
     "outDir": "out",
     "rootDir": "src"
