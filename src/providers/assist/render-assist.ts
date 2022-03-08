@@ -4,9 +4,8 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-// TODO: test quarto assist for R (no signature tip?)
-// TODO: if no signature tip, perhaps scan backwards if cursor is in between two params
-// TODO: word range detection doesn't work for signature tip
+// TODO: table in ggplot2:quickplot
+// TODO: syntax highlighting for R
 // TODO: only set seletion for math preview if the selection isn't in the block
 // TODO: consider having a help command
 // TODO: code lenses only active when panel isn't shown?
@@ -76,20 +75,27 @@ export async function renderActiveAssist(
     return undefined;
   }
 
+  // get hovers
   const hovers = await getHoversAtCurrentPositionInEditor(editor);
   if (token.isCancellationRequested) {
     return undefined;
   }
 
-  if (hovers.length) {
-    return getAssistFromHovers(hovers, language);
+  // see if we can create an assist from the hovers
+  const assist = getAssistFromHovers(hovers, language);
+  if (assist) {
+    return assist;
+  }
+  if (token.isCancellationRequested) {
+    return undefined;
+  }
+
+  // get signature help and try to create an assist
+  const help = await getSignatureHelpAtCurrentPositionInEditor(editor);
+  if (help) {
+    return getAssistFromSignatureHelp(help, language);
   } else {
-    const help = await getSignatureHelpAtCurrentPositionInEditor(editor);
-    if (help) {
-      return getAssistFromSignatureHelp(help, language);
-    } else {
-      return undefined;
-    }
+    return undefined;
   }
 }
 
@@ -115,7 +121,7 @@ function getAssistFromHovers(hovers: Hover[], language?: string) {
     .map((content) => getMarkdown(content))
     .filter((content) => content.length > 0);
 
-  if (!parts.length) {
+  if (parts.length === 0) {
     return undefined;
   }
 
@@ -128,7 +134,9 @@ function getAssistFromHovers(hovers: Hover[], language?: string) {
 }
 
 function filterHoverAssist(markdown: string) {
-  return !markdown.match(/^```\w*\n.*?\n```\s*$/);
+  return (
+    !markdown.match(/^```\w*\n.*?\n```\s*$/) && markdown.indexOf("\n") !== -1
+  );
 }
 
 function getAssistFromSignatureHelp(help: SignatureHelp, language?: string) {
@@ -153,7 +161,7 @@ function getAssistFromSignatureHelp(help: SignatureHelp, language?: string) {
   }
 
   const activeParameter = signature.parameters[activeParameterIndex];
-  if (activeParameter.documentation) {
+  if (activeParameter?.documentation) {
     markdown.push("");
     markdown.push(getMarkdown(activeParameter.documentation));
   }
