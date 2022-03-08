@@ -3,7 +3,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-// TODO: only set seletion for math preview if the selection isn't in the block
 
 import MarkdownIt from "markdown-it";
 import markdownItHljs from "markdown-it-highlightjs";
