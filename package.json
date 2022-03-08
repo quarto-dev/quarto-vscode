@@ -197,11 +197,6 @@
         "title": "Go to Previous Cell",
         "category": "Quarto",
         "when": "!isWeb"
-      },
-      {
-        "command": "quarto.previewMath",
-        "category": "Quarto",
-        "title": "Preview Math"
       }
     ],
     "keybindings": [
