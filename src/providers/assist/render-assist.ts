@@ -4,8 +4,6 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 // TODO: only set seletion for math preview if the selection isn't in the block
-// TODO: consider having a help command
-// TODO: code lenses only active when panel isn't shown?
 
 import MarkdownIt from "markdown-it";
 import markdownItHljs from "markdown-it-highlightjs";
@@ -64,8 +62,7 @@ export interface Assist {
 }
 
 export async function renderActiveAssist(
-  token: CancellationToken,
-  language?: string
+  token: CancellationToken
 ): Promise<Assist | undefined> {
   const editor = window.activeTextEditor;
   if (!editor) {
@@ -79,7 +76,7 @@ export async function renderActiveAssist(
   }
 
   // see if we can create an assist from the hovers
-  const assist = getAssistFromHovers(hovers, language);
+  const assist = getAssistFromHovers(hovers);
   if (assist) {
     return assist;
   }
@@ -90,7 +87,7 @@ export async function renderActiveAssist(
   // get signature help and try to create an assist
   const help = await getSignatureHelpAtCurrentPositionInEditor(editor);
   if (help) {
-    return getAssistFromSignatureHelp(help, language);
+    return getAssistFromSignatureHelp(help);
   } else {
     return undefined;
   }
@@ -112,7 +109,7 @@ function getSignatureHelpAtCurrentPositionInEditor(editor: TextEditor) {
   );
 }
 
-function getAssistFromHovers(hovers: Hover[], language?: string) {
+function getAssistFromHovers(hovers: Hover[]) {
   const parts = hovers
     .flatMap((hover) => hover.contents)
     .map((content) => getMarkdown(content))
@@ -124,7 +121,7 @@ function getAssistFromHovers(hovers: Hover[], language?: string) {
 
   const markdown = parts.join("\n---\n");
   if (filterHoverAssist(markdown)) {
-    return renderAssist(kAssistHelp, markdown, language);
+    return renderAssist(kAssistHelp, markdown);
   } else {
     return undefined;
   }
@@ -136,7 +133,7 @@ function filterHoverAssist(markdown: string) {
   );
 }
 
-function getAssistFromSignatureHelp(help: SignatureHelp, language?: string) {
+function getAssistFromSignatureHelp(help: SignatureHelp) {
   // no signatures means no help
   if (help.signatures.length === 0) {
     return undefined;
@@ -173,7 +170,7 @@ function getAssistFromSignatureHelp(help: SignatureHelp, language?: string) {
   }
 
   if (markdown.length > 0) {
-    return renderAssist(kAssistHelp, markdown.join("\n"), language);
+    return renderAssist(kAssistHelp, markdown.join("\n"));
   } else {
     return undefined;
   }
@@ -233,7 +230,7 @@ function getMarkdown(content: MarkedString | MarkdownString | string): string {
   }
 }
 
-function renderAssist(type: string, markdown: string, language?: string) {
+function renderAssist(type: string, markdown: string) {
   const md = MarkdownIt("default", {
     html: true,
     linkify: true,

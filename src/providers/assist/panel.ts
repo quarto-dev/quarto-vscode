@@ -12,7 +12,7 @@ import { quartoLensCodeLensProvider } from "./codelens";
 import { PreviewMathCommand } from "./commands";
 import { QuartoAssistViewProvider } from "./webview";
 
-export function activateQuartoLensPanel(
+export function activateQuartoAssistPanel(
   context: ExtensionContext,
   engine: MarkdownEngine
 ): Command[] {

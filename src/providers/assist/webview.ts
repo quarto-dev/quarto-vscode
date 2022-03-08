@@ -17,8 +17,6 @@ import {
   ExtensionContext,
 } from "vscode";
 import { MarkdownEngine } from "../../markdown/engine";
-import { languageNameFromBlock } from "../../markdown/language";
-import { languageBlockAtPosition } from "../../vdoc/vdoc";
 import {
   createRenderCacheKey,
   RenderCacheKey,
@@ -32,9 +30,8 @@ export class QuartoAssistViewProvider
 {
   public static readonly viewType = "quarto-assist";
 
-  constructor(context: ExtensionContext, engine: MarkdownEngine) {
+  constructor(context: ExtensionContext, _engine: MarkdownEngine) {
     this.extensionUri_ = context.extensionUri;
-    this.engine_ = engine;
 
     window.onDidChangeActiveTextEditor(
       () => {
@@ -135,26 +132,8 @@ export class QuartoAssistViewProvider
 
     // promise used to perform updates (this will be raced with a progress indicator)
     const renderPromise = (async () => {
-      // determine default language
-      let defaultLanguage = "";
-      if (window.activeTextEditor?.document) {
-        const tokens = await this.engine_.parse(
-          window.activeTextEditor?.document
-        );
-        const languageBlock = languageBlockAtPosition(
-          tokens,
-          window.activeTextEditor.selection.active
-        );
-        if (languageBlock) {
-          defaultLanguage = languageNameFromBlock(languageBlock);
-        }
-      }
-
       // get html
-      const assist = await renderActiveAssist(
-        renderingEntry.cts.token,
-        defaultLanguage
-      );
+      const assist = await renderActiveAssist(renderingEntry.cts.token);
 
       // check for cancel
       if (renderingEntry.cts.token.isCancellationRequested) {
@@ -215,6 +194,4 @@ export class QuartoAssistViewProvider
 
   private currentRenderCacheKey_: RenderCacheKey = renderCacheKeyNone;
   private rendering_?: { cts: CancellationTokenSource };
-
-  private readonly engine_: MarkdownEngine;
 }

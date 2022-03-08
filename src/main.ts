@@ -10,7 +10,7 @@ import { kQuartoDocSelector } from "./core/doc";
 import { activateLsp } from "./lsp/client";
 import { cellCommands } from "./providers/cell/commands";
 import { quartoCellExecuteCodeLensProvider } from "./providers/cell/codelens";
-import { activateQuartoLensPanel } from "./providers/assist/panel";
+import { activateQuartoAssistPanel } from "./providers/assist/panel";
 import { activateCommon } from "./extension";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -20,8 +20,8 @@ export function activate(context: vscode.ExtensionContext) {
   // activate lsp for node
   activateLsp(context, engine);
 
-  // activate lens panel for node
-  const lensCommands = activateQuartoLensPanel(context, engine);
+  // activate assist panel for node
+  const lensCommands = activateQuartoAssistPanel(context, engine);
 
   // provide code lens for node
   vscode.languages.registerCodeLensProvider(
