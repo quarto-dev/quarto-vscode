@@ -130,7 +130,8 @@
         {
           "id": "quarto-panel",
           "title": "Quarto Assist",
-          "icon": "assets/logo/quarto.svg"
+          "icon": "assets/logo/quarto.svg",
+          "when": "!isWeb"
         }
       ]
     },
@@ -139,7 +140,8 @@
         {
           "type": "webview",
           "id": "quarto-assist",
-          "name": "Quarto Assist"
+          "name": "Quarto Assist",
+          "when": "!isWeb"
         }
       ]
     },
