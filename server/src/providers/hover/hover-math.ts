@@ -15,29 +15,67 @@ import {
 import MarkdownIt from "markdown-it";
 import Token from "markdown-it/lib/token";
 
-import { mathPlugin } from "./hover-math-plugin";
+import { mathPlugin } from "./mathdownit-math";
 
 export async function mathHover(
   doc: TextDocument,
   pos: Position
 ): Promise<Hover | null> {
+  // see if we are in a math block
   const tokens = mathTokens.parse(doc);
   const mathBlock = tokens.find(isMathBlockAtPosition(pos));
   if (mathBlock && mathBlock.map) {
-    const markdown: MarkupContent = {
-      kind: MarkupKind.Markdown,
-      value: mathBlock.content,
-    };
     return {
-      contents: markdown,
+      contents: mathAsMarkdown(mathBlock.content),
       range: Range.create(
         Position.create(mathBlock.map[0], 0),
         Position.create(mathBlock.map[1] + 1, 0)
       ),
     };
-  } else {
-    return null;
   }
+
+  // see if we are inside inline math
+  const line = doc
+    .getText(Range.create(pos.line, 0, pos.line + 1, 0))
+    .trimEnd();
+
+  return (
+    inlineMathHover(pos, line, kInlineMathPattern) ||
+    inlineMathHover(pos, line, kSingleLineDisplayMathPattern)
+  );
+}
+
+const kInlineMathPattern = /\$([^ ].*?[^\ ]?)\$/;
+const kSingleLineDisplayMathPattern = /\$\$([^\n]+?)\$\$/;
+
+function inlineMathHover(pos: Position, line: string, pattern: RegExp) {
+  const match = line.match(pattern);
+  if (match) {
+    const range = Range.create(
+      Position.create(pos.line, match.index || 0),
+      Position.create(pos.line, (match.index || 0) + match[0].length)
+    );
+    if (
+      range.start.character <= pos.character &&
+      range.end.character >= pos.character
+    ) {
+      return {
+        contents: mathAsMarkdown(match[1]),
+        range,
+      };
+    }
+  }
+  return null;
+}
+
+function mathAsMarkdown(math: string): MarkupContent {
+  if (!math.endsWith("\n")) {
+    math = math + "\n";
+  }
+  return {
+    kind: MarkupKind.Markdown,
+    value: math,
+  };
 }
 
 function isMathBlockAtPosition(pos: Position) {
@@ -65,10 +103,7 @@ class MathTokens {
       doc.uri !== this.cachedUri_ ||
       doc.version !== this.cachedVersion_
     ) {
-      // suffix to make sure trimming of whitepsace doesn't mess
-      // up our cursor location detection
-      const kSuffix = "\n\n---\n";
-      this.cachedTokens_ = this.md_.parse(doc.getText() + kSuffix, {});
+      this.cachedTokens_ = this.md_.parse(doc.getText(), {});
       this.cachedUri_ = doc.uri;
       this.cachedVersion_ = doc.version;
     }
