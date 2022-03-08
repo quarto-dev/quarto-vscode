@@ -14,9 +14,11 @@ import StateBlock from "markdown-it/lib/rules_block/state_block";
 export function mathPlugin(md: MarkdownIt, options: Record<string, undefined>) {
   options = options || {};
   const enableBareBlocks = !!options.enableBareBlocks;
-
-  md.inline.ruler.after("escape", "math_inline", math_inline);
-  md.inline.ruler.after("escape", "math_inline_block", math_inline_block);
+  const enableInlines = !!options.enableInlines;
+  if (enableInlines) {
+    md.inline.ruler.after("escape", "math_inline", math_inline);
+    md.inline.ruler.after("escape", "math_inline_block", math_inline_block);
+  }
   md.block.ruler.after(
     "blockquote",
     "math_block",

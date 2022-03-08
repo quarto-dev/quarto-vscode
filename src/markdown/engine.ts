@@ -57,7 +57,9 @@ export class MarkdownEngine {
         // "lheading",
         // "reference",
       ]);
-      this.md.use(mathPlugin);
+      this.md.use(mathPlugin, {
+        enableInlines: false,
+      });
     }
     return this.md;
   }

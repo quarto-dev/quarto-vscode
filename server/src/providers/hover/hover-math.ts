@@ -56,7 +56,7 @@ class MathTokens {
     // create parser on demand
     if (!this.md_) {
       this.md_ = MarkdownIt("zero");
-      this.md_.use(mathPlugin);
+      this.md_.use(mathPlugin, { enableInlines: false });
     }
 
     // do we need to primate/update the cache?
