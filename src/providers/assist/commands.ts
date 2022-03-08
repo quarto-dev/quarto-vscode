@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Position, Selection, window } from "vscode";
+import { Position, Selection, window, commands } from "vscode";
 import { Command } from "../../core/command";
 import { QuartoAssistViewProvider } from "./webview";
 
@@ -20,7 +20,7 @@ export class PreviewMathCommand implements Command {
     // attempt to activate (if we fail to the view has been closed so
     // recreate it by calling focus)
     if (!this.provider_.activate()) {
-      // commands.executeCommand("quarto-assist.focus");
+      commands.executeCommand("quarto-assist.focus");
     }
   }
 }
