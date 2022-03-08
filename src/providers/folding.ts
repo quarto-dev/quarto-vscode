@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import Token = require("markdown-it/lib/token");
+import Token from "markdown-it/lib/token";
 import * as vscode from "vscode";
 import { MarkdownEngine } from "../markdown/engine";
 import { MarkdownTableOfContents } from "../markdown/toc";

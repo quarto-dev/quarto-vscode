@@ -4,9 +4,9 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import MarkdownIt = require("markdown-it");
-import StateInline = require("markdown-it/lib/rules_inline/state_inline");
-import StateBlock = require("markdown-it/lib/rules_block/state_block");
+import MarkdownIt from "markdown-it";
+import StateInline from "markdown-it/lib/rules_inline/state_inline";
+import StateBlock from "markdown-it/lib/rules_block/state_block";
 
 // Fork of https://github.com/mjbvz/markdown-it-katex/ that doesn't render
 // (so has no depencency on katex or mathjax)

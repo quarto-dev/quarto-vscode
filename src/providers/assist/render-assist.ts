@@ -9,9 +9,10 @@
 // TODO: word range detection doesn't work for signature tip
 // TODO: only set seletion for math preview if the selection isn't in the block
 // TODO: consider having a help command
+// TODO: code lenses only active when panel isn't shown?
 
 import MarkdownIt from "markdown-it";
-const hljs = require("highlight.js");
+import hljs from "highlight.js";
 
 import {
   Uri,
@@ -236,7 +237,7 @@ function renderAssist(type: string, markdown: string, language?: string) {
           console.log(error);
         }
       }
-      return undefined; // use external default escaping
+      return "";
     },
   });
   return {

@@ -4,8 +4,8 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import MarkdownIt = require("markdown-it");
-import Token = require("markdown-it/lib/token");
+import MarkdownIt from "markdown-it";
+import Token from "markdown-it/lib/token";
 import * as vscode from "vscode";
 import { MarkdownTextDocument } from "./document";
 import { mathPlugin } from "./math";
@@ -42,9 +42,7 @@ export class MarkdownEngine {
 
   private async getEngine(): Promise<MarkdownIt> {
     if (!this.md) {
-      const markdownIt = await import("markdown-it");
-      const md = markdownIt.default("zero");
-      this.md = md.use(mathPlugin);
+      this.md = MarkdownIt("zero");
       // tokenize blocks only
       this.md.enable([
         "blockquote",
@@ -59,6 +57,7 @@ export class MarkdownEngine {
         // "lheading",
         // "reference",
       ]);
+      this.md.use(mathPlugin);
     }
     return this.md;
   }
