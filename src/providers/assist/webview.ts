@@ -27,12 +27,17 @@ import {
 } from "./render-cache";
 import { renderActiveAssist, renderWebviewHtml } from "./render-assist";
 
-export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
+export class QuartoAssistViewProvider
+  implements WebviewViewProvider, Disposable
+{
   public static readonly viewType = "quarto-assist";
 
   constructor(context: ExtensionContext, engine: MarkdownEngine) {
     this.extensionUri_ = context.extensionUri;
     this.engine_ = engine;
+    this.recordVisibility = (visible: boolean) => {
+      context.globalState.update("assist-visible", visible);
+    };
 
     window.onDidChangeActiveTextEditor(
       () => {
@@ -73,6 +78,7 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
       if (this.view_?.visible) {
         this.render(true);
       }
+      this.recordVisibility(!!this.view_?.visible);
     });
 
     webviewView.onDidDispose(() => {
@@ -165,18 +171,18 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
               assist.html
             }</div>`,
           });
-          this.view_.title = assist.type;
+          this.view_.description = assist.type;
         }
       } else {
         if (this.view_) {
           this.view_?.webview.postMessage({
             type: "noContent",
             body:
-              "The Quarto panel displays help and live preview for equations. " +
+              "Quarto Assist provides contextual help for code and live preview for equation editing. " +
               "Help will display automatically when your cursor is located on a symbol with " +
-              "help content available (e.g. a function or yaml option).",
+              "help content available (for example, a function or yaml option).",
           });
-          this.view_.title = undefined;
+          this.view_.description = undefined;
         }
       }
     })();
@@ -190,12 +196,14 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
           return;
         }
         return window.withProgress(
-          { location: { viewId: QuartoLensViewProvider.viewType } },
+          { location: { viewId: QuartoAssistViewProvider.viewType } },
           () => renderPromise
         );
       }),
     ]);
   }
+
+  private readonly recordVisibility: (visible: boolean) => void;
 
   private view_?: WebviewView;
   private readonly extensionUri_: Uri;

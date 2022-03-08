@@ -129,7 +129,7 @@
       "panel": [
         {
           "id": "quarto-panel",
-          "title": "Quarto",
+          "title": "Quarto Assist",
           "icon": "assets/logo/quarto.svg"
         }
       ]
@@ -139,7 +139,7 @@
         {
           "type": "webview",
           "id": "quarto-assist",
-          "name": "Quarto"
+          "name": "Quarto Assist"
         }
       ]
     },
@@ -310,6 +310,7 @@
         "editor.wordWrap": "on",
         "editor.quickSuggestions": true,
         "editor.quickSuggestionsDelay": 250,
+        "editor.parameterHints.enabled": false,
         "editor.snippetSuggestions": "none",
         "editor.wordBasedSuggestions": false,
         "editor.suggestOnTriggerCharacters": true,

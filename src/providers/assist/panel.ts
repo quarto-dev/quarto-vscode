@@ -10,18 +10,18 @@ import { kQuartoDocSelector } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
 import { quartoLensCodeLensProvider } from "./codelens";
 import { PreviewMathCommand } from "./commands";
-import { QuartoLensViewProvider } from "./webview";
+import { QuartoAssistViewProvider } from "./webview";
 
 export function activateQuartoLensPanel(
   context: ExtensionContext,
   engine: MarkdownEngine
 ): Command[] {
-  const provider = new QuartoLensViewProvider(context, engine);
+  const provider = new QuartoAssistViewProvider(context, engine);
   context.subscriptions.push(provider);
 
   context.subscriptions.push(
     window.registerWebviewViewProvider(
-      QuartoLensViewProvider.viewType,
+      QuartoAssistViewProvider.viewType,
       provider
     )
   );

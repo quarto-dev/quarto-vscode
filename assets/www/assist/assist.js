@@ -6,20 +6,16 @@
 
   const main = document.getElementById("main");
 
-  let contentShown = false;
-
   // Handle messages sent from the extension to the webview
   window.addEventListener("message", (event) => {
     const message = event.data; // The json data that the extension sent
     switch (message.type) {
       case "update": {
         updateContent(message.body);
-        contentShown = true;
         break;
       }
       case "noContent": {
-        setNoContent(!contentShown ? message.body : "");
-        contentShown = true;
+        setNoContent(message.body);
         break;
       }
     }
