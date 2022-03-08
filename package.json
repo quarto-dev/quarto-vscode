@@ -365,9 +365,11 @@
     "vscode-nls": "^5.0.0"
   },
   "devDependencies": {
+    "@types/highlight.js": "^10.1.0",
     "@types/js-yaml": "^3.12.2",
     "@types/lodash.debounce": "^4.0.6",
     "@types/markdown-it": "^12.0.2",
+    "@types/markdown-it-highlightjs": "^3.3.1",
     "@types/node": "^8.10.25",
     "@types/tmp": "^0.2.3",
     "@types/vscode": "^1.55.0",

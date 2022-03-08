@@ -3,15 +3,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
-// TODO: table in ggplot2:quickplot
-// TODO: syntax highlighting for R
 // TODO: only set seletion for math preview if the selection isn't in the block
 // TODO: consider having a help command
 // TODO: code lenses only active when panel isn't shown?
 
 import MarkdownIt from "markdown-it";
-import hljs from "highlight.js";
+import markdownItHljs from "markdown-it-highlightjs";
 
 import {
   Uri,
@@ -140,10 +137,14 @@ function filterHoverAssist(markdown: string) {
 }
 
 function getAssistFromSignatureHelp(help: SignatureHelp, language?: string) {
-  const markdown: string[] = [];
+  // no signatures means no help
+  if (help.signatures.length === 0) {
+    return undefined;
+  }
 
   // build up markdown for signature
-  const signature = help.signatures[help.activeSignature];
+  const markdown: string[] = [];
+  const signature = help.signatures[help.activeSignature] || help.signatures[0];
   const activeParameterIndex =
     signature.activeParameter ?? help.activeParameter;
 
@@ -236,17 +237,10 @@ function renderAssist(type: string, markdown: string, language?: string) {
   const md = MarkdownIt("default", {
     html: true,
     linkify: true,
-    highlight: (str, lang) => {
-      lang = lang || language || "";
-      if (lang && hljs.getLanguage(lang)) {
-        try {
-          return hljs.highlight(str, { language: lang }).value;
-        } catch (error) {
-          console.log(error);
-        }
-      }
-      return "";
-    },
+  });
+  md.use(markdownItHljs, {
+    auto: true,
+    code: true,
   });
   return {
     type,
