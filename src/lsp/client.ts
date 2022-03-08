@@ -76,7 +76,11 @@ export function activateLsp(context: ExtensionContext, engine: MarkdownEngine) {
   const clientOptions: LanguageClientOptions = {
     documentSelector: [
       { scheme: "*", language: "quarto" },
-      { scheme: "*", language: "yaml", pattern: "**/_quarto.{yml,yaml}" },
+      {
+        scheme: "*",
+        language: "yaml",
+        pattern: "**/_{quarto,metadata}.{yml,yaml}",
+      },
     ],
     middleware,
   };
