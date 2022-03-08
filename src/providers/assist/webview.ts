@@ -163,7 +163,7 @@ export class QuartoAssistViewProvider
           this.view_?.webview.postMessage({
             type: "noContent",
             body:
-              "Quarto Assist provides contextual help as you edit. " +
+              "Quarto Assist provides contextual help as you edit, as well as live preview for LaTeX equations. " +
               "Help will display automatically when your cursor is located on a symbol with " +
               "help content available (for example, a function or yaml option).",
           });

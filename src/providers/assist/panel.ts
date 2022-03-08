@@ -26,14 +26,12 @@ export function activateQuartoAssistPanel(
     )
   );
 
-  /*
   context.subscriptions.push(
     languages.registerCodeLensProvider(
       kQuartoDocSelector,
       quartoLensCodeLensProvider(engine)
     )
   );
-  */
 
   return [new PreviewMathCommand(provider)];
 }
