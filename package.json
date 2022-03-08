@@ -310,7 +310,6 @@
         "editor.wordWrap": "on",
         "editor.quickSuggestions": true,
         "editor.quickSuggestionsDelay": 250,
-        "editor.parameterHints.enabled": false,
         "editor.snippetSuggestions": "none",
         "editor.wordBasedSuggestions": false,
         "editor.suggestOnTriggerCharacters": true,
