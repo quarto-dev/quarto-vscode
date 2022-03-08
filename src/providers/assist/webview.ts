@@ -68,6 +68,7 @@ export class QuartoAssistViewProvider
 
     webviewView.webview.options = {
       enableScripts: true,
+      enableCommandUris: true,
       localResourceRoots: [this.extensionUri_],
     };
 
