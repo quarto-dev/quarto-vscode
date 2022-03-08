@@ -233,7 +233,7 @@ function getMarkdown(content: MarkedString | MarkdownString | string): string {
 }
 
 function renderAssist(type: string, markdown: string, language?: string) {
-  const md = MarkdownIt("commonmark", {
+  const md = MarkdownIt("default", {
     html: true,
     linkify: true,
     highlight: (str, lang) => {
