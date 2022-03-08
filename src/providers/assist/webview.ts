@@ -35,9 +35,6 @@ export class QuartoAssistViewProvider
   constructor(context: ExtensionContext, engine: MarkdownEngine) {
     this.extensionUri_ = context.extensionUri;
     this.engine_ = engine;
-    this.recordVisibility = (visible: boolean) => {
-      context.globalState.update("assist-visible", visible);
-    };
 
     window.onDidChangeActiveTextEditor(
       () => {
@@ -78,7 +75,6 @@ export class QuartoAssistViewProvider
       if (this.view_?.visible) {
         this.render(true);
       }
-      this.recordVisibility(!!this.view_?.visible);
     });
 
     webviewView.onDidDispose(() => {
@@ -91,6 +87,15 @@ export class QuartoAssistViewProvider
     );
 
     this.render(true);
+  }
+
+  public activate() {
+    if (this.view_) {
+      this.view_.show(true);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public dispose() {
@@ -202,8 +207,6 @@ export class QuartoAssistViewProvider
       }),
     ]);
   }
-
-  private readonly recordVisibility: (visible: boolean) => void;
 
   private view_?: WebviewView;
   private readonly extensionUri_: Uri;

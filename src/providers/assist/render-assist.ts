@@ -4,11 +4,11 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-// TODO: Quarto cell commands are gone!
 // TODO: test quarto assist for R (no signature tip?)
 // TODO: if no signature tip, perhaps scan backwards if cursor is in between two params
 // TODO: word range detection doesn't work for signature tip
-// TODO: show using command that preserves focus (view has a show/focus method)
+// TODO: only set seletion for math preview if the selection isn't in the block
+// TODO: consider having a help command
 
 import MarkdownIt from "markdown-it";
 const hljs = require("highlight.js");

@@ -33,5 +33,5 @@ export function activateQuartoLensPanel(
     )
   );
 
-  return [new PreviewMathCommand()];
+  return [new PreviewMathCommand(provider)];
 }
