@@ -6,6 +6,7 @@ VS Code extension for the [Quarto](https://quarto.org) scientific and technical 
 - Commands and key-bindings for running cells and selected line(s)
 - Completion for embedded languages (e.g. Python, R, LaTeX, etc.)
 - Completion and diagnostics for project files and document/cell options
+- Quarto Assist panel for contextual help as you edit
 - Code snippets for common markdown constructs
 - Code folding and document outline for navigation within documents
 - Workspace symbol provider for navigation across project files
@@ -24,7 +25,7 @@ There are a variety of tools that make it easier to edit and execute code cells.
 
 ![](https://quarto.org/docs/tools/images/vscode-code-cell.png)
 
-For Python cells, commands are available to execute the current cell, previous cells, or the currently selected line(s). Cell output is shown side by side in the Jupyter interactive console:
+For Python and R cells, commands are available to execute the current cell, previous cells, or the currently selected line(s). Cell output is shown side by side in the Jupyter interactive console:
 
 ![](https://quarto.org/docs/tools/images/vscode-execute-cell.png)
 
@@ -70,12 +71,12 @@ Use the `Go to File` command (`Ctrl+P`) to navigate to other files and the `Go t
 
 You can alternatively download and install the extension from the command line as follows:
 
-1.  Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/visx/quarto-1.6.0.vsix)
+1.  Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/visx/quarto-1.7.0.vsix)
 
 2.  Install from the command line with:
 
     ```bash
-    code --install-extension quarto-1.6.0.vsix
+    code --install-extension quarto-1.7.0.vsix
     ```
 
 Note that in order to use the `code` command to perform the installation you may need to open the VS Code Command Palette (Ctrl+Shift+P) and type "shell command" to execute the `Shell Command: Install 'code' command in PATH` command. This will make sure that `code` can be invoked from the command line on your system.

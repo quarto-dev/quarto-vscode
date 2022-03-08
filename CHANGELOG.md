@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.0 (Release on 8 March 2022)
+
+- Quarto Assist panel for contextual help as you edit
+- Code Lens to execute code from R executable code blocks
+- Hover help provider for Quarto YAML options
+- Additional language features (outline, folding, etc) in VS code for the web
+
 ## 1.6.0 (Release on 3 March 2022)
 
 - Completion for Quarto markdown classes and attributes
