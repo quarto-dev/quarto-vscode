@@ -98,7 +98,6 @@ const pythonCellExecutor: CellExecutor = {
   },
 };
 
-/*
 const rCellExecutor: CellExecutor = {
   language: "r",
   requiredExtension: "Ikuyadeu.r",
@@ -106,6 +105,5 @@ const rCellExecutor: CellExecutor = {
     await commands.executeCommand("r.runSelection", code);
   },
 };
-*/
 
-const kCellExecutors = [pythonCellExecutor];
+const kCellExecutors = [pythonCellExecutor, rCellExecutor];
