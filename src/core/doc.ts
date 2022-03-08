@@ -7,13 +7,23 @@
 import * as vscode from "vscode";
 import { extname } from "./path";
 
+const kQuartoLanguageId = "quarto";
+const kYamlLanguageId = "yaml";
+
 export const kQuartoDocSelector: vscode.DocumentSelector = {
-  language: "quarto",
+  language: kQuartoLanguageId,
   scheme: "*",
 };
 
 export function isQuartoDoc(document: vscode.TextDocument) {
-  return document.languageId === "quarto";
+  return document.languageId === kQuartoLanguageId;
+}
+
+export function isQuartoYaml(doc: vscode.TextDocument) {
+  return (
+    doc.languageId === kYamlLanguageId &&
+    doc.uri.toString().match(/_quarto\.ya?ml$/)
+  );
 }
 
 export function isMarkdownDoc(document: vscode.TextDocument) {
