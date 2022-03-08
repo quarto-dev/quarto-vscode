@@ -252,39 +252,39 @@
       "commandPalette": [
         {
           "command": "quarto.runSelection",
-          "when": "!isWeb && editorTextFocus && editorLangId == quarto"
+          "when": "!isWeb && editorLangId == quarto"
         },
         {
           "command": "quarto.runCurrentCell",
-          "when": "!isWeb && editorTextFocus && editorLangId == quarto"
+          "when": "!isWeb && editorLangId == quarto"
         },
         {
           "command": "quarto.runPreviousCell",
-          "when": "!isWeb && editorTextFocus && editorLangId == quarto"
+          "when": "!isWeb && editorLangId == quarto"
         },
         {
           "command": "quarto.runNextCell",
-          "when": "!isWeb && editorTextFocus && editorLangId == quarto"
+          "when": "!isWeb && editorLangId == quarto"
         },
         {
           "command": "quarto.runCellsBelow",
-          "when": "!isWeb && editorTextFocus && editorLangId == quarto"
+          "when": "!isWeb && editorLangId == quarto"
         },
         {
           "command": "quarto.runCellsAbove",
-          "when": "!isWeb && editorTextFocus && editorLangId == quarto"
+          "when": "!isWeb && editorLangId == quarto"
         },
         {
           "command": "quarto.runAllCells",
-          "when": "!isWeb && editorTextFocus && editorLangId == quarto"
+          "when": "!isWeb && editorLangId == quarto"
         },
         {
           "command": "quarto.goToNextCell",
-          "when": "!isWeb && editorTextFocus && editorLangId == quarto"
+          "when": "!isWeb && editorLangId == quarto"
         },
         {
           "command": "quarto.goToPreviousCell",
-          "when": "!isWeb && editorTextFocus && editorLangId == quarto"
+          "when": "!isWeb && editorLangId == quarto"
         }
       ]
     },
