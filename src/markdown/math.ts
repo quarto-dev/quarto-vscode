@@ -228,7 +228,7 @@ function math_block_dollar(
       break;
     }
 
-    if (state.src.slice(pos, max).trim().slice(-2) === "$$") {
+    if (state.src.slice(pos, max).trim().slice(0, 2) === "$$") {
       lastPos = state.src.slice(0, max).lastIndexOf("$$");
       lastLine = state.src.slice(pos, lastPos);
       found = true;
