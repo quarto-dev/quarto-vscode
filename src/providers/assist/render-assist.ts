@@ -3,8 +3,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
-// TODO: empty message
 // TODO: hide the signature tip in the editor when lens is visible
 // TODO: word range detection doesn't work for signature tip
 // TODO: show using command that preserves focus (view has a show/focus method)
@@ -118,8 +116,15 @@ function getAssistFromHovers(hovers: Hover[], language?: string) {
   }
 
   const markdown = parts.join("\n---\n");
+  if (filterHoverAssist(markdown)) {
+    return renderAssist(kAssistHelp, markdown, language);
+  } else {
+    return undefined;
+  }
+}
 
-  return renderAssist(kAssistHelp, markdown, language);
+function filterHoverAssist(markdown: string) {
+  return !markdown.match(/^```\w*\n.*?\n```\s*$/);
 }
 
 function getAssistFromSignatureHelp(help: SignatureHelp, language?: string) {

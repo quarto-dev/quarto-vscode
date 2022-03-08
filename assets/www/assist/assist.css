@@ -3,6 +3,8 @@ body {
   margin: 1em 0;
   font-size: 12px;
   line-height: 17px;
+  color: var(--vscode-editor-foreground);
+  background-color: var(--vscode-editor-background);
 }
 
 pre {
@@ -26,11 +28,11 @@ pre code {
 }
 
 #main > * {
-  padding: 0 20px;
+  padding: 0;
 }
 
-.no-content {
-  font-style: italic;
+.vscode-light .no-content {
+  color: rgb(113, 113, 113);
 }
 
 #main hr {

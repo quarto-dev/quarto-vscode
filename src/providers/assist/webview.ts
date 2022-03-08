@@ -36,7 +36,9 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
 
     window.onDidChangeActiveTextEditor(
       () => {
-        this.render();
+        if (this.view_?.visible) {
+          this.render();
+        }
       },
       null,
       this._disposables
@@ -44,7 +46,9 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
 
     window.onDidChangeTextEditorSelection(
       () => {
-        this.render();
+        if (this.view_?.visible) {
+          this.render();
+        }
       },
       null,
       this._disposables
@@ -154,20 +158,26 @@ export class QuartoLensViewProvider implements WebviewViewProvider, Disposable {
 
       // post update to view
       if (assist) {
-        this.view_?.webview.postMessage({
-          type: "update",
-          body: `<div class="${assist.type.toLowerCase()}">${
-            assist.html
-          }</div>`,
-        });
         if (this.view_) {
-          this.view_.description = assist.type;
+          this.view_.webview.postMessage({
+            type: "update",
+            body: `<div class="${assist.type.toLowerCase()}">${
+              assist.html
+            }</div>`,
+          });
+          this.view_.title = assist.type;
         }
       } else {
-        this.view_?.webview.postMessage({
-          type: "noContent",
-          body: "",
-        });
+        if (this.view_) {
+          this.view_?.webview.postMessage({
+            type: "noContent",
+            body:
+              "The Quarto panel displays help and live preview for equations. " +
+              "Help will display automatically when your cursor is located on a symbol with " +
+              "help content available (e.g. a function or yaml option).",
+          });
+          this.view_.title = undefined;
+        }
       }
     })();
 
