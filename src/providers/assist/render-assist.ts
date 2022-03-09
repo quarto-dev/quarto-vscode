@@ -1,6 +1,7 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) RStudio, PBC. All rights reserved.
  *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Copyright (c) 2020 Matt Bierner
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
@@ -128,7 +129,9 @@ function getAssistFromHovers(hovers: Hover[]) {
 
 function filterHoverAssist(markdown: string) {
   return (
-    !markdown.match(/^```\w*\n.*?\n```\s*$/) && markdown.indexOf("\n") !== -1
+    (!markdown.match(/^```\w*\n.*?\n```\s*$/) &&
+      markdown.indexOf("\n") !== -1) ||
+    markdown.startsWith("![equation]")
   );
 }
 
@@ -234,6 +237,14 @@ function renderAssist(type: string, markdown: string) {
     html: true,
     linkify: true,
   });
+  const validateLink = md.validateLink;
+  md.validateLink = (link: string) => {
+    return (
+      validateLink(link) ||
+      link.startsWith("file:") ||
+      /^data:image\/.*?;/.test(link)
+    );
+  };
   md.use(markdownItHljs, {
     auto: true,
     code: true,

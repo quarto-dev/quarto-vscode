@@ -4,25 +4,23 @@
  * ------------------------------------------------------------------------------------------ */
 
 import { Position, TextDocument } from "vscode-languageserver-textdocument";
-import { Hover, ServerCapabilities } from "vscode-languageserver/node";
+import {
+  Hover,
+  InitializeParams,
+  ServerCapabilities,
+} from "vscode-languageserver/node";
 
-import { mathHover } from "./hover-math";
 import { yamlHover } from "./hover-yaml";
+import { initializeMathHover } from "./math/math";
 
 export const kHoverCapabilities: ServerCapabilities = {
   hoverProvider: true,
 };
 
-export async function onHover(
-  doc: TextDocument,
-  pos: Position
-): Promise<Hover | null> {
-  // try math first
-  const hover = await mathHover(doc, pos);
-  if (hover) {
-    return hover;
-  }
+export function initializeHover(params: InitializeParams) {
+  const mathHover = initializeMathHover(params);
 
-  // now try yaml
-  return await yamlHover(doc, pos);
+  return async (doc: TextDocument, pos: Position): Promise<Hover | null> => {
+    return (await mathHover(doc, pos)) || (await yamlHover(doc, pos));
+  };
 }

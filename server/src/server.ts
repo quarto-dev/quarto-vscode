@@ -6,7 +6,9 @@
 import {
   createConnection,
   Diagnostic,
+  Hover,
   InitializeParams,
+  Position,
   ProposedFeatures,
   TextDocumentIdentifier,
   TextDocuments,
@@ -18,7 +20,7 @@ import {
   kCompletionCapabilities,
   onCompletion,
 } from "./providers/completion/completion";
-import { kHoverCapabilities, onHover } from "./providers/hover/hover";
+import { kHoverCapabilities, initializeHover } from "./providers/hover/hover";
 import { kSignatureCapabilities, onSignatureHelp } from "./providers/signature";
 import { provideDiagnostics } from "./providers/diagnostics";
 
@@ -45,7 +47,15 @@ function resolveDoc(docId: TextDocumentIdentifier) {
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
-connection.onInitialize((_params: InitializeParams) => {
+
+let onHover: (
+  doc: TextDocument,
+  pos: Position
+) => Promise<Hover | null> | undefined;
+
+connection.onInitialize((params: InitializeParams) => {
+  onHover = initializeHover(params);
+
   return {
     capabilities: {
       textDocumentSync: TextDocumentSyncKind.Incremental,

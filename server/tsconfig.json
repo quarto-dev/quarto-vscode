@@ -8,7 +8,10 @@
     "esModuleInterop": true,
     "strict": true,
     "outDir": "out",
-    "rootDir": "src"
+    "rootDir": "src",
+    "paths": {
+      "mathjax-full": ["./types/mathjax-full"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", ".vscode-test"]
