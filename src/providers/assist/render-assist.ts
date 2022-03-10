@@ -24,6 +24,7 @@ import {
 import { escapeRegExpCharacters } from "../../core/strings";
 
 const kAssistHelp = "Help";
+const kAssistEquation = "Equation";
 
 export function renderWebviewHtml(webview: Webview, extensionUri: Uri) {
   const nonce = scriptNonce();
@@ -121,9 +122,17 @@ function getAssistFromHovers(hovers: Hover[]) {
 
   const markdown = parts.join("\n---\n");
   if (filterHoverAssist(markdown)) {
-    return renderAssist(kAssistHelp, markdown);
+    return renderAssist(assistType(markdown), markdown);
   } else {
     return undefined;
+  }
+}
+
+function assistType(markdown: string) {
+  if (isEquation(markdown)) {
+    return kAssistEquation;
+  } else {
+    return kAssistHelp;
   }
 }
 
@@ -131,8 +140,12 @@ function filterHoverAssist(markdown: string) {
   return (
     (!markdown.match(/^```\w*\n.*?\n```\s*$/) &&
       markdown.indexOf("\n") !== -1) ||
-    markdown.startsWith("![equation]")
+    isEquation(markdown)
   );
+}
+
+function isEquation(markdown: string) {
+  return markdown.startsWith("![equation]");
 }
 
 function getAssistFromSignatureHelp(help: SignatureHelp) {
@@ -249,9 +262,10 @@ function renderAssist(type: string, markdown: string) {
     auto: true,
     code: true,
   });
+  const html = md.render(markdown);
   return {
     type,
-    html: md.render(markdown),
+    html,
   };
 }
 
