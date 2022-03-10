@@ -30,7 +30,7 @@ export function isDisplayMath(token: Token) {
 
 export function languageNameFromBlock(token: Token) {
   if (isDisplayMath(token)) {
-    return "latex";
+    return "tex";
   } else {
     const name = token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "");
     return name;

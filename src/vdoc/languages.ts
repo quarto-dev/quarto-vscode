@@ -25,7 +25,6 @@ const kEmbededLanguages = [
   }),
   defineLanguage("r", { trigger: ["$", "@", ":", "."], reuseVdoc: true }),
   defineLanguage("julia", { ext: "jl", trigger: ["."] }),
-  defineLanguage(["tex", "latex"], { trigger: ["\\"] }),
   defineLanguage("sql", { trigger: ["."] }),
   defineLanguage("bash", { ext: "sh" }),
   defineLanguage("ruby", { ext: "rb", trigger: ["."] }),
