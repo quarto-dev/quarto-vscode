@@ -437,6 +437,8 @@
     "concurrently": "^7.0.0",
     "esbuild": "^0.14.21",
     "js-yaml": "^4.1.0",
+    "npx": "^10.2.2",
+    "ovsx": "^0.3.0",
     "plist": "^3.0.1",
     "ts-loader": "^9.2.7",
     "typescript": "^4.5.5",
