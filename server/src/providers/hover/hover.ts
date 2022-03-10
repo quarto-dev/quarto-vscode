@@ -4,11 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 import { Position, TextDocument } from "vscode-languageserver-textdocument";
-import {
-  Hover,
-  InitializeParams,
-  ServerCapabilities,
-} from "vscode-languageserver/node";
+import { Hover, ServerCapabilities } from "vscode-languageserver/node";
 
 import { yamlHover } from "./hover-yaml";
 import { mathHover } from "./math/math";

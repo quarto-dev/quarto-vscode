@@ -16,6 +16,9 @@ import {
   CancellationTokenSource,
   ExtensionContext,
 } from "vscode";
+
+import debounce from "lodash.debounce";
+
 import { MarkdownEngine } from "../../markdown/engine";
 import {
   createRenderCacheKey,
@@ -44,11 +47,11 @@ export class QuartoAssistViewProvider
     );
 
     window.onDidChangeTextEditorSelection(
-      () => {
+      debounce(() => {
         if (this.view_?.visible) {
           this.render();
         }
-      },
+      }, 500),
       null,
       this._disposables
     );
