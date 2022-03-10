@@ -6,11 +6,8 @@
 
 // based on https://github.com/James-Yu/LaTeX-Workshop/tree/master/src/providers/preview
 
-// TODO: Cursor preview
 // TODO: math highlighting is not quite right (compare to md, pure embed?)
-// TOOD: Need another return value where we signal an error (and keep last)
 // TOOO: math should get separate css treatment (don't width confine, center?
-// TODO: consider debouncing the assist panel
 // TODO: embed latex completions
 
 import type {
@@ -84,10 +81,11 @@ export function mathjaxTypesetToMarkdown(tex: string): MarkupContent | null {
       kind: MarkupKind.Markdown,
       value: `![equation](${md})`,
     };
-  } catch (e) {
-    console.log(e);
-    console.log(`Error when MathJax is rendering ${tex}`);
-    return null;
+  } catch (error: any) {
+    return {
+      kind: MarkupKind.Markdown,
+      value: "**LaTeX Error**:\n" + error.message || "Unknown error",
+    };
   }
 }
 
