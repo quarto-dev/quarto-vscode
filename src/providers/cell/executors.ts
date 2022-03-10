@@ -10,6 +10,7 @@ import Token from "markdown-it/lib/token";
 import { commands, extensions, Position, TextDocument } from "vscode";
 import { MarkdownEngine } from "../../markdown/engine";
 import {
+  isExecutableLanguageBlock,
   isExecutableLanguageBlockOf,
   languageNameFromBlock,
 } from "../../markdown/language";
@@ -22,7 +23,7 @@ export function hasExecutor(language: string) {
 export function blockHasExecutor(token?: Token) {
   if (token) {
     const language = languageNameFromBlock(token);
-    return hasExecutor(language);
+    return isExecutableLanguageBlock(token) && hasExecutor(language);
   } else {
     return false;
   }
