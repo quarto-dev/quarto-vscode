@@ -11,6 +11,9 @@ import {
   SignatureHelp,
   SignatureHelpContext,
   workspace,
+  window,
+  ColorThemeKind,
+  ConfigurationTarget,
 } from "vscode";
 import {
   LanguageClient,
@@ -40,7 +43,13 @@ import { deactivateVirtualDocTempFiles } from "../vdoc/vdoc-tempfile";
 
 let client: LanguageClient;
 
-export function activateLsp(context: ExtensionContext, engine: MarkdownEngine) {
+export async function activateLsp(
+  context: ExtensionContext,
+  engine: MarkdownEngine
+) {
+  // sync color theme config before starting server
+  await syncColorThemeConfig();
+
   // The server is implemented in node
   const serverModule = context.asAbsolutePath(
     path.join("server", "out", "server.js")
@@ -216,4 +225,26 @@ function embeddedSignatureHelpProvider(engine: MarkdownEngine) {
 function isWithinYamlComment(doc: TextDocument, pos: Position) {
   const line = doc.lineAt(pos.line).text;
   return !!line.match(/^\s*#\| /);
+}
+
+async function syncColorThemeConfig() {
+  // update the config
+  const updateColorThemeConfig = async () => {
+    const theme =
+      window.activeColorTheme.kind == ColorThemeKind.Light ? "light" : "dark";
+    const quartoConfig = workspace.getConfiguration("quarto");
+    await quartoConfig.update(
+      "preview.mathjax.theme",
+      theme,
+      ConfigurationTarget.Global
+    );
+  };
+  await updateColorThemeConfig();
+
+  // listen for changes and update on change
+  workspace.onDidChangeConfiguration(async (ev) => {
+    if (ev.affectsConfiguration("workbench.colorTheme")) {
+      await updateColorThemeConfig();
+    }
+  });
 }
