@@ -15,15 +15,9 @@ import Token from "markdown-it/lib/token";
 import MarkdownIt from "markdown-it";
 import { mathPlugin } from "./math-markdownit";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import {
-  mathjaxLoadExtensions,
-  mathjaxTypesetToMarkdown,
-} from "./math-mathjax";
+import { mathjaxTypesetToMarkdown } from "./math-mathjax";
 
-export function initializeMathHover(_params: InitializeParams) {
-  // one time load of extensions
-  mathjaxLoadExtensions();
-
+export function initializeMathHover() {
   // return hover function
   return (doc: TextDocument, pos: Position): Hover | null => {
     // see if we are in a math block

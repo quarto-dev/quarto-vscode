@@ -7,11 +7,14 @@
 // based on https://github.com/James-Yu/LaTeX-Workshop/tree/master/src/providers/preview
 
 // TODO: Cursor preview
+// TODO: Preview only move selection if necessary
 // TODO: Configuration / themeing
 // TOOD: Need another return value where we signal an error (and keep last)
-// TOOO: math should get separate css treatment (don't width confine)
+// TOOO: math should get separate css treatment (don't width confine, center?
+// TODO: height of equations (break across mutliple lines)
 // TODO: look at other width related options
 // TODO: consider debouncing the assist panel
+// TODO: embed latex completions
 
 import type {
   ConvertOption,
@@ -31,7 +34,7 @@ import type { LiteText } from "mathjax-full/js/adaptors/lite/Text.js";
 import "mathjax-full/js/input/tex/AllPackages.js";
 
 import { MarkupContent, MarkupKind } from "vscode-languageserver/node";
-import { getConfig } from "../../../core/config";
+import { config } from "../../../core/config";
 
 const baseExtensions: SupportedExtension[] = [
   "ams",
@@ -64,12 +67,10 @@ RegisterHTMLHandler(adaptor);
 let html = createHtmlConverter(baseExtensions);
 
 export function mathjaxLoadExtensions() {
-  const extensions = getConfig(
-    "hover.mathjax.extensions",
-    []
-  ) as SupportedExtension[];
   const extensionsToLoad = baseExtensions.concat(
-    extensions.filter((ex) => supportedExtensionList.includes(ex))
+    config
+      .previewMathJaxExtensions()
+      .filter((ex) => supportedExtensionList.includes(ex))
   );
   html = createHtmlConverter(extensionsToLoad);
 }
@@ -83,8 +84,10 @@ export function mathjaxTypesetToMarkdown(tex: string): MarkupContent | null {
   tex = mathjaxify(tex, envname);
 
   // typeset
-  const scale = getConfig("hover.mathjax.scale", 1);
-  const typesetOpts = { scale, color: getColor() };
+  const typesetOpts = {
+    scale: config.previewMathJaxScale(),
+    color: getColor(),
+  };
   try {
     const svg = typesetToSvg(tex, typesetOpts);
     const md = svgToDataUrl(svg);
@@ -120,22 +123,12 @@ function typesetToSvg(
 }
 
 function getColor() {
-  const lightness = getCurrentThemeLightness();
+  const lightness = config.previewMathJaxTheme();
   if (lightness === "light") {
     return "#000000";
   } else {
     return "#ffffff";
   }
-}
-
-function getCurrentThemeLightness(): "light" | "dark" {
-  return getConfig("hover.mathjax.theme", "light");
-}
-
-function addDummyCodeBlock(md: string): string {
-  // We need a dummy code block in hover to make the width of hover larger.
-  const dummyCodeBlock = "```\n```";
-  return dummyCodeBlock + "\n" + md + "\n" + dummyCodeBlock;
 }
 
 function mathjaxify(

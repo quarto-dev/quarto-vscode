@@ -320,38 +320,96 @@
       }
     },
     "configuration": {
+      "type": "object",
+      "title": "Quarto",
       "properties": {
         "quarto.cells.hoverHelp.enabled": {
+          "scope": "window",
           "type": "boolean",
           "default": true,
           "markdownDescription": "Show help when hovering over functions."
         },
         "quarto.cells.signatureHelp.enabled": {
+          "scope": "window",
           "type": "boolean",
           "default": true,
           "markdownDescription": "Show parameter help when editing function calls."
         },
         "quarto.cells.background.enabled": {
+          "scope": "window",
           "type": "boolean",
           "default": true,
           "markdownDescription": "Enable coloring the background of executable code cells."
         },
         "quarto.cells.background.light": {
+          "scope": "window",
           "type": "string",
           "format": "color",
           "default": "#E1E1E166",
           "markdownDescription": "CSS color for background of executable code cells on light themes.\n\n*Note that this color should include an alpha channel so that selections show up against the background.*"
         },
         "quarto.cells.background.dark": {
+          "scope": "window",
           "type": "string",
           "format": "color",
           "default": "#40404066",
           "markdownDescription": "CSS color for background of executable code cells on dark themes.\n\n*Note that this color should include an alpha channel so that selections show up against the background.*"
         },
         "quarto.cells.background.delay": {
+          "scope": "window",
           "type": "integer",
           "default": 250,
           "markdownDescription": "Millisecond delay between background color updates."
+        },
+        "quarto.preview.mathjax.scale": {
+          "scope": "window",
+          "type": "number",
+          "default": 1,
+          "markdownDescription": "Scaling of MathJax preview."
+        },
+        "quarto.preview.mathjax.extensions": {
+          "scope": "window",
+          "type": "array",
+          "default": [],
+          "markdownDescription": "MathJax extensions to load for preview. See [the list](https://docs.mathjax.org/en/latest/input/tex/extensions/index.html). Note that the following extensions are loaded by default: `ams`, `color`, `newcommand`, `noerrors`, and `noundefined`. They cannot be disabled.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "amscd",
+              "bbox",
+              "boldsymbol",
+              "braket",
+              "bussproofs",
+              "cancel",
+              "cases",
+              "centernot",
+              "colortbl",
+              "empheq",
+              "enclose",
+              "extpfeil",
+              "gensymb",
+              "html",
+              "mathtools",
+              "mhchem",
+              "physics",
+              "textcomp",
+              "textmacros",
+              "unicode",
+              "upgreek",
+              "verb"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "quarto.preview.mathjax.theme": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "light",
+            "dark"
+          ],
+          "default": "dark",
+          "markdownDescription": "Theme for MathJax preview (`light` or `dark`)."
         }
       }
     }

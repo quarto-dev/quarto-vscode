@@ -17,8 +17,8 @@ export const kHoverCapabilities: ServerCapabilities = {
   hoverProvider: true,
 };
 
-export function initializeHover(params: InitializeParams) {
-  const mathHover = initializeMathHover(params);
+export function initializeHover() {
+  const mathHover = initializeMathHover();
 
   return async (doc: TextDocument, pos: Position): Promise<Hover | null> => {
     return (await mathHover(doc, pos)) || (await yamlHover(doc, pos));

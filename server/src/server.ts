@@ -6,6 +6,7 @@
 import {
   createConnection,
   Diagnostic,
+  DidChangeConfigurationNotification,
   Hover,
   InitializeParams,
   Position,
@@ -16,6 +17,7 @@ import {
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { isQuartoDoc, isQuartoYaml } from "./core/doc";
+import { config } from "./core/config";
 import {
   kCompletionCapabilities,
   onCompletion,
@@ -25,6 +27,8 @@ import { kSignatureCapabilities, onSignatureHelp } from "./providers/signature";
 import { provideDiagnostics } from "./providers/diagnostics";
 
 import { initializeQuarto } from "./quarto/quarto";
+
+import { mathjaxLoadExtensions } from "./providers/hover/math/math-mathjax";
 
 // initialize connection to quarto
 initializeQuarto();
@@ -48,13 +52,19 @@ function resolveDoc(docId: TextDocumentIdentifier) {
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
 
+let hasConfigurationCapability = false;
+
 let onHover: (
   doc: TextDocument,
   pos: Position
 ) => Promise<Hover | null> | undefined;
 
 connection.onInitialize((params: InitializeParams) => {
-  onHover = initializeHover(params);
+  const capabilities = params.capabilities;
+
+  hasConfigurationCapability = !!(
+    capabilities.workspace && !!capabilities.workspace.configuration
+  );
 
   return {
     capabilities: {
@@ -64,6 +74,30 @@ connection.onInitialize((params: InitializeParams) => {
       ...kSignatureCapabilities,
     },
   };
+});
+
+connection.onInitialized(async () => {
+  if (hasConfigurationCapability) {
+    // sync configuration
+    const syncConfiguration = async () => {
+      const configuration = await connection.workspace.getConfiguration({
+        section: "quarto",
+      });
+      config.update(configuration);
+      mathjaxLoadExtensions();
+    };
+    await syncConfiguration();
+
+    // monitor changes
+    connection.client.register(
+      DidChangeConfigurationNotification.type,
+      undefined
+    );
+    connection.onDidChangeConfiguration(syncConfiguration);
+  }
+
+  // initialize hover
+  onHover = initializeHover();
 });
 
 connection.onCompletion(async (textDocumentPosition, _token) => {
