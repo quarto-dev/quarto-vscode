@@ -21,10 +21,6 @@ import {
   validateRequiredExtension,
 } from "./executors";
 
-// run cell
-// run next
-// run above
-
 export function quartoCellExecuteCodeLensProvider(
   engine: MarkdownEngine
 ): CodeLensProvider {

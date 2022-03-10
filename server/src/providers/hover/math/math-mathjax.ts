@@ -7,8 +7,6 @@
 // based on https://github.com/James-Yu/LaTeX-Workshop/tree/master/src/providers/preview
 
 // TODO: Cursor preview
-// TODO: Preview only move selection if necessary
-// TODO: Configuration / themeing
 // TOOD: Need another return value where we signal an error (and keep last)
 // TOOO: math should get separate css treatment (don't width confine, center?
 // TODO: height of equations (break across mutliple lines)
