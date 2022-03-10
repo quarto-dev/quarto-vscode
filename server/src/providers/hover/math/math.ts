@@ -17,37 +17,34 @@ import { mathPlugin } from "./math-markdownit";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { mathjaxTypesetToMarkdown } from "./math-mathjax";
 
-export function initializeMathHover() {
-  // return hover function
-  return (doc: TextDocument, pos: Position): Hover | null => {
-    // see if we are in a math block
-    const tokens = mathTokens.parse(doc);
-    const mathBlock = tokens.find(isMathBlockAtPosition(pos));
-    if (mathBlock && mathBlock.map) {
-      const contents = mathjaxTypesetToMarkdown(mathBlock.content);
-      if (contents) {
-        return {
-          contents,
-          range: Range.create(
-            Position.create(mathBlock.map[0], 0),
-            Position.create(mathBlock.map[1] + 1, 0)
-          ),
-        };
-      } else {
-        return null;
-      }
+export function mathHover(doc: TextDocument, pos: Position): Hover | null {
+  // see if we are in a math block
+  const tokens = mathTokens.parse(doc);
+  const mathBlock = tokens.find(isMathBlockAtPosition(pos));
+  if (mathBlock && mathBlock.map) {
+    const contents = mathjaxTypesetToMarkdown(mathBlock.content);
+    if (contents) {
+      return {
+        contents,
+        range: Range.create(
+          Position.create(mathBlock.map[0], 0),
+          Position.create(mathBlock.map[1] + 1, 0)
+        ),
+      };
+    } else {
+      return null;
     }
+  }
 
-    // see if we are inside inline math
-    const line = doc
-      .getText(Range.create(pos.line, 0, pos.line + 1, 0))
-      .trimEnd();
+  // see if we are inside inline math
+  const line = doc
+    .getText(Range.create(pos.line, 0, pos.line + 1, 0))
+    .trimEnd();
 
-    return (
-      inlineMathHover(pos, line, kInlineMathPattern) ||
-      inlineMathHover(pos, line, kSingleLineDisplayMathPattern)
-    );
-  };
+  return (
+    inlineMathHover(pos, line, kInlineMathPattern) ||
+    inlineMathHover(pos, line, kSingleLineDisplayMathPattern)
+  );
 }
 
 const kInlineMathPattern = /\$([^ ].*?[^\ ]?)\$/;

@@ -8,8 +8,10 @@
 
 // TODO: Cursor preview
 // TOOD: Need another return value where we signal an error (and keep last)
+// TODO: consider whether to support bare math blocks (\begin). check nesting
 // TOOO: math should get separate css treatment (don't width confine, center?
-// TODO: height of equations (break across mutliple lines)
+// TODO: height of equations
+// TODO: preview when cursor is on \begin(align) is different -- perhaps tokenization of raw math?
 // TODO: look at other width related options
 // TODO: consider debouncing the assist panel
 // TODO: embed latex completions
@@ -74,14 +76,6 @@ export function mathjaxLoadExtensions() {
 }
 
 export function mathjaxTypesetToMarkdown(tex: string): MarkupContent | null {
-  // prepare tex for mathjax
-  const envBeginPat =
-    /\\begin\{(align|align\*|alignat|alignat\*|aligned|alignedat|array|Bmatrix|bmatrix|cases|CD|eqnarray|eqnarray\*|equation|equation\*|gather|gather\*|gathered|matrix|multline|multline\*|pmatrix|smallmatrix|split|subarray|Vmatrix|vmatrix)\}/;
-  const match = tex.match(envBeginPat);
-  const envname = match ? match[1] : "";
-  tex = mathjaxify(tex, envname);
-
-  // typeset
   const typesetOpts = {
     scale: config.previewMathJaxScale(),
     color: getColor(),
@@ -127,32 +121,6 @@ function getColor() {
   } else {
     return "#ffffff";
   }
-}
-
-function mathjaxify(
-  tex: string,
-  envname: string,
-  opt = { stripLabel: true }
-): string {
-  // remove TeX comments
-  let s = stripComments(tex);
-  // remove \label{...}
-  if (opt.stripLabel) {
-    s = s.replace(/\\label\{.*?\}/g, "");
-  }
-  if (
-    envname.match(
-      /^(aligned|alignedat|array|Bmatrix|bmatrix|cases|CD|gathered|matrix|pmatrix|smallmatrix|split|subarray|Vmatrix|vmatrix)$/
-    )
-  ) {
-    s = "\\begin{equation}" + s + "\\end{equation}";
-  }
-  return s;
-}
-
-function stripComments(text: string): string {
-  const reg = /(^|[^\\]|(?:(?<!\\)(?:\\\\)+))%.*$/gm;
-  return text.replace(reg, "$1");
 }
 
 function svgToDataUrl(xml: string): string {

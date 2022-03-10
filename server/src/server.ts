@@ -22,7 +22,7 @@ import {
   kCompletionCapabilities,
   onCompletion,
 } from "./providers/completion/completion";
-import { kHoverCapabilities, initializeHover } from "./providers/hover/hover";
+import { kHoverCapabilities, onHover } from "./providers/hover/hover";
 import { kSignatureCapabilities, onSignatureHelp } from "./providers/signature";
 import { provideDiagnostics } from "./providers/diagnostics";
 
@@ -53,11 +53,6 @@ function resolveDoc(docId: TextDocumentIdentifier) {
 const connection = createConnection(ProposedFeatures.all);
 
 let hasConfigurationCapability = false;
-
-let onHover: (
-  doc: TextDocument,
-  pos: Position
-) => Promise<Hover | null> | undefined;
 
 connection.onInitialize((params: InitializeParams) => {
   const capabilities = params.capabilities;
@@ -95,9 +90,6 @@ connection.onInitialized(async () => {
     );
     connection.onDidChangeConfiguration(syncConfiguration);
   }
-
-  // initialize hover
-  onHover = initializeHover();
 });
 
 connection.onCompletion(async (textDocumentPosition, _token) => {
