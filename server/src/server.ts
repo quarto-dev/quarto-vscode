@@ -116,7 +116,11 @@ connection.onCompletion(async (textDocumentPosition, _token) => {
 connection.onHover(async (textDocumentPosition, _token) => {
   const doc = resolveDoc(textDocumentPosition.textDocument);
   if (doc) {
-    return await onHover(doc, textDocumentPosition.position);
+    if (onHover) {
+      return await onHover(doc, textDocumentPosition.position);
+    } else {
+      return null;
+    }
   } else {
     return null;
   }

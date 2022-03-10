@@ -32,5 +32,5 @@ export function activateQuartoAssistPanel(
     )
   );
 
-  return [new PreviewMathCommand(provider)];
+  return [new PreviewMathCommand(provider, engine)];
 }
