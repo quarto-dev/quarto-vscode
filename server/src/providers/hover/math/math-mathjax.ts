@@ -7,12 +7,9 @@
 // based on https://github.com/James-Yu/LaTeX-Workshop/tree/master/src/providers/preview
 
 // TODO: Cursor preview
+// TODO: math highlighting is not quite right (compare to md, pure embed?)
 // TOOD: Need another return value where we signal an error (and keep last)
-// TODO: consider whether to support bare math blocks (\begin). check nesting
 // TOOO: math should get separate css treatment (don't width confine, center?
-// TODO: height of equations
-// TODO: preview when cursor is on \begin(align) is different -- perhaps tokenization of raw math?
-// TODO: look at other width related options
 // TODO: consider debouncing the assist panel
 // TODO: embed latex completions
 
