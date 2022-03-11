@@ -6,9 +6,6 @@
 
 // based on https://github.com/James-Yu/LaTeX-Workshop/tree/master/src/providers/preview
 
-// TODO: math highlighting is not quite right (compare to md, pure embed?)
-// TODO: embed latex completions
-
 import type {
   ConvertOption,
   SupportedExtension,
