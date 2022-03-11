@@ -1,0 +1,1010 @@
+{
+  "acute{}": {
+    "command": "acute{a}",
+    "snippet": "acute{${1:a}}"
+  },
+  "aleph": {
+    "command": "aleph",
+    "snippet": "aleph",
+    "detail": "ℵ",
+    "documentation": "aleph, hebrew"
+  },
+  "amalg": {
+    "command": "amalg",
+    "snippet": "amalg",
+    "detail": "⨿",
+    "documentation": "AMALGAMATION OR COPRODUCT"
+  },
+  "angle": {
+    "command": "angle",
+    "snippet": "angle",
+    "detail": "∠",
+    "documentation": "ANGLE"
+  },
+  "arccos": {
+    "command": "arccos",
+    "snippet": "arccos"
+  },
+  "arcsin": {
+    "command": "arcsin",
+    "snippet": "arcsin"
+  },
+  "arctan": {
+    "command": "arctan",
+    "snippet": "arctan"
+  },
+  "arg": {
+    "command": "arg",
+    "snippet": "arg"
+  },
+  "Arrowvert": {
+    "command": "Arrowvert",
+    "snippet": "Arrowvert"
+  },
+  "arrowvert": {
+    "command": "arrowvert",
+    "snippet": "arrowvert"
+  },
+  "ast": {
+    "command": "ast",
+    "snippet": "ast",
+    "detail": "∗",
+    "documentation": "ASTERISK OPERATOR (Hodge star operator)"
+  },
+  "asymp": {
+    "command": "asymp",
+    "snippet": "asymp",
+    "detail": "≍",
+    "documentation": "asymptotically equal to"
+  },
+  "backslash": {
+    "command": "backslash",
+    "snippet": "backslash",
+    "detail": "\\",
+    "documentation": "REVERSE SOLIDUS"
+  },
+  "bar{}": {
+    "command": "bar{a}",
+    "snippet": "bar{${1:a}}"
+  },
+  "Big": {
+    "command": "Big",
+    "snippet": "Big"
+  },
+  "big": {
+    "command": "big",
+    "snippet": "big"
+  },
+  "bigcirc": {
+    "command": "bigcirc",
+    "snippet": "bigcirc"
+  },
+  "Bigg": {
+    "command": "Bigg",
+    "snippet": "Bigg"
+  },
+  "bigg": {
+    "command": "bigg",
+    "snippet": "bigg"
+  },
+  "Biggl": {
+    "command": "Biggl",
+    "snippet": "Biggl"
+  },
+  "Biggl..\\Biggr": {
+    "command": "Biggl..\\Biggr",
+    "snippet": "Biggl${1}\\Biggr"
+  },
+  "biggl": {
+    "command": "biggl",
+    "snippet": "biggl"
+  },
+  "biggl..\\biggr": {
+    "command": "biggl..\\biggr",
+    "snippet": "biggl${1}\\biggr"
+  },
+  "Biggm": {
+    "command": "Biggm",
+    "snippet": "Biggm"
+  },
+  "biggm": {
+    "command": "biggm",
+    "snippet": "biggm"
+  },
+  "Biggr": {
+    "command": "Biggr",
+    "snippet": "Biggr"
+  },
+  "biggr": {
+    "command": "biggr",
+    "snippet": "biggr"
+  },
+  "Bigl": {
+    "command": "Bigl",
+    "snippet": "Bigl"
+  },
+  "Bigl..\\Bigr": {
+    "command": "Bigl..\\Bigr",
+    "snippet": "Bigl${1}\\Bigr"
+  },
+  "bigl": {
+    "command": "bigl",
+    "snippet": "bigl"
+  },
+  "bigl..\\bigr": {
+    "command": "bigl..\\bigr",
+    "snippet": "bigl${1}\\bigr"
+  },
+  "Bigm": {
+    "command": "Bigm",
+    "snippet": "Bigm"
+  },
+  "bigm": {
+    "command": "bigm",
+    "snippet": "bigm"
+  },
+  "bigodot": {
+    "command": "bigodot",
+    "snippet": "bigodot",
+    "detail": "⨀",
+    "documentation": "N-ARY CIRCLED DOT OPERATOR"
+  },
+  "bigoplus": {
+    "command": "bigoplus",
+    "snippet": "bigoplus",
+    "detail": "⨁",
+    "documentation": "N-ARY CIRCLED PLUS OPERATOR"
+  },
+  "bigotimes": {
+    "command": "bigotimes",
+    "snippet": "bigotimes",
+    "detail": "⨂",
+    "documentation": "N-ARY CIRCLED TIMES OPERATOR"
+  },
+  "Bigr": {
+    "command": "Bigr",
+    "snippet": "Bigr"
+  },
+  "bigr": {
+    "command": "bigr",
+    "snippet": "bigr"
+  },
+  "bigsqcup": {
+    "command": "bigsqcup",
+    "snippet": "bigsqcup",
+    "detail": "⨆",
+    "documentation": "N-ARY SQUARE UNION OPERATOR"
+  },
+  "bigtriangledown": {
+    "command": "bigtriangledown",
+    "snippet": "bigtriangledown",
+    "detail": "▽",
+    "documentation": "big down open"
+  },
+  "bigtriangleup": {
+    "command": "bigtriangleup",
+    "snippet": "bigtriangleup",
+    "detail": "△",
+    "documentation": "big up open"
+  },
+  "biguplus": {
+    "command": "biguplus",
+    "snippet": "biguplus",
+    "detail": "⨄",
+    "documentation": "N-ARY UNION OPERATOR WITH PLUS"
+  },
+  "bigvee": {
+    "command": "bigvee",
+    "snippet": "bigvee",
+    "detail": "⋁",
+    "documentation": "logical and operator"
+  },
+  "bigwedge": {
+    "command": "bigwedge",
+    "snippet": "bigwedge",
+    "detail": "⋀",
+    "documentation": "logical or operator"
+  },
+  "bot": {
+    "command": "bot",
+    "snippet": "bot",
+    "detail": "⊥",
+    "documentation": "UP TACK, bottom"
+  },
+  "bracevert": {
+    "command": "bracevert",
+    "snippet": "bracevert"
+  },
+  "breve{}": {
+    "command": "breve{a}",
+    "snippet": "breve{${1:a}}"
+  },
+  "bullet": {
+    "command": "bullet",
+    "snippet": "bullet",
+    "detail": "∙",
+    "documentation": "BULLET OPERATOR"
+  },
+  "check{}": {
+    "command": "check{a}",
+    "snippet": "check{${1:a}}"
+  },
+  "clubsuit": {
+    "command": "clubsuit",
+    "snippet": "clubsuit",
+    "detail": "♣",
+    "documentation": "club suit symbol"
+  },
+  "cong": {
+    "command": "cong",
+    "snippet": "cong",
+    "detail": "≅",
+    "documentation": "congruent with"
+  },
+  "coprod": {
+    "command": "coprod",
+    "snippet": "coprod",
+    "detail": "∐",
+    "documentation": "coproduct operator"
+  },
+  "cos": {
+    "command": "cos",
+    "snippet": "cos"
+  },
+  "cosh": {
+    "command": "cosh",
+    "snippet": "cosh"
+  },
+  "cot": {
+    "command": "cot",
+    "snippet": "cot"
+  },
+  "coth": {
+    "command": "coth",
+    "snippet": "coth"
+  },
+  "csc": {
+    "command": "csc",
+    "snippet": "csc"
+  },
+  "dagger": {
+    "command": "dagger",
+    "snippet": "dagger",
+    "detail": "†",
+    "documentation": "DAGGER relation"
+  },
+  "dashv": {
+    "command": "dashv",
+    "snippet": "dashv",
+    "detail": "⊣",
+    "documentation": "LEFT TACK, non- does no (dash, vertical)"
+  },
+  "ddagger": {
+    "command": "ddagger",
+    "snippet": "ddagger",
+    "detail": "‡",
+    "documentation": "DOUBLE DAGGER relation"
+  },
+  "ddot{}": {
+    "command": "ddot{a}",
+    "snippet": "ddot{${1:a}}"
+  },
+  "deg": {
+    "command": "deg",
+    "snippet": "deg"
+  },
+  "det": {
+    "command": "det",
+    "snippet": "det"
+  },
+  "diamond": {
+    "command": "diamond",
+    "snippet": "diamond",
+    "detail": "⋄",
+    "documentation": "DIAMOND OPERATOR (white diamond)"
+  },
+  "diamondsuit": {
+    "command": "diamondsuit",
+    "snippet": "diamondsuit",
+    "detail": "♢",
+    "documentation": "diamond suit symbol"
+  },
+  "dim": {
+    "command": "dim",
+    "snippet": "dim"
+  },
+  "doteq": {
+    "command": "doteq",
+    "snippet": "doteq",
+    "detail": "≐",
+    "documentation": "equals, single dot above"
+  },
+  "dot{}": {
+    "command": "dot{x}",
+    "snippet": "dot{${1:x}}"
+  },
+  "Downarrow": {
+    "command": "Downarrow",
+    "snippet": "Downarrow",
+    "detail": "⇓",
+    "documentation": "down double arrow"
+  },
+  "downarrow": {
+    "command": "downarrow",
+    "snippet": "downarrow",
+    "detail": "↓",
+    "documentation": "downward arrow"
+  },
+  "ell": {
+    "command": "ell",
+    "snippet": "ell",
+    "detail": "ℓ",
+    "documentation": "cursive small l"
+  },
+  "emptyset": {
+    "command": "emptyset",
+    "snippet": "emptyset"
+  },
+  "exp": {
+    "command": "exp",
+    "snippet": "exp"
+  },
+  "flat": {
+    "command": "flat",
+    "snippet": "flat",
+    "detail": "♭",
+    "documentation": "musical flat"
+  },
+  "frown": {
+    "command": "frown",
+    "snippet": "frown",
+    "detail": "⌢",
+    "documentation": "FROWN (down curve)"
+  },
+  "gcd": {
+    "command": "gcd",
+    "snippet": "gcd"
+  },
+  "ge": {
+    "command": "ge",
+    "snippet": "ge",
+    "detail": "≥",
+    "documentation": "r: greater-than-or-equal"
+  },
+  "gets": {
+    "command": "gets",
+    "snippet": "gets",
+    "detail": "←",
+    "documentation": "a: leftward arrow"
+  },
+  "gg": {
+    "command": "gg",
+    "snippet": "gg",
+    "detail": "≫",
+    "documentation": "much greater type 2"
+  },
+  "grave{}": {
+    "command": "grave{a}",
+    "snippet": "grave{${1:a}}"
+  },
+  "hat{}": {
+    "command": "hat{a}",
+    "snippet": "hat{${1:a}}"
+  },
+  "hbar": {
+    "command": "hbar",
+    "snippet": "hbar"
+  },
+  "heartsuit": {
+    "command": "heartsuit",
+    "snippet": "heartsuit",
+    "detail": "♡",
+    "documentation": "heart suit symbol"
+  },
+  "hom": {
+    "command": "hom",
+    "snippet": "hom"
+  },
+  "hookleftarrow": {
+    "command": "hookleftarrow",
+    "snippet": "hookleftarrow",
+    "detail": "↩",
+    "documentation": "left arrow-hooked"
+  },
+  "hookrightarrow": {
+    "command": "hookrightarrow",
+    "snippet": "hookrightarrow",
+    "detail": "↪",
+    "documentation": "right arrow-hooked"
+  },
+  "Im": {
+    "command": "Im",
+    "snippet": "Im",
+    "detail": "ℑ",
+    "documentation": "imaginary part"
+  },
+  "imath": {
+    "command": "imath",
+    "snippet": "imath",
+    "detail": "𝚤",
+    "documentation": "MATHEMATICAL ITALIC SMALL DOTLESS I"
+  },
+  "inf": {
+    "command": "inf",
+    "snippet": "inf"
+  },
+  "int": {
+    "command": "int",
+    "snippet": "int",
+    "detail": "∫",
+    "documentation": "INTEGRAL operator"
+  },
+  "jmath": {
+    "command": "jmath",
+    "snippet": "jmath",
+    "detail": "𝚥",
+    "documentation": "MATHEMATICAL ITALIC SMALL DOTLESS J"
+  },
+  "ker": {
+    "command": "ker",
+    "snippet": "ker"
+  },
+  "langle": {
+    "command": "langle",
+    "snippet": "langle",
+    "detail": "⟨",
+    "documentation": "MATHEMATICAL LEFT ANGLE BRACKET"
+  },
+  "lbrace": {
+    "command": "lbrace",
+    "snippet": "lbrace",
+    "detail": "{",
+    "documentation": "LEFT CURLY BRACKET"
+  },
+  "lbrack": {
+    "command": "lbrack",
+    "snippet": "lbrack",
+    "detail": "[",
+    "documentation": "LEFT SQUARE BRACKET"
+  },
+  "lceil": {
+    "command": "lceil",
+    "snippet": "lceil",
+    "detail": "⌈",
+    "documentation": "LEFT CEILING"
+  },
+  "le": {
+    "command": "le",
+    "snippet": "le",
+    "detail": "≤",
+    "documentation": "r: less-than-or-equal"
+  },
+  "leftharpoondown": {
+    "command": "leftharpoondown",
+    "snippet": "leftharpoondown",
+    "detail": "↽",
+    "documentation": "left harpoon-down"
+  },
+  "leftharpoonup": {
+    "command": "leftharpoonup",
+    "snippet": "leftharpoonup",
+    "detail": "↼",
+    "documentation": "left harpoon-up"
+  },
+  "leftrightarrow": {
+    "command": "leftrightarrow",
+    "snippet": "leftrightarrow",
+    "detail": "⇆",
+    "documentation": "left arrow over right arrow"
+  },
+  "lfloor": {
+    "command": "lfloor",
+    "snippet": "lfloor",
+    "detail": "⌊",
+    "documentation": "LEFT FLOOR"
+  },
+  "lg": {
+    "command": "lg",
+    "snippet": "lg"
+  },
+  "lgroup": {
+    "command": "lgroup",
+    "snippet": "lgroup",
+    "detail": "⟮",
+    "documentation": "MATHEMATICAL LEFT FLATTENED PARENTHESIS"
+  },
+  "lim": {
+    "command": "lim",
+    "snippet": "lim"
+  },
+  "liminf": {
+    "command": "liminf",
+    "snippet": "liminf"
+  },
+  "limsup": {
+    "command": "limsup",
+    "snippet": "limsup"
+  },
+  "ll": {
+    "command": "ll",
+    "snippet": "ll",
+    "detail": "≪",
+    "documentation": "much less type 2"
+  },
+  "lmoustache": {
+    "command": "lmoustache",
+    "snippet": "lmoustache",
+    "detail": "⎰",
+    "documentation": "? \\lmous UPPER LEFT OR LOWER RIGHT CURLY BRACKET SECTION"
+  },
+  "ln": {
+    "command": "ln",
+    "snippet": "ln"
+  },
+  "log": {
+    "command": "log",
+    "snippet": "log"
+  },
+  "Longleftarrow": {
+    "command": "Longleftarrow",
+    "snippet": "Longleftarrow",
+    "detail": "⟸",
+    "documentation": "LONG LEFTWARDS DOUBLE ARROW"
+  },
+  "longleftarrow": {
+    "command": "longleftarrow",
+    "snippet": "longleftarrow",
+    "detail": "⟵",
+    "documentation": "LONG LEFTWARDS ARROW"
+  },
+  "longleftrightarrow": {
+    "command": "longleftrightarrow",
+    "snippet": "longleftrightarrow",
+    "detail": "⟷",
+    "documentation": "LONG LEFT RIGHT ARROW"
+  },
+  "Longleftrightarrow": {
+    "command": "Longleftrightarrow",
+    "snippet": "Longleftrightarrow",
+    "detail": "⟺",
+    "documentation": "LONG LEFT RIGHT DOUBLE ARROW"
+  },
+  "longmapsto": {
+    "command": "longmapsto",
+    "snippet": "longmapsto",
+    "detail": "⟼",
+    "documentation": "LONG RIGHTWARDS ARROW FROM BAR"
+  },
+  "Longrightarrow": {
+    "command": "Longrightarrow",
+    "snippet": "Longrightarrow",
+    "detail": "⟹",
+    "documentation": "LONG RIGHTWARDS DOUBLE ARROW"
+  },
+  "longrightarrow": {
+    "command": "longrightarrow",
+    "snippet": "longrightarrow",
+    "detail": "⟶",
+    "documentation": "LONG RIGHTWARDS ARROW"
+  },
+  "mapsto": {
+    "command": "mapsto",
+    "snippet": "mapsto",
+    "detail": "↦",
+    "documentation": "maps righ z notation maplet"
+  },
+  "max": {
+    "command": "max",
+    "snippet": "max"
+  },
+  "min": {
+    "command": "min",
+    "snippet": "min"
+  },
+  "models": {
+    "command": "models",
+    "snippet": "models",
+    "detail": "⊧",
+    "documentation": "MODELS (ver short double dash)"
+  },
+  "mp": {
+    "command": "mp",
+    "snippet": "mp",
+    "detail": "∓",
+    "documentation": "MINUS-OR-PLUS SIGN"
+  },
+  "nabla": {
+    "command": "nabla",
+    "snippet": "nabla",
+    "detail": "∇",
+    "documentation": "NABLA, del, hamilton operator"
+  },
+  "natural": {
+    "command": "natural",
+    "snippet": "natural",
+    "detail": "♮",
+    "documentation": "music natural"
+  },
+  "nearrow": {
+    "command": "nearrow",
+    "snippet": "nearrow",
+    "detail": "↗",
+    "documentation": "ne pointing arrow"
+  },
+  "ni": {
+    "command": "ni",
+    "snippet": "ni",
+    "detail": "∋",
+    "documentation": "con variant"
+  },
+  "not": {
+    "command": "not",
+    "snippet": "not",
+    "detail": " ̸",
+    "documentation": "COMBINING LONG SOLIDUS OVERLAY"
+  },
+  "nwarrow": {
+    "command": "nwarrow",
+    "snippet": "nwarrow",
+    "detail": "↖",
+    "documentation": "nw pointing arrow"
+  },
+  "odot": {
+    "command": "odot",
+    "snippet": "odot",
+    "detail": "⊙",
+    "documentation": "middle dot in circle"
+  },
+  "oint": {
+    "command": "oint",
+    "snippet": "oint",
+    "detail": "∮",
+    "documentation": "CONTOUR INTEGRAL operator"
+  },
+  "ominus": {
+    "command": "ominus",
+    "snippet": "ominus",
+    "detail": "⊖",
+    "documentation": "minus sign in circle"
+  },
+  "oplus": {
+    "command": "oplus",
+    "snippet": "oplus",
+    "detail": "⊕",
+    "documentation": "plus sign in circle"
+  },
+  "oslash": {
+    "command": "oslash",
+    "snippet": "oslash",
+    "detail": "⊘",
+    "documentation": "solidus in circle"
+  },
+  "otimes": {
+    "command": "otimes",
+    "snippet": "otimes",
+    "detail": "⊗",
+    "documentation": "multiply sign in circle"
+  },
+  "parallel": {
+    "command": "parallel",
+    "snippet": "parallel",
+    "detail": "∥",
+    "documentation": "parallel"
+  },
+  "perp": {
+    "command": "perp",
+    "snippet": "perp",
+    "detail": "⟂",
+    "documentation": "PERPENDICULAR"
+  },
+  "Pr": {
+    "command": "Pr",
+    "snippet": "Pr"
+  },
+  "prec": {
+    "command": "prec",
+    "snippet": "prec",
+    "detail": "≺",
+    "documentation": "PRECEDES"
+  },
+  "preceq": {
+    "command": "preceq",
+    "snippet": "preceq",
+    "detail": "⪯",
+    "documentation": "PRECEDES ABOVE SINGLE-LINE EQUALS SIGN"
+  },
+  "propto": {
+    "command": "propto",
+    "snippet": "propto",
+    "detail": "∝",
+    "documentation": "is PROPORTIONAL TO"
+  },
+  "rangle": {
+    "command": "rangle",
+    "snippet": "rangle",
+    "detail": "⟩",
+    "documentation": "MATHEMATICAL RIGHT ANGLE BRACKET"
+  },
+  "rbrace": {
+    "command": "rbrace",
+    "snippet": "rbrace",
+    "detail": "}",
+    "documentation": "RIGHT CURLY BRACKET"
+  },
+  "rbrack": {
+    "command": "rbrack",
+    "snippet": "rbrack",
+    "detail": "]",
+    "documentation": "RIGHT SQUARE BRACKET"
+  },
+  "rceil": {
+    "command": "rceil",
+    "snippet": "rceil",
+    "detail": "⌉",
+    "documentation": "RIGHT CEILING"
+  },
+  "Re": {
+    "command": "Re",
+    "snippet": "Re",
+    "detail": "ℜ",
+    "documentation": "real part"
+  },
+  "rfloor": {
+    "command": "rfloor",
+    "snippet": "rfloor",
+    "detail": "⌋",
+    "documentation": "RIGHT FLOOR"
+  },
+  "rgroup": {
+    "command": "rgroup",
+    "snippet": "rgroup",
+    "detail": "⟯",
+    "documentation": "MATHEMATICAL RIGHT FLATTENED PARENTHESIS"
+  },
+  "rightharpoondown": {
+    "command": "rightharpoondown",
+    "snippet": "rightharpoondown",
+    "detail": "⇁",
+    "documentation": "right harpoon-down"
+  },
+  "rightharpoonup": {
+    "command": "rightharpoonup",
+    "snippet": "rightharpoonup",
+    "detail": "⇀",
+    "documentation": "right harpoon-up"
+  },
+  "rightleftharpoons": {
+    "command": "rightleftharpoons",
+    "snippet": "rightleftharpoons",
+    "detail": "⇌",
+    "documentation": "right harpoon over left"
+  },
+  "rmoustache": {
+    "command": "rmoustache",
+    "snippet": "rmoustache",
+    "detail": "⎱",
+    "documentation": "? \\rmous UPPER RIGHT OR LOWER LEFT CURLY BRACKET SECTION"
+  },
+  "searrow": {
+    "command": "searrow",
+    "snippet": "searrow",
+    "detail": "↘",
+    "documentation": "se pointing arrow"
+  },
+  "sec": {
+    "command": "sec",
+    "snippet": "sec"
+  },
+  "sharp": {
+    "command": "sharp",
+    "snippet": "sharp",
+    "detail": "♯",
+    "documentation": "= \\ MUSIC SHARP SIGN, z notation infix bag count"
+  },
+  "sim": {
+    "command": "sim",
+    "snippet": "sim",
+    "detail": "∼",
+    "documentation": "similar TILDE OPERATOR"
+  },
+  "simeq": {
+    "command": "simeq",
+    "snippet": "simeq",
+    "detail": "≃",
+    "documentation": "similar, equals"
+  },
+  "sin": {
+    "command": "sin",
+    "snippet": "sin"
+  },
+  "sinh": {
+    "command": "sinh",
+    "snippet": "sinh"
+  },
+  "smile": {
+    "command": "smile",
+    "snippet": "smile",
+    "detail": "⌣",
+    "documentation": "SMILE (up curve)"
+  },
+  "spadesuit": {
+    "command": "spadesuit",
+    "snippet": "spadesuit",
+    "detail": "♠",
+    "documentation": "spades suit symbol"
+  },
+  "sqcup": {
+    "command": "sqcup",
+    "snippet": "sqcup",
+    "detail": "⊔",
+    "documentation": "square union"
+  },
+  "sqsupseteq": {
+    "command": "sqsupseteq",
+    "snippet": "sqsupseteq",
+    "detail": "⊒",
+    "documentation": "square superset, equals"
+  },
+  "star": {
+    "command": "star",
+    "snippet": "star",
+    "detail": "⋆",
+    "documentation": "small s filled, low"
+  },
+  "subseteq": {
+    "command": "subseteq",
+    "snippet": "subseteq",
+    "detail": "⊆",
+    "documentation": "subset, equals"
+  },
+  "succ": {
+    "command": "succ",
+    "snippet": "succ",
+    "detail": "≻",
+    "documentation": "SUCCEEDS"
+  },
+  "succeq": {
+    "command": "succeq",
+    "snippet": "succeq",
+    "detail": "⪰",
+    "documentation": "SUCCEEDS ABOVE SINGLE-LINE EQUALS SIGN"
+  },
+  "sup": {
+    "command": "sup",
+    "snippet": "sup"
+  },
+  "supseteq": {
+    "command": "supseteq",
+    "snippet": "supseteq",
+    "detail": "⊇",
+    "documentation": "superset, equals"
+  },
+  "surd": {
+    "command": "surd",
+    "snippet": "surd"
+  },
+  "swarrow": {
+    "command": "swarrow",
+    "snippet": "swarrow",
+    "detail": "↙",
+    "documentation": "sw pointing arrow"
+  },
+  "tan": {
+    "command": "tan",
+    "snippet": "tan"
+  },
+  "tanh": {
+    "command": "tanh",
+    "snippet": "tanh"
+  },
+  "tilde{}": {
+    "command": "tilde{a}",
+    "snippet": "tilde{${1:a}}"
+  },
+  "to": {
+    "command": "to",
+    "snippet": "to",
+    "detail": "→",
+    "documentation": "rightward arrow, z notation total function"
+  },
+  "top": {
+    "command": "top",
+    "snippet": "top",
+    "detail": "⊤",
+    "documentation": "DOWN TACK, top"
+  },
+  "triangle": {
+    "command": "triangle",
+    "snippet": "triangle",
+    "detail": "△",
+    "documentation": "big up open"
+  },
+  "triangleleft": {
+    "command": "triangleleft",
+    "snippet": "triangleleft",
+    "detail": "◁",
+    "documentation": "(large) lef open; z notation domain restriction"
+  },
+  "triangleright": {
+    "command": "triangleright",
+    "snippet": "triangleright",
+    "detail": "▷",
+    "documentation": "(large) righ open; z notation range restriction"
+  },
+  "Uparrow": {
+    "command": "Uparrow",
+    "snippet": "Uparrow",
+    "detail": "⇑",
+    "documentation": "up double arrow"
+  },
+  "uparrow": {
+    "command": "uparrow",
+    "snippet": "uparrow",
+    "detail": "↑",
+    "documentation": "upward arrow"
+  },
+  "Updownarrow": {
+    "command": "Updownarrow",
+    "snippet": "Updownarrow",
+    "detail": "⇕",
+    "documentation": "up and down double arrow"
+  },
+  "updownarrow": {
+    "command": "updownarrow",
+    "snippet": "updownarrow",
+    "detail": "↕",
+    "documentation": "up and down arrow"
+  },
+  "uplus": {
+    "command": "uplus",
+    "snippet": "uplus",
+    "detail": "⊎",
+    "documentation": "plus sign in union"
+  },
+  "varpi": {
+    "command": "varpi",
+    "snippet": "varpi",
+    "detail": "𝜛",
+    "documentation": "MATHEMATICAL ITALIC PI SYMBOL"
+  },
+  "varrho": {
+    "command": "varrho",
+    "snippet": "varrho",
+    "detail": "𝜚",
+    "documentation": "MATHEMATICAL ITALIC RHO SYMBOL"
+  },
+  "vdash": {
+    "command": "vdash",
+    "snippet": "vdash",
+    "detail": "⊢",
+    "documentation": "RIGHT TACK, proves, implies, yields, (ver dash)"
+  },
+  "vec{}": {
+    "command": "vec{a}",
+    "snippet": "vec{${1:a}}"
+  },
+  "Vert": {
+    "command": "Vert",
+    "snippet": "Vert",
+    "detail": "‖",
+    "documentation": "double vertical bar"
+  },
+  "vert": {
+    "command": "vert",
+    "snippet": "vert",
+    "detail": "|",
+    "documentation": "vertical bar"
+  },
+  "wp": {
+    "command": "wp",
+    "snippet": "wp",
+    "detail": "℘",
+    "documentation": "weierstrass p"
+  },
+  "wr": {
+    "command": "wr",
+    "snippet": "wr",
+    "detail": "≀",
+    "documentation": "WREATH PRODUCT"
+  }
+}

@@ -11,8 +11,9 @@ import {
   CompletionTriggerKind,
   ServerCapabilities,
 } from "vscode-languageserver/node";
-import { editorContext, Quarto } from "../../quarto/quarto";
+import { editorContext } from "../../quarto/quarto";
 import { attrCompletions } from "./completion-attrs";
+import { mathCompletions } from "./completion-math";
 import { yamlCompletions } from "./completion-yaml";
 
 export const kCompletionCapabilities: ServerCapabilities = {
@@ -34,6 +35,9 @@ export async function onCompletion(
   const trigger = completionContext?.triggerCharacter;
   const context = editorContext(doc, pos, explicit, trigger);
   return (
-    (await attrCompletions(context)) || (await yamlCompletions(context)) || null
+    (await attrCompletions(context)) ||
+    (await mathCompletions(doc, pos, completionContext)) ||
+    (await yamlCompletions(context)) ||
+    null
   );
 }

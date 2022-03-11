@@ -1,9 +1,8 @@
-import {
-  CompletionItem,
-  CompletionItemKind,
-  Range,
-  TextEdit,
-} from "vscode-languageserver/node";
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) RStudio, PBC. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+
 import { EditorContext, quarto } from "../../quarto/quarto";
 import { AttrToken } from "../../quarto/quarto-attr";
 
@@ -35,47 +34,6 @@ export async function attrCompletions(context: EditorContext) {
     return quarto.getAttrCompletions(token, context);
   } else {
     return null;
-  }
-}
-
-function resolveCompletions(
-  token: AttrToken,
-  context: EditorContext
-): CompletionItem[] {
-  const kDivCompletions = [
-    ".callout",
-    ".callout-note",
-    ".callout-tip",
-    ".callout-important",
-    ".callout-caution",
-    ".callout-warning",
-  ];
-  if (token.context === "div") {
-    return kDivCompletions
-      .filter(
-        (completion) =>
-          completion.startsWith(token.token) && completion !== token.token
-      )
-      .map((completion) => {
-        const edit = TextEdit.replace(
-          Range.create(
-            context.position.row,
-            context.position.column - token.token.length,
-            context.position.row,
-            context.position.column
-          ),
-          completion
-        );
-        const item: CompletionItem = {
-          label: completion,
-          textEdit: edit,
-          kind: CompletionItemKind.Field,
-        };
-
-        return item;
-      });
-  } else {
-    return [];
   }
 }
 

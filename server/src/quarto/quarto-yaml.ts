@@ -6,25 +6,7 @@
 import * as path from "path";
 
 import fileUrl from "file-url";
-import { HoverResult } from "./quarto";
-
-export interface EditorContext {
-  path: string;
-  filetype: string;
-  embedded: boolean;
-  line: string;
-  code: string;
-  position: {
-    row: number;
-    column: number;
-  };
-  explicit: boolean;
-  trigger?: string;
-  formats: string[];
-  project_formats: string[];
-  engine: string;
-  client: string;
-}
+import { EditorContext, HoverResult } from "./quarto";
 
 export const kStartRow = "start.row";
 export const kStartColumn = "start.column";

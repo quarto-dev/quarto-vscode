@@ -6,6 +6,7 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "strict": true,
     "outDir": "out",
     "rootDir": "src",
