@@ -16,7 +16,7 @@ import {
   Range,
 } from "vscode-languageserver/node";
 
-import { isLatexPosition, mathRange } from "../../core/markdown/markdown";
+import { isLatexPosition } from "../../core/markdown/markdown";
 
 interface LatexCommand {
   command: string;
@@ -24,17 +24,22 @@ interface LatexCommand {
   detail?: string;
   documentation?: string;
 }
-import latexImport from "./latex.json";
-const kLatexCommands = latexImport as Record<string, LatexCommand>;
-for (const key of Object.keys(kLatexCommands)) {
+import mathjaxImport from "./mathjax.json";
+const kMathjaxCommands = mathjaxImport as string[];
+
+import mathjaxCompletions from "./mathjax-completions.json";
+const kMathjaxCompletions = mathjaxCompletions as Record<string, LatexCommand>;
+for (const key of Object.keys(kMathjaxCompletions)) {
   if (key.match(/\{.*?\}/)) {
-    const ent = kLatexCommands[key];
+    const ent = kMathjaxCompletions[key];
     const newKey = key.replace(/\{.*?\}/, "");
-    delete kLatexCommands[key];
-    kLatexCommands[newKey] = ent;
+    delete kMathjaxCompletions[key];
+    kMathjaxCompletions[newKey] = ent;
   }
 }
 
+// for latex we complete the subset of commands supported by mathjax
+// (as those will work universally in pdf and html)
 export async function latexCompletions(
   doc: TextDocument,
   pos: Position,
@@ -60,21 +65,27 @@ export async function latexCompletions(
   const spacePos = text.lastIndexOf(" ");
   if (backslashPos !== -1 && backslashPos > spacePos) {
     const token = text.slice(backslashPos + 1);
-    // find commands that start with the token
-    const completions: CompletionItem[] = [];
-    Object.values(kLatexCommands).forEach((command) => {
-      if (command.command.startsWith(token)) {
-        const item: CompletionItem = {
-          kind: CompletionItemKind.Function,
-          label: command.command,
-          documentation: command.documentation,
-          detail: command.detail,
-          insertTextFormat: InsertTextFormat.Snippet,
-          insertText: command.snippet,
-        };
-        completions.push(item);
-      }
-    });
+    const completions: CompletionItem[] = kMathjaxCommands
+      .filter((cmd) => cmd.startsWith(token))
+      .map((cmd) => {
+        const mathjaxCompletion = kMathjaxCompletions[cmd];
+        if (mathjaxCompletion) {
+          return {
+            kind: CompletionItemKind.Function,
+            label: mathjaxCompletion.command,
+            documentation: mathjaxCompletion.documentation,
+            detail: mathjaxCompletion.detail,
+            insertTextFormat: InsertTextFormat.Snippet,
+            insertText: mathjaxCompletion.snippet,
+          };
+        } else {
+          return {
+            kind: CompletionItemKind.Function,
+            label: cmd,
+          };
+        }
+      });
+
     if (completions.length > 0) {
       return completions;
     }
