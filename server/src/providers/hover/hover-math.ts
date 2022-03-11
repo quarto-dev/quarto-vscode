@@ -28,7 +28,7 @@ import {
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 
-import { mathRange } from "../../core/math/math";
+import { mathRange } from "../../core/markdown/markdown";
 import { config } from "../../core/config";
 
 export function mathHover(doc: TextDocument, pos: Position): Hover | null {

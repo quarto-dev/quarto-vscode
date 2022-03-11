@@ -8,12 +8,12 @@ import { Range, Position } from "vscode-languageserver/node";
 import Token from "markdown-it/lib/token";
 
 import MarkdownIt from "markdown-it";
-import { mathPlugin } from "./math-markdownit";
+import { mathPlugin } from "./markdownit-math";
 import { TextDocument } from "vscode-languageserver-textdocument";
 
 export function mathRange(doc: TextDocument, pos: Position) {
   // see if we are in a math block
-  const tokens = mathTokens.parse(doc);
+  const tokens = markdownTokens.parse(doc);
   const mathBlock = tokens.find(isMathBlockAtPosition(pos));
   if (mathBlock && mathBlock.map) {
     return {
@@ -35,9 +35,43 @@ export function mathRange(doc: TextDocument, pos: Position) {
   );
 }
 
+export function isLatexPosition(doc: TextDocument, pos: Position) {
+  // math is always latex
+  if (mathRange(doc, pos)) {
+    return true;
+  }
+  //
+  const tokens = markdownTokens.parse(doc);
+  const codeBlock = tokens.find(isCodeBlockAtPosition(pos));
+  if (codeBlock) {
+    // code block is latex only if it's 'tex' or 'latex'
+    return isLatexCodeBlock(codeBlock);
+  } else {
+    // non code block is latex
+    return true;
+  }
+}
+
 function isMathBlockAtPosition(pos: Position) {
+  return isBlockTypeAtPosition(["math_block"], pos);
+}
+
+function isCodeBlockAtPosition(pos: Position) {
+  return isBlockTypeAtPosition(kCodeBlockTokens, pos);
+}
+
+export function isLatexCodeBlock(token: Token) {
+  return (
+    token.info &&
+    ["tex", "latex"].includes(
+      token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "")
+    )
+  );
+}
+
+function isBlockTypeAtPosition(types: string[], pos: Position) {
   return (token: Token) => {
-    if (token.type === "math_block" && token.map) {
+    if (types.includes(token.type) && token.map) {
       let [begin, end] = token.map;
       return pos.line >= begin && pos.line < end;
     } else {
@@ -46,11 +80,14 @@ function isMathBlockAtPosition(pos: Position) {
   };
 }
 
-class MathTokens {
+const kCodeBlockTokens = ["code", "fence", "html_block"];
+
+class MarkdownTokens {
   public parse(document: TextDocument): Token[] {
     // create parser on demand
     if (!this.md_) {
       this.md_ = MarkdownIt("zero");
+      this.md_.enable(kCodeBlockTokens);
       this.md_.use(mathPlugin, { enableInlines: false });
     }
 
@@ -74,7 +111,7 @@ class MathTokens {
   private cachedTokens_: Token[] | undefined;
 }
 
-const mathTokens = new MathTokens();
+const markdownTokens = new MarkdownTokens();
 
 const kInlineMathPattern = /\$([^ ].*?[^\ ]?)\$/;
 const kSingleLineDisplayMathPattern = /\$\$([^\n]+?)\$\$/;
