@@ -99,6 +99,12 @@ export async function latexCompletions(
         }
       });
 
+    // single completion w/ matching token is ignored
+    if (completions.length == 1 && completions[0].label === token) {
+      return null;
+    }
+
+    // return completions if we have them
     if (completions.length > 0) {
       return completions;
     }
