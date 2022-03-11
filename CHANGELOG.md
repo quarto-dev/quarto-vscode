@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.0 (Release on 11 March 2022)
+
+- Syntax highlighting for embedded LaTeX
+- Completion for MathJax-compatible LaTeX commands
+- Hover and assist preview for MathJax equations
+
 ## 1.7.0 (Release on 8 March 2022)
 
 - Quarto Assist panel for contextual help as you edit
