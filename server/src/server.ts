@@ -27,8 +27,7 @@ import { kSignatureCapabilities, onSignatureHelp } from "./providers/signature";
 import { provideDiagnostics } from "./providers/diagnostics";
 
 import { initializeQuarto } from "./quarto/quarto";
-
-import { mathjaxLoadExtensions } from "./providers/hover/hover-math";
+import { mathjaxLoadExtensions } from "./core/mathjax";
 
 // initialize connection to quarto
 initializeQuarto();

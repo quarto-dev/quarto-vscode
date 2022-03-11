@@ -25,9 +25,10 @@ interface LatexCommand {
   documentation?: string;
 }
 import mathjaxImport from "./mathjax.json";
-const kMathjaxCommands = mathjaxImport as string[];
+const kMathjaxCommands = mathjaxImport as Record<string, string[]>;
 
 import mathjaxCompletions from "./mathjax-completions.json";
+import { mathjaxLoadedExtensions } from "../../core/mathjax";
 const kMathjaxCompletions = mathjaxCompletions as Record<string, LatexCommand>;
 for (const key of Object.keys(kMathjaxCompletions)) {
   if (key.match(/\{.*?\}/)) {
@@ -64,9 +65,21 @@ export async function latexCompletions(
   const backslashPos = text.lastIndexOf("\\");
   const spacePos = text.lastIndexOf(" ");
   if (backslashPos !== -1 && backslashPos > spacePos) {
+    const loadedExtensions = mathjaxLoadedExtensions();
     const token = text.slice(backslashPos + 1);
-    const completions: CompletionItem[] = kMathjaxCommands
-      .filter((cmd) => cmd.startsWith(token))
+    const completions: CompletionItem[] = Object.keys(kMathjaxCommands)
+      .filter((cmdName) => {
+        if (cmdName.startsWith(token)) {
+          // filter on loaded extensions
+          const pkgs = kMathjaxCommands[cmdName];
+          return (
+            pkgs.length === 0 ||
+            pkgs.some((pkg) => loadedExtensions.includes(pkg))
+          );
+        } else {
+          return false;
+        }
+      })
       .map((cmd) => {
         const mathjaxCompletion = kMathjaxCompletions[cmd];
         if (mathjaxCompletion) {
