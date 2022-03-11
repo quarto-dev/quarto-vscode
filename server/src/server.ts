@@ -28,7 +28,7 @@ import { provideDiagnostics } from "./providers/diagnostics";
 
 import { initializeQuarto } from "./quarto/quarto";
 
-import { mathjaxLoadExtensions } from "./providers/hover/math/math-mathjax";
+import { mathjaxLoadExtensions } from "./providers/hover/hover-math";
 
 // initialize connection to quarto
 initializeQuarto();

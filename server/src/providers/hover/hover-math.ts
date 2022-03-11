@@ -1,10 +1,7 @@
 /* --------------------------------------------------------------------------------------------
  * Copyright (c) RStudio, PBC. All rights reserved.
- * Copyright (c) 2016 James Yu
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-
-// based on https://github.com/James-Yu/LaTeX-Workshop/tree/master/src/providers/preview
 
 import type {
   ConvertOption,
@@ -23,8 +20,30 @@ import type { LiteDocument } from "mathjax-full/js/adaptors/lite/Document.js";
 import type { LiteText } from "mathjax-full/js/adaptors/lite/Text.js";
 import "mathjax-full/js/input/tex/AllPackages.js";
 
-import { MarkupContent, MarkupKind } from "vscode-languageserver/node";
-import { config } from "../../../core/config";
+import {
+  Hover,
+  Position,
+  MarkupContent,
+  MarkupKind,
+} from "vscode-languageserver/node";
+import { TextDocument } from "vscode-languageserver-textdocument";
+
+import { mathRange } from "../../core/math/math";
+import { config } from "../../core/config";
+
+export function mathHover(doc: TextDocument, pos: Position): Hover | null {
+  const range = mathRange(doc, pos);
+  if (range) {
+    const contents = mathjaxTypesetToMarkdown(range.math);
+    if (contents) {
+      return {
+        contents,
+        range: range.range,
+      };
+    }
+  }
+  return null;
+}
 
 const baseExtensions: SupportedExtension[] = [
   "ams",
@@ -65,7 +84,7 @@ export function mathjaxLoadExtensions() {
   html = createHtmlConverter(extensionsToLoad);
 }
 
-export function mathjaxTypesetToMarkdown(tex: string): MarkupContent | null {
+function mathjaxTypesetToMarkdown(tex: string): MarkupContent | null {
   const typesetOpts = {
     scale: config.previewMathJaxScale(),
     color: getColor(),

@@ -7,7 +7,7 @@ import { Position, TextDocument } from "vscode-languageserver-textdocument";
 import { Hover, ServerCapabilities } from "vscode-languageserver/node";
 
 import { yamlHover } from "./hover-yaml";
-import { mathHover } from "./math/math";
+import { mathHover } from "./hover-math";
 
 export const kHoverCapabilities: ServerCapabilities = {
   hoverProvider: true,
