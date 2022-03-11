@@ -15,7 +15,7 @@ import {
   Range,
   TextEdit,
 } from "vscode-languageserver/node";
-import { EditorContext } from "./quarto-yaml";
+import { EditorContext } from "./quarto";
 
 export const kContextHeading = "heading";
 export const kContextDiv = "div";
