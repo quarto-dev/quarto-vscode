@@ -9,6 +9,7 @@ import * as nls from "vscode-nls";
 
 import {
   getUriForLinkWithKnownExternalScheme,
+  isImageLink,
   isOfScheme,
   Schemes,
 } from "../core/links";
@@ -243,6 +244,11 @@ function parseLink(
   }
 
   if (!resourceUri) {
+    return undefined;
+  }
+
+  // don't show for images (interferes w/ hover)
+  if (isImageLink(resourceUri.fsPath)) {
     return undefined;
   }
 

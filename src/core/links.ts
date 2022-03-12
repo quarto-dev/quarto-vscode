@@ -31,3 +31,26 @@ export function getUriForLinkWithKnownExternalScheme(
 export function isOfScheme(scheme: string, link: string): boolean {
   return link.toLowerCase().startsWith(scheme);
 }
+
+// https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types#Common_image_file_types
+const kImageExtensions = [
+  ".apng",
+  ".bmp",
+  ".gif",
+  ".ico",
+  ".cur",
+  ".jpg",
+  ".jpeg",
+  ".jfif",
+  ".pjpeg",
+  ".pjp",
+  ".png",
+  ".svg",
+  ".tif",
+  ".tiff",
+  ".webp",
+];
+
+export function isImageLink(link: string) {
+  return kImageExtensions.some((ext) => link.toLowerCase().endsWith(ext));
+}
