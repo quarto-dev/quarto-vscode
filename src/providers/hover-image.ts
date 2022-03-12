@@ -49,7 +49,7 @@ async function imageWidth(file: string) {
         const width = Math.round(pngImage.width / 2);
         return Math.min(width, kMaxWidth);
       } else {
-        return Math.min(pngImage.width, kMaxWidth);
+        return null;
       }
     } catch (error) {
       console.log(error);

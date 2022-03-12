@@ -25,11 +25,14 @@ import { escapeRegExpCharacters } from "../../core/strings";
 
 const kAssistHelp = "Help";
 const kAssistEquation = "Equation";
+const kAssistImage = "Image";
 
 export function renderWebviewHtml(webview: Webview, extensionUri: Uri) {
   const nonce = scriptNonce();
   const scriptUri = webview.asWebviewUri(assetUri("assist.js", extensionUri));
   const styleUri = webview.asWebviewUri(assetUri("assist.css", extensionUri));
+
+  console.log(scriptUri);
 
   return /* html */ `<!DOCTYPE html>
     <html lang="en">
@@ -63,6 +66,7 @@ export interface Assist {
 }
 
 export async function renderActiveAssist(
+  asWebviewUri: (uri: Uri) => Uri,
   token: CancellationToken
 ): Promise<Assist | undefined> {
   const editor = window.activeTextEditor;
@@ -77,7 +81,7 @@ export async function renderActiveAssist(
   }
 
   // see if we can create an assist from the hovers
-  const assist = getAssistFromHovers(hovers);
+  const assist = getAssistFromHovers(hovers, asWebviewUri);
   if (assist) {
     return assist;
   }
@@ -110,7 +114,7 @@ function getSignatureHelpAtCurrentPositionInEditor(editor: TextEditor) {
   );
 }
 
-function getAssistFromHovers(hovers: Hover[]) {
+function getAssistFromHovers(hovers: Hover[], asWebviewUri: (uri: Uri) => Uri) {
   const parts = hovers
     .flatMap((hover) => hover.contents)
     .map((content) => getMarkdown(content))
@@ -122,7 +126,7 @@ function getAssistFromHovers(hovers: Hover[]) {
 
   const markdown = parts.join("\n---\n");
   if (filterHoverAssist(markdown)) {
-    return renderAssist(assistType(markdown), markdown);
+    return renderAssist(assistType(markdown), markdown, asWebviewUri);
   } else {
     return undefined;
   }
@@ -131,6 +135,8 @@ function getAssistFromHovers(hovers: Hover[]) {
 function assistType(markdown: string) {
   if (isEquation(markdown)) {
     return kAssistEquation;
+  } else if (isImage(markdown)) {
+    return kAssistImage;
   } else {
     return kAssistHelp;
   }
@@ -140,12 +146,17 @@ function filterHoverAssist(markdown: string) {
   return (
     (!markdown.match(/^```\w*\n.*?\n```\s*$/) &&
       markdown.indexOf("\n") !== -1) ||
-    isEquation(markdown)
+    isEquation(markdown) ||
+    isImage(markdown)
   );
 }
 
 function isEquation(markdown: string) {
   return markdown.startsWith("![equation]");
+}
+
+function isImage(markdown: string) {
+  return markdown.startsWith("![") || markdown.startsWith("<img src");
 }
 
 function getAssistFromSignatureHelp(help: SignatureHelp) {
@@ -245,7 +256,11 @@ function getMarkdown(content: MarkedString | MarkdownString | string): string {
   }
 }
 
-function renderAssist(type: string, markdown: string) {
+function renderAssist(
+  type: string,
+  markdown: string,
+  asWebviewUri?: (uri: Uri) => Uri
+) {
   const md = MarkdownIt("default", {
     html: true,
     linkify: true,
@@ -254,6 +269,7 @@ function renderAssist(type: string, markdown: string) {
   md.validateLink = (link: string) => {
     return (
       validateLink(link) ||
+      link.startsWith("vscode-resource:") ||
       link.startsWith("file:") ||
       /^data:image\/.*?;/.test(link)
     );
@@ -262,7 +278,18 @@ function renderAssist(type: string, markdown: string) {
     auto: true,
     code: true,
   });
-  const html = md.render(markdown);
+  let html = md.render(markdown).trim();
+
+  // replace image paths with webview safe ones
+  if (asWebviewUri) {
+    const imgPattern = /^<img src="([^"]+)"(.*?>)$/;
+    const imgMatch = html.match(imgPattern);
+    if (imgMatch) {
+      const webviewUri = asWebviewUri(Uri.file(imgMatch[1]));
+      html = `<img src="${webviewUri.toString()}"${imgMatch[2]}`;
+    }
+  }
+
   return {
     type,
     html,

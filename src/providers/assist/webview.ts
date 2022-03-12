@@ -69,7 +69,6 @@ export class QuartoAssistViewProvider
     webviewView.webview.options = {
       enableScripts: true,
       enableCommandUris: true,
-      localResourceRoots: [this.extensionUri_],
     };
 
     webviewView.onDidChangeVisibility(() => {
@@ -136,7 +135,10 @@ export class QuartoAssistViewProvider
     // promise used to perform updates (this will be raced with a progress indicator)
     const renderPromise = (async () => {
       // get html
-      const assist = await renderActiveAssist(renderingEntry.cts.token);
+      const assist = await renderActiveAssist(
+        (uri: Uri) => this.view_!.webview.asWebviewUri(uri),
+        renderingEntry.cts.token
+      );
 
       // check for cancel
       if (renderingEntry.cts.token.isCancellationRequested) {
