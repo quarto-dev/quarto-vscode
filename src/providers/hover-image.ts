@@ -37,6 +37,7 @@ export async function imageHover(
         for (const wsFolder of workspace.workspaceFolders) {
           const wsRoot = wsFolder.uri.fsPath;
           imagePath = path.join(wsRoot, imagePath.slice(1));
+          break;
         }
       } else {
         imagePath = path.join(path.dirname(doc.uri.fsPath), imagePath);
