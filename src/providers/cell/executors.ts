@@ -7,7 +7,7 @@
 // (e.g. see https://github.com/JeepShen/vscode-markdown-code-runner)
 
 import Token from "markdown-it/lib/token";
-import { commands, extensions, Position, TextDocument } from "vscode";
+import { commands, extensions, Position, TextDocument, window } from "vscode";
 import { MarkdownEngine } from "../../markdown/engine";
 import {
   isExecutableLanguageBlock,
@@ -107,4 +107,17 @@ const rCellExecutor: CellExecutor = {
   },
 };
 
-const kCellExecutors = [pythonCellExecutor, rCellExecutor];
+const juliaCellExecutor: CellExecutor = {
+  language: "julia",
+  requiredExtension: "julialang.language-julia",
+  execute: async (code: string) => {
+    const extension = extensions.getExtension("julialang.language-julia");
+    if (extension) {
+      extension.exports.executeInREPL(code, {});
+    } else {
+      window.showErrorMessage("Unable to execute code in Julia REPL");
+    }
+  },
+};
+
+const kCellExecutors = [pythonCellExecutor, rCellExecutor, juliaCellExecutor];

@@ -84,6 +84,7 @@
           "meta.embedded.block.makefile": "makefile",
           "meta.embedded.block.perl": "perl",
           "meta.embedded.block.r": "r",
+          "meta.embedded.block.julia": "julia",
           "meta.embedded.block.ruby": "ruby",
           "meta.embedded.block.php": "php",
           "meta.embedded.block.sql": "sql",

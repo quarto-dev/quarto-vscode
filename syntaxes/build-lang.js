@@ -50,6 +50,12 @@ const languages = [
     source: "source.r",
   },
   {
+    name: "julia",
+    language: "julia",
+    identifiers: ["julia", "jl"],
+    source: "source.julia",
+  },
+  {
     name: "ruby",
     language: "ruby",
     identifiers: [
