@@ -39,18 +39,39 @@ export async function imageHover(
   }
 }
 
+interface ImageWidthInfo {
+  file: string;
+  mtime: number;
+  width: number;
+}
+
+const kMaxImageWidth = 750;
+
+const imageWidthCache = new Map<string, ImageWidthInfo>();
+
 async function imageWidth(file: string) {
   if (file.toLowerCase().endsWith(".png")) {
     try {
-      const kMaxWidth = 600;
+      // file uri and modification time
+      const fileUri = Uri.file(file);
+      const mtime = await (await workspace.fs.stat(fileUri)).mtime;
+
+      // can we serve the width from the cache?
+      const cachedWidth = imageWidthCache.get(file);
+      if (cachedWidth && cachedWidth.mtime === mtime) {
+        return cachedWidth.width;
+      }
+
+      // crack the image header and see if we need to adjust the width
       const imageData = await workspace.fs.readFile(Uri.file(file));
       const pngImage = new PngImage(imageData);
+      let width = pngImage.width;
       if (pngImage.isHighDpi) {
-        const width = Math.round(pngImage.width / 2);
-        return Math.min(width, kMaxWidth);
-      } else {
-        return null;
+        width = Math.round(width / 2);
       }
+      width = Math.min(width, kMaxImageWidth);
+      imageWidthCache.set(file, { file, mtime, width });
+      return width;
     } catch (error) {
       console.log(error);
       return null;
