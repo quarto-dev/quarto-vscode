@@ -40,6 +40,7 @@ import { MarkdownEngine } from "../markdown/engine";
 import { virtualDoc, virtualDocUri } from "../vdoc/vdoc";
 import { activateVirtualDocEmbeddedContent } from "../vdoc/vdoc-content";
 import { deactivateVirtualDocTempFiles } from "../vdoc/vdoc-tempfile";
+import { imageHover } from "../providers/hover-image";
 
 let client: LanguageClient;
 
@@ -168,6 +169,12 @@ function embeddedHoverProvider(engine: MarkdownEngine) {
     token: CancellationToken,
     next: ProvideHoverSignature
   ) => {
+    // see if we have any local hover providers
+    const imgHover = imageHover(document, position);
+    if (imgHover) {
+      return imgHover;
+    }
+
     const vdoc = await virtualDoc(document, position, engine);
     if (vdoc) {
       // get uri for hover

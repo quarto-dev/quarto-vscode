@@ -8,7 +8,6 @@ import { Hover, ServerCapabilities } from "vscode-languageserver/node";
 
 import { yamlHover } from "./hover-yaml";
 import { mathHover } from "./hover-math";
-import { imageHover } from "./hover-image";
 
 export const kHoverCapabilities: ServerCapabilities = {
   hoverProvider: true,
@@ -18,7 +17,5 @@ export async function onHover(
   doc: TextDocument,
   pos: Position
 ): Promise<Hover | null> {
-  return (
-    imageHover(doc, pos) || mathHover(doc, pos) || (await yamlHover(doc, pos))
-  );
+  return (await mathHover(doc, pos)) || (await yamlHover(doc, pos));
 }
