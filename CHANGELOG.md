@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.0 (Unreleased)
+
+- Syntax highlighting, completion, and cell execution for Julia
+- Hover and assist preview for markdown images
+
 ## 1.8.0 (Release on 11 March 2022)
 
 - Syntax highlighting for embedded LaTeX

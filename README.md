@@ -6,7 +6,7 @@ VS Code extension for the [Quarto](https://quarto.org) scientific and technical 
 - Commands and key-bindings for running cells and selected line(s)
 - Completion for embedded languages (e.g. Python, R, Julia, LaTeX, etc.)
 - Completion and diagnostics for project files and document/cell options
-- Quarto Assist panel for contextual help and math preview as you edit
+- Quarto panel for contextual help, image preview, and math preview.
 - Code snippets for common markdown constructs
 - Code folding and document outline for navigation within documents
 - Workspace symbol provider for navigation across project files
