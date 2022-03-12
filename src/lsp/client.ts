@@ -170,7 +170,7 @@ function embeddedHoverProvider(engine: MarkdownEngine) {
     next: ProvideHoverSignature
   ) => {
     // see if we have any local hover providers
-    const imgHover = imageHover(document, position);
+    const imgHover = await imageHover(document, position);
     if (imgHover) {
       return imgHover;
     }
