@@ -3,6 +3,8 @@
  * Licensed under the MIT License. See LICENSE in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+import * as path from "path";
+import * as fs from "fs";
 import {
   Hover,
   Position,
@@ -23,20 +25,40 @@ export async function imageHover(
 ): Promise<Hover | null> {
   const lineRange = new Range(pos.line, 0, pos.line + 1, 0);
   const line = doc.getText(lineRange).trimEnd();
-  if (line.match(kImagePattern)) {
-    const path = "/Users/jjallaire/Desktop/foo.png";
-    const width = await imageWidth(path);
-    const widthAttrib = width ? `width="${width}"` : "";
-    const content = new MarkdownString(`<img src="${path}" ${widthAttrib}/>`);
-    content.supportHtml = true;
-    content.isTrusted = true;
-    return {
-      contents: [content],
-      range: lineRange,
-    };
-  } else {
-    return null;
+  for (const match of line.matchAll(kImagePattern)) {
+    if (
+      match.index !== undefined &&
+      pos.character >= match.index &&
+      pos.character < match.index + match[0].length
+    ) {
+      // path can be either document relative or workspace rooted w/ "/"
+      let imagePath = match[5];
+      if (imagePath.startsWith("/") && workspace.workspaceFolders) {
+        for (const wsFolder of workspace.workspaceFolders) {
+          const wsRoot = wsFolder.uri.fsPath;
+          imagePath = path.join(wsRoot, imagePath.slice(1));
+        }
+      } else {
+        imagePath = path.join(path.dirname(doc.uri.fsPath), imagePath);
+      }
+      imagePath = path.normalize(imagePath);
+      if (fs.existsSync(imagePath)) {
+        const width = await imageWidth(imagePath);
+        const widthAttrib = width ? `width="${width}"` : "";
+        const content = new MarkdownString(
+          `<img src="${imagePath}" ${widthAttrib}/>`
+        );
+        content.supportHtml = true;
+        content.isTrusted = true;
+        return {
+          contents: [content],
+          range: lineRange,
+        };
+      }
+    }
   }
+
+  return null;
 }
 
 interface ImageWidthInfo {
