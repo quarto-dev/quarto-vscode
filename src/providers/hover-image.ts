@@ -12,10 +12,14 @@ export function imageHover(doc: TextDocument, pos: Position): Hover | null {
   const lineRange = new Range(pos.line, 0, pos.line + 1, 0);
   const line = doc.getText(lineRange).trimEnd();
   if (line.match(kImagePattern)) {
+    const content = new MarkdownString(
+      `![image](/Users/jjallaire/Desktop/foo.png)`
+    );
+    content.supportHtml = true;
+    content.isTrusted = true;
+
     return {
-      contents: [
-        new MarkdownString(`![image](/Users/jjallaire/Desktop/foo.png)`),
-      ],
+      contents: [content],
       range: lineRange,
     };
   } else {
