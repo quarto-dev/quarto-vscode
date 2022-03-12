@@ -6,6 +6,8 @@
 // TODO: implement some terminal based executors
 // (e.g. see https://github.com/JeepShen/vscode-markdown-code-runner)
 
+import semver from "semver";
+
 import Token from "markdown-it/lib/token";
 import { commands, extensions, Position, TextDocument, window } from "vscode";
 import { MarkdownEngine } from "../../markdown/engine";
@@ -42,7 +44,17 @@ export async function executeInteractive(
 export function validateRequiredExtension(language: string) {
   const executor = kCellExecutors.find((x) => x.language === language);
   if (executor?.requiredExtension) {
-    return !!extensions.getExtension(executor?.requiredExtension);
+    const extension = extensions.getExtension(executor?.requiredExtension);
+    if (extension) {
+      if (executor?.requiredVersion) {
+        const version = (extension.packageJSON.version || "0.0.0") as string;
+        return semver.gte(version, executor.requiredVersion);
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
   } else {
     return true;
   }
@@ -88,12 +100,14 @@ export async function ensureRequiredExtension(
 interface CellExecutor {
   language: string;
   requiredExtension?: string;
+  requiredVersion?: string;
   execute: (code: string) => Promise<void>;
 }
 
 const pythonCellExecutor: CellExecutor = {
   language: "python",
   requiredExtension: "ms-python.python",
+  requiredVersion: "2021.8.0",
   execute: async (code: string) => {
     await commands.executeCommand("jupyter.execSelectionInteractive", code);
   },
@@ -102,6 +116,7 @@ const pythonCellExecutor: CellExecutor = {
 const rCellExecutor: CellExecutor = {
   language: "r",
   requiredExtension: "Ikuyadeu.r",
+  requiredVersion: "2.4.0",
   execute: async (code: string) => {
     await commands.executeCommand("r.runSelection", code);
   },
@@ -110,6 +125,7 @@ const rCellExecutor: CellExecutor = {
 const juliaCellExecutor: CellExecutor = {
   language: "julia",
   requiredExtension: "julialang.language-julia",
+  requiredVersion: "1.4.0",
   execute: async (code: string) => {
     const extension = extensions.getExtension("julialang.language-julia");
     if (extension) {

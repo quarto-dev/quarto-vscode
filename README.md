@@ -25,13 +25,13 @@ There are a variety of tools that make it easier to edit and execute code cells.
 
 ![](https://quarto.org/docs/tools/images/vscode-code-cell.png)
 
-For Python and R cells, commands are available to execute the current cell, previous cells, or the currently selected line(s). Cell output is shown side by side in the Jupyter interactive console:
+For Python, R, and Julia cells, commands are available to execute the current cell, previous cells, or the currently selected line(s). Cell output is shown side by side in the Jupyter interactive console:
 
 ![](https://quarto.org/docs/tools/images/vscode-execute-cell.png)
 
 Execute the current cell with `Ctrl+Shift+Enter`, the current line(s) with `Ctrl+Enter`, or previous cells with `Ctrl+Alt+P` (note that on the Mac you should use `Cmd` rather than `Ctrl` as the prefix for all Quarto keyboard shortcuts).
 
-Enhanced features for embedded languages (e.g. completion, code execution) can be enabled by installing one or more of these other extensions:
+Enhanced features for embedded languages (e.g. completion, code execution) can be enabled by installing the most recent version(s) of these extensions:
 
 - [Python Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 - [R Extension](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r)
