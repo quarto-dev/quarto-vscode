@@ -1,7 +1,7 @@
 /* --------------------------------------------------------------------------------------------
  * Copyright (c) RStudio, PBC. All rights reserved.
  * Copyright (c) 2016 James Yu
- * Licensed under the MIT License. See License.txt in the project root for license information.
+ * Licensed under the MIT License. See LICENSE in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
 // based on https://github.com/James-Yu/LaTeX-Workshop/blob/master/src/providers/completion.ts
