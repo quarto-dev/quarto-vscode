@@ -35,6 +35,10 @@ pre code {
   color: rgb(113, 113, 113);
 }
 
+.vscode-dark .no-content {
+  color: rgb(146, 146, 146);
+}
+
 #main hr {
   display: block;
   border: none;

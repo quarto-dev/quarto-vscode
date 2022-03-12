@@ -161,18 +161,15 @@ export class QuartoAssistViewProvider
               assist.html
             }</div>`,
           });
-          this.view_.description = assist.type;
+          this.view_.title = assist.type;
         }
       } else {
         if (this.view_) {
           this.view_?.webview.postMessage({
             type: "noContent",
-            body:
-              "Quarto Assist provides contextual help as you edit, as well as live preview for LaTeX equations. " +
-              "Help will display automatically when your cursor is located on a symbol with " +
-              "help content available (for example, a function or yaml option).",
+            body: "The Quarto pane provides contextual help as you edit and live preview for images and equations.",
           });
-          this.view_.description = undefined;
+          this.view_.title = "Quarto";
         }
       }
     })();
