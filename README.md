@@ -4,7 +4,7 @@ VS Code extension for the [Quarto](https://quarto.org) scientific and technical 
 
 - Syntax highlighting for markdown and embedded languages
 - Commands and key-bindings for running cells and selected line(s)
-- Completion for embedded languages (e.g. Python, R, LaTeX, etc.)
+- Completion for embedded languages (e.g. Python, R, Julia, LaTeX, etc.)
 - Completion and diagnostics for project files and document/cell options
 - Quarto Assist panel for contextual help and math preview as you edit
 - Code snippets for common markdown constructs
@@ -35,7 +35,7 @@ Enhanced features for embedded languages (e.g. completion, code execution) can b
 
 - [Python Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 - [R Extension](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r)
-- [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)
+- [Julia Extension](https://marketplace.visualstudio.com/items?itemName=julialang.language-julia)
 
 ### YAML Intelligence
 
