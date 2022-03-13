@@ -15,6 +15,7 @@ import {
   Disposable,
   CancellationTokenSource,
   ExtensionContext,
+  workspace,
 } from "vscode";
 
 import debounce from "lodash.debounce";
@@ -27,6 +28,11 @@ import {
   renderCacheKeyNone,
 } from "./render-cache";
 import { renderActiveAssist, renderWebviewHtml } from "./render-assist";
+
+enum UpdateMode {
+  Sticky = "sticky",
+  Live = "live",
+}
 
 export class QuartoAssistViewProvider
   implements WebviewViewProvider, Disposable
@@ -55,6 +61,16 @@ export class QuartoAssistViewProvider
       null,
       this._disposables
     );
+
+    workspace.onDidChangeConfiguration(
+      () => {
+        this.updateConfiguration();
+      },
+      null,
+      this._disposables
+    );
+
+    this.updateConfiguration();
 
     this.render();
   }
@@ -160,6 +176,7 @@ export class QuartoAssistViewProvider
             body: `<div class="${assist.type.toLowerCase()}">${
               assist.html
             }</div>`,
+            updateMode: this.updateMode_,
           });
           this.view_.title = assist.type;
         }
@@ -168,8 +185,11 @@ export class QuartoAssistViewProvider
           this.view_?.webview.postMessage({
             type: "noContent",
             body: "The Quarto assist panel provides contextual help as you edit and live preview for images and equations.",
+            updateMode: this.updateMode_,
           });
-          this.view_.title = "Quarto";
+          if (this.updateMode_ === UpdateMode.Live) {
+            this.view_.title = "Quarto";
+          }
         }
       }
     })();
@@ -190,10 +210,18 @@ export class QuartoAssistViewProvider
     ]);
   }
 
+  private updateConfiguration() {
+    const config = workspace.getConfiguration("quarto");
+    this.updateMode_ =
+      config.get<UpdateMode>("assist.updateMode") || UpdateMode.Sticky;
+  }
+
   private view_?: WebviewView;
   private readonly extensionUri_: Uri;
   private readonly _disposables: Disposable[] = [];
 
   private currentRenderCacheKey_: RenderCacheKey = renderCacheKeyNone;
   private rendering_?: { cts: CancellationTokenSource };
+
+  private updateMode_ = UpdateMode.Sticky;
 }

@@ -327,6 +327,19 @@
       "type": "object",
       "title": "Quarto",
       "properties": {
+        "quarto.assist.updateMode": {
+          "type": "string",
+          "description": "Controls how the Quarto Assist panel is updated when the cursor moves.",
+          "default": "sticky",
+          "enum": [
+            "sticky",
+            "live"
+          ],
+          "enumDescriptions": [
+            "The assist panel tries to show help or live preview at the current cursor position. If there is none, it continues showing the last available help or preview.",
+            "The assist panel tracks the current cursor position. Display empty content if no help or live preview is found at the current position."
+          ]
+        },
         "quarto.cells.hoverHelp.enabled": {
           "scope": "window",
           "type": "boolean",

@@ -17,7 +17,11 @@
         break;
       }
       case "noContent": {
-        setNoContent(!contentShown ? message.body : "");
+        if (!contentShown) {
+          setNoContent(message.body);
+        } else if (message.updateMode === "live") {
+          setNoContent("");
+        }
         break;
       }
     }
