@@ -61,7 +61,7 @@ let loadedExtensions = baseExtensions;
 export function mathjaxLoadExtensions() {
   loadedExtensions = baseExtensions.concat(
     config
-      .previewMathJaxExtensions()
+      .mathJaxExtensions()
       .filter((ex) => supportedExtensionList.includes(ex))
   );
   html = createHtmlConverter(loadedExtensions);
@@ -73,7 +73,7 @@ export function mathjaxLoadedExtensions() {
 
 export function mathjaxTypesetToMarkdown(tex: string): MarkupContent | null {
   const typesetOpts = {
-    scale: config.previewMathJaxScale(),
+    scale: config.mathJaxScale(),
     color: getColor(),
   };
   try {
@@ -112,7 +112,7 @@ function typesetToSvg(
 }
 
 function getColor() {
-  const lightness = config.previewMathJaxTheme();
+  const lightness = config.mathJaxTheme();
   if (lightness === "light") {
     return "#000000";
   } else {

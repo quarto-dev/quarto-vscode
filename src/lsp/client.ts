@@ -241,7 +241,7 @@ async function syncColorThemeConfig() {
       window.activeColorTheme.kind == ColorThemeKind.Light ? "light" : "dark";
     const quartoConfig = workspace.getConfiguration("quarto");
     await quartoConfig.update(
-      "preview.mathjax.theme",
+      "mathjax.theme",
       theme,
       ConfigurationTarget.Global
     );

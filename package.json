@@ -365,13 +365,13 @@
           "default": 250,
           "markdownDescription": "Millisecond delay between background color updates."
         },
-        "quarto.preview.mathjax.scale": {
+        "quarto.mathjax.scale": {
           "scope": "window",
           "type": "number",
           "default": 1,
           "markdownDescription": "Scaling of MathJax preview."
         },
-        "quarto.preview.mathjax.extensions": {
+        "quarto.mathjax.extensions": {
           "scope": "window",
           "type": "array",
           "default": [],
@@ -405,7 +405,7 @@
           },
           "uniqueItems": true
         },
-        "quarto.preview.mathjax.theme": {
+        "quarto.mathjax.theme": {
           "scope": "window",
           "type": "string",
           "enum": [
