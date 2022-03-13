@@ -167,7 +167,7 @@ export class QuartoAssistViewProvider
         if (this.view_) {
           this.view_?.webview.postMessage({
             type: "noContent",
-            body: "The Quarto pane provides contextual help as you edit and live preview for images and equations.",
+            body: "The Quarto assist panel provides contextual help as you edit and live preview for images and equations.",
           });
           this.view_.title = "Quarto";
         }
