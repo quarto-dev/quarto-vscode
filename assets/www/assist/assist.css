@@ -59,7 +59,6 @@ pre code {
 
 code {
   color: inherit;
-  background: var(--vscode-textCodeBlock-background);
   font-family: var(--vscode-editor-font-family);
 }
 
@@ -70,7 +69,6 @@ ol {
 }
 
 .vscode-light .hljs {
-  background: white;
   color: black;
 }
 
@@ -131,7 +129,6 @@ ol {
 }
 
 .vscode-dark .hljs {
-  background: #1e1e1e;
   color: #dcdcdc;
 }
 
