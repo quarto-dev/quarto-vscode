@@ -1,9 +1,10 @@
 # Changelog
 
-## 1.9.0 (Unreleased)
+## 1.9.0 (Release on 13 March 2022)
 
 - Syntax highlighting, completion, and cell execution for Julia
 - Hover and assist preview for markdown images
+- Assist panel content can now be pinned/unpinned
 
 ## 1.8.0 (Release on 11 March 2022)
 

@@ -1,7 +1,7 @@
 {
   "name": "quarto",
   "displayName": "Quarto",
-  "description": "Official extension for the Quarto scientific and technical publishing system.",
+  "description": "Extension for the Quarto scientific and technical publishing system.",
   "author": "quarto",
   "publisher": "quarto",
   "icon": "assets/logo/quarto.png",
@@ -11,7 +11,7 @@
     "pandoc",
     "quarto"
   ],
-  "version": "1.8.0",
+  "version": "1.9.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/quarto-dev/quarto-vscode.git"
@@ -40,7 +40,7 @@
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. ."
   },
   "engines": {
-    "vscode": "^1.55.0"
+    "vscode": "^1.61.0"
   },
   "main": "./out/main.js",
   "browser": "./out/browser.js",
