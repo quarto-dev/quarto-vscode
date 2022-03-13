@@ -206,7 +206,8 @@
       {
         "command": "quarto.previewMath",
         "category": "Quarto",
-        "title": "Preview Math"
+        "title": "Preview Math",
+        "when": "!isWeb"
       }
     ],
     "keybindings": [
