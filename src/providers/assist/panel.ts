@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ExtensionContext, window, languages } from "vscode";
+import { ExtensionContext, window, languages, commands } from "vscode";
 import { Command } from "../../core/command";
 import { kQuartoDocSelector } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
@@ -30,6 +30,18 @@ export function activateQuartoAssistPanel(
       kQuartoDocSelector,
       quartoLensCodeLensProvider(engine)
     )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand("quarto.assist.pin", () => {
+      provider.pin();
+    })
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand("quarto.assist.unpin", () => {
+      provider.unpin();
+    })
   );
 
   return [new PreviewMathCommand(provider, engine)];

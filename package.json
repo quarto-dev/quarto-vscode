@@ -208,6 +208,20 @@
         "category": "Quarto",
         "title": "Preview Math",
         "when": "!isWeb"
+      },
+      {
+        "command": "quarto.assist.pin",
+        "title": "Pin Assist Panel",
+        "icon": "$(pin)",
+        "category": "Quarto",
+        "when": "!isWeb"
+      },
+      {
+        "command": "quarto.assist.unpin",
+        "title": "Unpin Assist Panel",
+        "icon": "$(pinned)",
+        "category": "Quarto",
+        "when": "!isWeb"
       }
     ],
     "keybindings": [
@@ -291,6 +305,26 @@
         {
           "command": "quarto.goToPreviousCell",
           "when": "!isWeb && editorLangId == quarto"
+        },
+        {
+          "command": "quarto.assist.pin",
+          "when": "!isWeb && !quarto.assistView.isPinned"
+        },
+        {
+          "command": "quarto.assist.unpin",
+          "when": "!isWeb && quarto.assistView.isPinned"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "quarto.assist.pin",
+          "when": "!isWeb && view == quarto-assist && !quarto.assistView.isPinned",
+          "group": "navigation"
+        },
+        {
+          "command": "quarto.assist.unpin",
+          "when": "!isWeb && view == quarto-assist && quarto.assistView.isPinned",
+          "group": "navigation"
         }
       ]
     },

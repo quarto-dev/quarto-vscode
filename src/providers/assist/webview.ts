@@ -16,6 +16,7 @@ import {
   CancellationTokenSource,
   ExtensionContext,
   workspace,
+  commands,
 } from "vscode";
 
 import debounce from "lodash.debounce";
@@ -114,6 +115,14 @@ export class QuartoAssistViewProvider
     }
   }
 
+  public pin() {
+    this.updatePinned(true);
+  }
+
+  public unpin() {
+    this.updatePinned(false);
+  }
+
   public dispose() {
     let item: Disposable | undefined;
     while ((item = this._disposables.pop())) {
@@ -121,9 +130,29 @@ export class QuartoAssistViewProvider
     }
   }
 
+  private updatePinned(value: boolean) {
+    if (this.pinned_ === value) {
+      return;
+    }
+
+    this.pinned_ = value;
+    commands.executeCommand(
+      "setContext",
+      QuartoAssistViewProvider.pinnedContext,
+      value
+    );
+
+    this.render();
+  }
+
   private async render(ignoreCache = false) {
     // ignore if we have no view
     if (!this.view_) {
+      return;
+    }
+
+    // ignore if we are pinned
+    if (this.pinned_) {
       return;
     }
 
@@ -224,4 +253,6 @@ export class QuartoAssistViewProvider
   private rendering_?: { cts: CancellationTokenSource };
 
   private updateMode_ = UpdateMode.Sticky;
+  private pinned_ = false;
+  private static readonly pinnedContext = "quarto.assistView.isPinned";
 }
