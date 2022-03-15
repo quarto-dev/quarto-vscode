@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.10.0 (Release on 15 March 2022)
+
+- Message when extensions required for cell execution aren't installed
+- Scroll to top when setting assist pane contents
+
 ## 1.9.0 (Release on 13 March 2022)
 
 - Syntax highlighting, completion, and cell execution for Julia
