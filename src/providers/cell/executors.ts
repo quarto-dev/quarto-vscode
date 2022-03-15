@@ -41,18 +41,80 @@ export async function executeInteractive(
   }
 }
 
-export function validateRequiredExtension(language: string) {
+export function hasCellExecutor(language: string) {
+  return !!kCellExecutors.find((x) => x.language === language);
+}
+
+// ensure language extension is loaded (if required) by creating a
+// virtual doc for the language (under the hood this triggers extension
+// loading by sending a dummy hover-provider request)
+const kLoadedLanguageExtensions: string[] = [];
+export async function ensureRequiredExtension(
+  language: string,
+  document: TextDocument,
+  engine: MarkdownEngine
+): Promise<boolean> {
+  // only do this once per language
+  if (kLoadedLanguageExtensions.includes(language)) {
+    return true;
+  }
+
   const executor = kCellExecutors.find((x) => x.language === language);
-  if (executor?.requiredExtension) {
+  if (executor) {
+    // validate the extension
+    if (!validateRequiredExtension(executor)) {
+      return false;
+    }
+
+    // load a virtual doc for this file (forces extension to load)
+    const tokens = await engine.parse(document);
+    const languageBlock = tokens.find(isExecutableLanguageBlockOf(language));
+    if (languageBlock?.map) {
+      const vdoc = await virtualDoc(
+        document,
+        new Position(languageBlock.map[0] + 1, 0),
+        engine
+      );
+      if (vdoc) {
+        // get the virtual doc
+        await virtualDocUri(vdoc, document.uri);
+
+        // mark language as being loaded
+        kLoadedLanguageExtensions.push(executor.language);
+
+        // success!!
+        return true;
+      }
+    }
+  }
+
+  //  unable to validate
+  return false;
+}
+
+function validateRequiredExtension(executor: CellExecutor) {
+  if (executor.requiredExtension) {
+    const extensionName =
+      executor.requiredExtensionName || executor.requiredExtension;
     const extension = extensions.getExtension(executor?.requiredExtension);
     if (extension) {
       if (executor?.requiredVersion) {
         const version = (extension.packageJSON.version || "0.0.0") as string;
-        return semver.gte(version, executor.requiredVersion);
+        if (semver.gte(version, executor.requiredVersion)) {
+          return true;
+        } else {
+          window.showWarningMessage(
+            `Executing ${executor.language} cells requires v${executor.requiredVersion} of the ${extensionName} extension.`
+          );
+          return false;
+        }
       } else {
         return true;
       }
     } else {
+      window.showWarningMessage(
+        `Executing ${executor.language} cells requires the ${extensionName} extension.`
+      );
       return false;
     }
   } else {
@@ -60,46 +122,10 @@ export function validateRequiredExtension(language: string) {
   }
 }
 
-// ensure language extension is loaded (if required) by creating a
-// virtual doc for the language (under the hood this triggers extension
-// loading by sending a dummy hover-provider request)
-const kLoadedExtensions: string[] = [];
-export async function ensureRequiredExtension(
-  language: string,
-  document: TextDocument,
-  engine: MarkdownEngine
-): Promise<void> {
-  // only do this once per language
-  if (!kLoadedExtensions.includes(language)) {
-    const executor = kCellExecutors.find((x) => x.language === language);
-    if (executor) {
-      // mark language as being loaded
-      kLoadedExtensions.push(executor.language);
-
-      // load extension if necessary
-      if (executor.requiredExtension) {
-        const tokens = await engine.parse(document);
-        const languageBlock = tokens.find(
-          isExecutableLanguageBlockOf(language)
-        );
-        if (languageBlock?.map) {
-          const vdoc = await virtualDoc(
-            document,
-            new Position(languageBlock.map[0] + 1, 0),
-            engine
-          );
-          if (vdoc) {
-            await virtualDocUri(vdoc, document.uri);
-          }
-        }
-      }
-    }
-  }
-}
-
 interface CellExecutor {
   language: string;
   requiredExtension?: string;
+  requiredExtensionName?: string;
   requiredVersion?: string;
   execute: (code: string) => Promise<void>;
 }
@@ -107,6 +133,7 @@ interface CellExecutor {
 const pythonCellExecutor: CellExecutor = {
   language: "python",
   requiredExtension: "ms-python.python",
+  requiredExtensionName: "Python",
   requiredVersion: "2021.8.0",
   execute: async (code: string) => {
     await commands.executeCommand("jupyter.execSelectionInteractive", code);
@@ -116,6 +143,7 @@ const pythonCellExecutor: CellExecutor = {
 const rCellExecutor: CellExecutor = {
   language: "r",
   requiredExtension: "Ikuyadeu.r",
+  requiredExtensionName: "R",
   requiredVersion: "2.4.0",
   execute: async (code: string) => {
     await commands.executeCommand("r.runSelection", code);
@@ -125,6 +153,7 @@ const rCellExecutor: CellExecutor = {
 const juliaCellExecutor: CellExecutor = {
   language: "julia",
   requiredExtension: "julialang.language-julia",
+  requiredExtensionName: "Julia",
   requiredVersion: "1.4.0",
   execute: async (code: string) => {
     const extension = extensions.getExtension("julialang.language-julia");

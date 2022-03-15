@@ -15,11 +15,7 @@ import {
 } from "vscode";
 import { MarkdownEngine } from "../../markdown/engine";
 import { languageNameFromBlock } from "../../markdown/language";
-import {
-  blockHasExecutor,
-  ensureRequiredExtension,
-  validateRequiredExtension,
-} from "./executors";
+import { blockHasExecutor, hasExecutor } from "./executors";
 
 export function quartoCellExecuteCodeLensProvider(
   engine: MarkdownEngine
@@ -31,7 +27,6 @@ export function quartoCellExecuteCodeLensProvider(
     ): ProviderResult<CodeLens[]> {
       const lenses: CodeLens[] = [];
       const tokens = engine.parseSync(document);
-      const langauges: string[] = [];
       const executableBlocks = tokens.filter(blockHasExecutor);
       for (let i = 0; i < executableBlocks.length; i++) {
         // respect cancellation request
@@ -41,17 +36,11 @@ export function quartoCellExecuteCodeLensProvider(
 
         const block = executableBlocks[i];
         if (block.map) {
-          // detect the language and see if it requires an extension
+          // detect the language and see if it has a cell executor
           const language = languageNameFromBlock(block);
-          if (
-            !langauges.includes(language) &&
-            !validateRequiredExtension(language)
-          ) {
+          if (!hasExecutor(language)) {
             continue;
           }
-
-          // ensure any required extension is loaded
-          ensureRequiredExtension(language, document, engine);
 
           // push code lens
           const range = new Range(block.map[0], 0, block.map[0], 0);
@@ -85,7 +74,6 @@ export function quartoCellExecuteCodeLensProvider(
               })
             );
           }
-          langauges.push(language);
         }
       }
       return lenses;

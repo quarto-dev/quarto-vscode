@@ -20,7 +20,11 @@ import {
   languageNameFromBlock,
 } from "../../markdown/language";
 import { languageBlockAtPosition } from "../../vdoc/vdoc";
-import { blockHasExecutor, executeInteractive } from "./executors";
+import {
+  blockHasExecutor,
+  ensureRequiredExtension,
+  executeInteractive,
+} from "./executors";
 
 export function cellCommands(engine: MarkdownEngine): Command[] {
   return [
@@ -47,17 +51,24 @@ abstract class RunCommand {
     if (doc && isQuartoDoc(doc)) {
       const tokens = await this.engine_.parse(doc);
       line = line || editor.selection.start.line;
-      const block = languageBlockAtPosition(
-        tokens,
-        new Position(line, 0),
-        this.includeFence()
-      );
-      if (!this.blockRequired() || blockHasExecutor(block)) {
-        this.doExecute(editor, tokens, line, block);
-      } else {
-        window.showInformationMessage(
-          "Editor selection is not within an executable cell"
+      if (this.blockRequired()) {
+        const block = languageBlockAtPosition(
+          tokens,
+          new Position(line, 0),
+          this.includeFence()
         );
+        if (block) {
+          const language = languageNameFromBlock(block);
+          if (await ensureRequiredExtension(language, doc, this.engine_)) {
+            await this.doExecute(editor, tokens, line, block);
+          }
+        } else {
+          window.showInformationMessage(
+            "Editor selection is not within an executable cell"
+          );
+        }
+      } else {
+        await this.doExecute(editor, tokens, line);
       }
     } else {
       window.showInformationMessage("Active editor is not a Quarto document");
@@ -274,7 +285,7 @@ class RunAllCellsCommand extends RunCommand implements Command {
   private static readonly id = "quarto.runAllCells";
   public readonly id = RunAllCellsCommand.id;
 
-  protected async doExecute(
+  override async doExecute(
     _editor: TextEditor,
     tokens: Token[],
     _line: number,
