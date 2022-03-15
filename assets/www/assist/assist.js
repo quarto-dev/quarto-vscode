@@ -32,6 +32,7 @@
    */
   function updateContent(contents) {
     main.innerHTML = contents;
+    window.scrollTo(0, 0);
   }
 
   /**
