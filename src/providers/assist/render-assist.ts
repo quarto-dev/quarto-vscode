@@ -32,8 +32,6 @@ export function renderWebviewHtml(webview: Webview, extensionUri: Uri) {
   const scriptUri = webview.asWebviewUri(assetUri("assist.js", extensionUri));
   const styleUri = webview.asWebviewUri(assetUri("assist.css", extensionUri));
 
-  console.log(scriptUri);
-
   return /* html */ `<!DOCTYPE html>
     <html lang="en">
     <head>
