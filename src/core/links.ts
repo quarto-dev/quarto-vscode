@@ -5,17 +5,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-
-export const Schemes = {
-  http: "http:",
-  https: "https:",
-  file: "file:",
-  untitled: "untitled",
-  mailto: "mailto:",
-  data: "data:",
-  vscode: "vscode:",
-  "vscode-insiders": "vscode-insiders:",
-};
+import { Schemes } from "./schemes";
 
 const knownSchemes = [...Object.values(Schemes), `${vscode.env.uriScheme}:`];
 

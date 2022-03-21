@@ -12,6 +12,7 @@ import { cellCommands } from "./providers/cell/commands";
 import { quartoCellExecuteCodeLensProvider } from "./providers/cell/codelens";
 import { activateQuartoAssistPanel } from "./providers/assist/panel";
 import { activateCommon } from "./extension";
+import { activatePreview } from "./providers/preview/preview";
 
 export function activate(context: vscode.ExtensionContext) {
   // create markdown engine
@@ -23,6 +24,9 @@ export function activate(context: vscode.ExtensionContext) {
   // activate assist panel for node
   const lensCommands = activateQuartoAssistPanel(context, engine);
 
+  // activate preview subsystem
+  const previewCommands = activatePreview(context);
+
   // provide code lens for node
   vscode.languages.registerCodeLensProvider(
     kQuartoDocSelector,
@@ -30,6 +34,10 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   // activate providers common to browser/node
-  const commands = [...cellCommands(engine), ...lensCommands];
+  const commands = [
+    ...cellCommands(engine),
+    ...previewCommands,
+    ...lensCommands,
+  ];
   activateCommon(context, engine, commands);
 }

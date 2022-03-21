@@ -15,19 +15,22 @@ export const kQuartoDocSelector: vscode.DocumentSelector = {
   scheme: "*",
 };
 
-export function isQuartoDoc(document: vscode.TextDocument) {
-  return document.languageId === kQuartoLanguageId;
+export function isQuartoDoc(document?: vscode.TextDocument) {
+  return document && document.languageId === kQuartoLanguageId;
 }
 
-export function isQuartoYaml(doc: vscode.TextDocument) {
+export function isQuartoYaml(doc?: vscode.TextDocument) {
   return (
+    doc &&
     doc.languageId === kYamlLanguageId &&
     doc.uri.toString().match(/_quarto\.ya?ml$/)
   );
 }
 
-export function isMarkdownDoc(document: vscode.TextDocument) {
-  return isQuartoDoc(document) || document.languageId === "markdown";
+export function isMarkdownDoc(document?: vscode.TextDocument) {
+  return (
+    document && (isQuartoDoc(document) || document.languageId === "markdown")
+  );
 }
 
 export async function resolveQuartoDocUri(

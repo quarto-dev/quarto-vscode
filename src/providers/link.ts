@@ -11,7 +11,6 @@ import {
   getUriForLinkWithKnownExternalScheme,
   isImageLink,
   isOfScheme,
-  Schemes,
 } from "../core/links";
 import { dirname, extname } from "../core/path";
 import { isQuartoDoc } from "../core/doc";
@@ -19,6 +18,7 @@ import { Command } from "../core/command";
 
 import { MarkdownEngine } from "../markdown/engine";
 import { MarkdownTableOfContents } from "../markdown/toc";
+import { Schemes } from "../core/schemes";
 
 const localize = nls.loadMessageBundle();
 

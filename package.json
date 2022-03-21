@@ -23,7 +23,8 @@
   "categories": [
     "Programming Languages",
     "Data Science",
-    "Machine Learning"
+    "Machine Learning",
+    "Notebooks"
   ],
   "private": true,
   "scripts": {
@@ -150,6 +151,12 @@
     },
     "commands": [
       {
+        "command": "quarto.render",
+        "title": "Render Document",
+        "category": "Quarto",
+        "when": "!isWeb"
+      },
+      {
         "command": "quarto.runSelection",
         "title": "Run Selected Line(s)",
         "category": "Quarto",
@@ -225,6 +232,12 @@
       }
     ],
     "keybindings": [
+      {
+        "command": "quarto.render",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "!isWeb && editorLangId == quarto && !inSearchEditor"
+      },
       {
         "command": "quarto.runSelection",
         "key": "ctrl+enter",
@@ -307,12 +320,20 @@
           "when": "!isWeb && editorLangId == quarto"
         },
         {
+          "command": "quarto.previewMath",
+          "when": "!isWeb && editorLangId == quarto"
+        },
+        {
           "command": "quarto.assist.pin",
-          "when": "!isWeb && !quarto.assistView.isPinned"
+          "when": "!isWeb && && editorLangId == quarto && !quarto.assistView.isPinned"
         },
         {
           "command": "quarto.assist.unpin",
-          "when": "!isWeb && quarto.assistView.isPinned"
+          "when": "!isWeb && editorLangId == quarto && quarto.assistView.isPinned"
+        },
+        {
+          "command": "quarto.render",
+          "when": "!isWeb && editorLangId == quarto"
         }
       ],
       "view/title": [
