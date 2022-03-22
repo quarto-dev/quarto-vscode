@@ -47,6 +47,8 @@
   "browser": "./out/browser.js",
   "activationEvents": [
     "onLanguage:quarto",
+    "onLanguage:jupyter",
+    "onNotebook:jupyter-notebook",
     "workspaceContains:**/_quarto.{yml,yaml}"
   ],
   "capabilities": {
@@ -154,7 +156,7 @@
         "command": "quarto.render",
         "title": "Render Document",
         "category": "Quarto",
-        "when": "!isWeb"
+        "when": "!isWeb && editorLangId == quarto || !isWeb && notebookType == jupyter-notebook"
       },
       {
         "command": "quarto.runSelection",
@@ -236,7 +238,7 @@
         "command": "quarto.render",
         "key": "ctrl+shift+r",
         "mac": "cmd+shift+r",
-        "when": "!isWeb && editorLangId == quarto && !inSearchEditor"
+        "when": "!isWeb && editorLangId == quarto && !inSearchEditor || !isWeb && notebookType == jupyter-notebook && !inSearchEditor"
       },
       {
         "command": "quarto.runSelection",
@@ -333,7 +335,7 @@
         },
         {
           "command": "quarto.render",
-          "when": "!isWeb && editorLangId == quarto"
+          "when": "!isWeb && editorLangId == quarto || !isWeb && notebookType == jupyter-notebook"
         }
       ],
       "view/title": [

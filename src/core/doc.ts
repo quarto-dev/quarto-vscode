@@ -15,8 +15,12 @@ export const kQuartoDocSelector: vscode.DocumentSelector = {
   scheme: "*",
 };
 
-export function isQuartoDoc(document?: vscode.TextDocument) {
-  return document && document.languageId === kQuartoLanguageId;
+export function isQuartoDoc(doc?: vscode.TextDocument) {
+  return doc && doc.languageId === kQuartoLanguageId;
+}
+
+export function isNotebook(doc?: vscode.TextDocument) {
+  return doc && extname(doc.uri.fsPath).toLowerCase() === ".ipynb";
 }
 
 export function isQuartoYaml(doc?: vscode.TextDocument) {

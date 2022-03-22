@@ -16,18 +16,17 @@ import {
   ViewColumn,
   window,
 } from "vscode";
-import { hasFileScheme } from "../../core/schemes";
 import { QuartoContext } from "../../core/quarto";
 import { shQuote } from "../../core/strings";
 import { previewCommands } from "./commands";
 import { Command } from "../../core/command";
+import { isNotebook, isQuartoDoc } from "../../core/doc";
 
 // TODO: Simple Browser .Aside ends up being somewhat unstable w/ other windows
 //       Do we need to consider a 'Quarto Preview' fork for better control
 //       over the preview window
 // TODO: image being removed from disk causes reload
 // TODO: discover project context for .qmd files
-// TODO: support for ipynb files
 // TODO: progress within preview window (don't showTerminal after that)
 
 let previewManager: PreviewManager;
@@ -37,12 +36,13 @@ export function activatePreview(quartoContext: QuartoContext): Command[] {
   return previewCommands();
 }
 
-export function previewDoc(doc: TextDocument) {
-  if (hasFileScheme(doc)) {
-    previewManager.preview(doc);
-  } else {
-    window.showErrorMessage("Unable to preview non-filesystem documents");
-  }
+export function canPreviewDoc(doc: TextDocument) {
+  return isQuartoDoc(doc) || isNotebook(doc);
+}
+
+export async function previewDoc(doc: TextDocument) {
+  await commands.executeCommand("workbench.action.files.save");
+  await previewManager.preview(doc);
 }
 
 class PreviewManager {
@@ -51,12 +51,13 @@ class PreviewManager {
     this.outputSink_ = new PreviewOutputSink(this.onPreviewOutput.bind(this));
   }
 
-  public preview(doc: TextDocument) {
+  public async preview(doc: TextDocument) {
     if (this.canReuseRunningPreview(doc)) {
-      // perform the render
-      http.get(this.serverUrl_ + "quarto-render/");
-      // show the terminal and preview browser
-      this.terminal_!.show(true);
+      if (isQuartoDoc(doc)) {
+        http.get(this.serverUrl_ + "quarto-render/");
+        this.terminal_!.show(true);
+      }
+      // show the preview browser
       this.showPreviewBrowser();
     } else {
       // start a new preview
@@ -97,15 +98,18 @@ class PreviewManager {
     };
     this.terminal_ = window.createTerminal(options);
     const quarto = path.join(this.quartoContext_.binPath, "quarto");
-    const cmd =
-      shQuote(quarto) +
-      " preview " +
-      shQuote(path.basename(doc.uri.fsPath)) +
-      " --no-browser" +
-      " --no-watch-inputs" +
-      " --log " +
-      shQuote(this.outputSink_.outputFile());
-    this.terminal_.sendText(cmd, true);
+    const cmd: string[] = [
+      shQuote(quarto),
+      "preview",
+      shQuote(path.basename(doc.uri.fsPath)),
+      "--no-browser",
+      "--log",
+      shQuote(this.outputSink_.outputFile()),
+    ];
+    if (isQuartoDoc(doc)) {
+      cmd.push("--no-watch-inputs");
+    }
+    this.terminal_.sendText(cmd.join(" "), true);
     this.terminal_.show(true);
   }
 

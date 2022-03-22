@@ -5,8 +5,7 @@
 
 import { window } from "vscode";
 import { Command } from "../../core/command";
-import { isQuartoDoc } from "../../core/doc";
-import { previewDoc } from "./preview";
+import { canPreviewDoc, previewDoc } from "./preview";
 
 export function previewCommands(): Command[] {
   return [new RenderCommand()];
@@ -17,11 +16,8 @@ class RenderCommand implements Command {
   public readonly id = RenderCommand.id;
   async execute() {
     const activeDoc = window.activeTextEditor?.document;
-    if (activeDoc && isQuartoDoc(activeDoc)) {
-      if (activeDoc.isDirty) {
-        await activeDoc.save();
-      }
-      previewDoc(activeDoc);
+    if (activeDoc && canPreviewDoc(activeDoc)) {
+      await previewDoc(activeDoc);
     }
   }
 }
