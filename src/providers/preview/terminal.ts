@@ -10,7 +10,6 @@ import * as http from "http";
 
 import {
   commands,
-  ExtensionContext,
   Terminal,
   TerminalOptions,
   TextDocument,
@@ -18,9 +17,11 @@ import {
   window,
 } from "vscode";
 import { Schemes } from "../../core/schemes";
+import { QuartoContext } from "../../core/quarto";
+import { shQuote } from "../../core/strings";
 
-export function terminalInitialize(context: ExtensionContext) {
-  terminalManager.init(context);
+export function terminalInitialize(quartoContext: QuartoContext) {
+  terminalManager.init(quartoContext);
 }
 
 export function terminalPreview(doc: TextDocument) {
@@ -32,7 +33,9 @@ export function terminalPreview(doc: TextDocument) {
 }
 
 class PreviewTerminalManager {
-  public init(_context: ExtensionContext) {
+  public init(quartoContext: QuartoContext) {
+    // record context
+    this.quartoContext_ = quartoContext;
     // allocate a directory for preview output
     tmp.setGracefulCleanup();
     const previewDir = tmp.dirSync({ prefix: "quarto-preview" });
@@ -92,14 +95,17 @@ class PreviewTerminalManager {
     const options: TerminalOptions = {
       name: kTerminalName,
       cwd: path.dirname(docPath),
-      env: {
-        QUARTO_LOG: this.previewOutputFile_,
-      },
-      strictEnv: false,
     };
     this.terminal_ = window.createTerminal(options);
     this.terminal_.show(true);
-    const cmd = 'quarto preview "' + path.basename(docPath) + '" --no-browser';
+    const quarto = path.join(this.quartoContext_!.binPath, "quarto");
+    const cmd =
+      shQuote(quarto) +
+      " preview " +
+      shQuote(path.basename(docPath)) +
+      " --no-browser" +
+      " --log " +
+      shQuote(this.previewOutputFile_!);
     this.terminal_.sendText(cmd, true);
     this.scope_ = docPath;
   }
@@ -133,6 +139,7 @@ class PreviewTerminalManager {
     }
   }
 
+  private quartoContext_: QuartoContext | undefined;
   private previewOutputFileLastModified_ = 0;
   private previewBrowserUrl_: string | undefined;
   private previewOutputFile_: string | undefined;
