@@ -8,7 +8,7 @@ import { QuartoContext } from "../../core/quarto";
 import { previewCommands } from "./commands";
 import { terminalInitialize } from "./terminal";
 
-// TODO: check quarto version and use --log
+// TODO: Simple Browser .Aside ends up being somewhat unstable w/ other windows
 
 export function activatePreview(quartoContext: QuartoContext): Command[] {
   terminalInitialize(quartoContext);

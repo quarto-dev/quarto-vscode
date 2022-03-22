@@ -66,8 +66,13 @@ class PreviewTerminalManager {
       this.previewBrowserUrl_ &&
       this.scope_ === doc.uri.fsPath
     ) {
-      this.terminal_.show();
-      http.get(this.previewBrowserUrl_);
+      // show the terminal (TODO: remove in favor of in browser progrss)
+      this.terminal_.show(true);
+
+      // request the render
+      http.get(this.previewBrowserUrl_ + "quarto-render/");
+
+      // show the preview
       this.showPreview();
       return;
     }
@@ -82,7 +87,7 @@ class PreviewTerminalManager {
       this.scope_ = undefined;
     }
 
-    // re-use any other quarto preview terminal
+    // re-use any other leftover quarto preview terminal
     const kTerminalName = "Quarto Preview";
     const terminal = window.terminals.find((terminal) => {
       return terminal.name === kTerminalName;
@@ -104,6 +109,7 @@ class PreviewTerminalManager {
       " preview " +
       shQuote(path.basename(docPath)) +
       " --no-browser" +
+      " --no-watch-inputs" +
       " --log " +
       shQuote(this.previewOutputFile_!);
     this.terminal_.sendText(cmd, true);
@@ -111,6 +117,7 @@ class PreviewTerminalManager {
   }
 
   private onPreviewOutput(output: string) {
+    // detect preview and show in browser
     if (!this.previewBrowserUrl_) {
       const match = output.match(/Browse at (http:\/\/localhost\:\d+\/)/);
       if (match) {
