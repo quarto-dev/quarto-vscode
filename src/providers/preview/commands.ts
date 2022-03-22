@@ -6,7 +6,7 @@
 import { window } from "vscode";
 import { Command } from "../../core/command";
 import { isQuartoDoc } from "../../core/doc";
-import { terminalPreview } from "./terminal";
+import { previewDoc } from "./preview";
 
 export function previewCommands(): Command[] {
   return [new RenderCommand()];
@@ -21,7 +21,7 @@ class RenderCommand implements Command {
       if (activeDoc.isDirty) {
         await activeDoc.save();
       }
-      terminalPreview(activeDoc);
+      previewDoc(activeDoc);
     }
   }
 }
