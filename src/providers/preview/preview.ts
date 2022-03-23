@@ -11,11 +11,13 @@ import axios from "axios";
 
 import {
   commands,
+  ExtensionContext,
   Terminal,
   TerminalOptions,
   TextDocument,
   Uri,
   ViewColumn,
+  WebviewPanel,
   window,
 } from "vscode";
 import { QuartoContext } from "../../core/quarto";
@@ -23,11 +25,27 @@ import { shQuote } from "../../core/strings";
 import { previewCommands } from "./commands";
 import { Command } from "../../core/command";
 import { isNotebook, isQuartoDoc } from "../../core/doc";
+import { QuartoPreviewView, ShowOptions } from "./preview-webview";
 
 let previewManager: PreviewManager;
 
-export function activatePreview(quartoContext: QuartoContext): Command[] {
-  previewManager = new PreviewManager(quartoContext);
+export function activatePreview(
+  context: ExtensionContext,
+  quartoContext: QuartoContext
+): Command[] {
+  // create preview manager
+  previewManager = new PreviewManager(context.extensionUri, quartoContext);
+  context.subscriptions.push(previewManager);
+
+  context.subscriptions.push(
+    window.registerWebviewPanelSerializer(QuartoPreviewView.viewType, {
+      deserializeWebviewPanel: async (panel, state) => {
+        previewManager.restoreWebvew(panel, state);
+      },
+    })
+  );
+
+  // preview commands
   return previewCommands(quartoContext);
 }
 
@@ -42,9 +60,16 @@ export async function previewDoc(doc: TextDocument, format?: string) {
 }
 
 class PreviewManager {
-  constructor(quartoContext: QuartoContext) {
-    this.quartoContext_ = quartoContext;
+  constructor(
+    private readonly extensionUri_: Uri,
+    private readonly quartoContext_: QuartoContext
+  ) {
     this.outputSink_ = new PreviewOutputSink(this.onPreviewOutput.bind(this));
+  }
+
+  dispose() {
+    this.activeView_?.dispose();
+    this.activeView_ = undefined;
   }
 
   public async preview(doc: TextDocument, format?: string) {
@@ -53,6 +78,7 @@ class PreviewManager {
         const response = await this.previewRenderRequest(doc, format);
         if (response.status === 200) {
           this.terminal_!.show(true);
+          this.revealWebview();
         } else {
           this.startPreview(doc, format);
         }
@@ -62,6 +88,37 @@ class PreviewManager {
     } else {
       this.startPreview(doc, format);
     }
+  }
+
+  public restoreWebvew(panel: WebviewPanel, state: any): void {
+    const url = state?.url ?? "";
+    const view = QuartoPreviewView.restore(this.extensionUri_, url, panel);
+    this.registerWebviewListeners(view);
+    return;
+  }
+
+  private showWebview(url: string, options?: ShowOptions): void {
+    if (this.activeView_) {
+      this.activeView_.show(url, options);
+    } else {
+      const view = QuartoPreviewView.create(this.extensionUri_, url, options);
+      this.registerWebviewListeners(view);
+      this.activeView_ = view;
+    }
+  }
+
+  private revealWebview() {
+    if (this.activeView_) {
+      this.activeView_.reveal();
+    }
+  }
+
+  private registerWebviewListeners(view: QuartoPreviewView) {
+    view.onDispose(() => {
+      if (this.activeView_ === view) {
+        this.activeView_ = undefined;
+      }
+    });
   }
 
   private canReuseRunningPreview() {
@@ -135,7 +192,7 @@ class PreviewManager {
       const match = output.match(/Browse at (http:\/\/localhost\:\d+\/[^\s]*)/);
       if (match) {
         this.previewUrl_ = match[1];
-        commands.executeCommand("simpleBrowser.api.open", this.previewUrl_, {
+        this.showWebview(this.previewUrl_, {
           preserveFocus: true,
           viewColumn: ViewColumn.Beside,
         });
@@ -145,8 +202,8 @@ class PreviewManager {
 
   private previewUrl_: string | undefined;
   private terminal_: Terminal | undefined;
+  private activeView_?: QuartoPreviewView;
 
-  private readonly quartoContext_: QuartoContext;
   private readonly outputSink_: PreviewOutputSink;
 }
 
