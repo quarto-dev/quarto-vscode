@@ -23,9 +23,9 @@ import { previewCommands } from "./commands";
 import { Command } from "../../core/command";
 import { isNotebook, isQuartoDoc } from "../../core/doc";
 
-// TODO: test on windows
-
 // TODO: use quarto context on server, create pref for context, detect rstudio (createStatusBarItem)
+
+// TODO: quarto preview webview
 
 // TODO: render project and preview project commands (in place render w/ those)
 
