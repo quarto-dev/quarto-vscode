@@ -41,7 +41,7 @@
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. ."
   },
   "engines": {
-    "vscode": "^1.61.0"
+    "vscode": "^1.60.0"
   },
   "main": "./out/main.js",
   "browser": "./out/browser.js",
