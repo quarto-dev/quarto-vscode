@@ -23,20 +23,12 @@ import { previewCommands } from "./commands";
 import { Command } from "../../core/command";
 import { isNotebook, isQuartoDoc } from "../../core/doc";
 
-// TODO: Simple Browser .Aside ends up being somewhat unstable w/ other windows
-//       Do we need to consider a 'Quarto Preview' fork for better control
-//       over the preview window
-//       activate on in place render (add after http call for re-render)
-//       url doesn't change on reload!
+// TODO: untitled notebook render uses root volume dir
+// TODO: test on windows
 
-// TODO: progress within preview window (don't showTerminal after that)
+// TODO: use quarto context on server, create pref for context, detect rstudio (createStatusBarItem)
 
-// TODO: test pdf and revealjs (including in project)
-// TODO: client sends format and that is respected by startup and by in-place
-//       (including no format / default format -- some sniffing)
-// TODO: update required CLI version in preview command once this lands
-
-// TODO: pdf viewer seems to always show the sidebar (detect viewer?)
+// TODO: render project and preview project commands (in place render w/ those)
 
 let previewManager: PreviewManager;
 
@@ -61,30 +53,24 @@ class PreviewManager {
   }
 
   public async preview(doc: TextDocument, format?: string) {
-    if (this.canReuseRunningPreview(doc)) {
-      if (isQuartoDoc(doc)) {
-        try {
-          const response = await this.previewRenderRequest(doc, format);
-          if (response.status === 200) {
-            this.terminal_!.show(true);
-          } else {
-            this.startPreview(doc, format);
-          }
-        } catch (e) {
+    if (this.canReuseRunningPreview()) {
+      try {
+        const response = await this.previewRenderRequest(doc, format);
+        if (response.status === 200) {
+          this.terminal_!.show(true);
+        } else {
           this.startPreview(doc, format);
         }
-      } else if (isNotebook(doc)) {
-        this.showPreviewBrowser();
+      } catch (e) {
+        this.startPreview(doc, format);
       }
     } else {
       this.startPreview(doc, format);
     }
   }
 
-  private canReuseRunningPreview(doc: TextDocument) {
+  private canReuseRunningPreview() {
     return (
-      (isQuartoDoc(doc) ||
-        (isNotebook(doc) && this.scope_ === doc.uri.fsPath)) &&
       this.previewUrl_ &&
       this.terminal_ &&
       this.terminal_.exitStatus === undefined
@@ -121,8 +107,7 @@ class PreviewManager {
     // cleanup output
     this.outputSink_.reset();
 
-    // reset scope and server url (used to detect re-use of existing terminal)
-    this.scope_ = doc.uri.fsPath;
+    // reset server url (used to detect re-use of existing terminal)
     this.previewUrl_ = undefined;
 
     // create and show the terminal
@@ -141,9 +126,7 @@ class PreviewManager {
       cmd.push("--to", format);
     }
     cmd.push("--no-browser");
-    if (isQuartoDoc(doc)) {
-      cmd.push("--no-watch-inputs");
-    }
+    cmd.push("--no-watch-inputs");
     cmd.push("--log", shQuote(this.outputSink_.outputFile()));
     this.terminal_.sendText(cmd.join(" "), true);
     this.terminal_.show(true);
@@ -155,19 +138,14 @@ class PreviewManager {
       const match = output.match(/Browse at (http:\/\/localhost\:\d+\/[^\s]*)/);
       if (match) {
         this.previewUrl_ = match[1];
-        this.showPreviewBrowser();
+        commands.executeCommand("simpleBrowser.api.open", this.previewUrl_, {
+          preserveFocus: true,
+          viewColumn: ViewColumn.Beside,
+        });
       }
     }
   }
 
-  private showPreviewBrowser() {
-    commands.executeCommand("simpleBrowser.api.open", this.previewUrl_, {
-      preserveFocus: true,
-      viewColumn: ViewColumn.Beside,
-    });
-  }
-
-  private scope_: string | undefined;
   private previewUrl_: string | undefined;
   private terminal_: Terminal | undefined;
 
