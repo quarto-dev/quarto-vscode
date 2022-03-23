@@ -6,6 +6,7 @@
 import * as tmp from "tmp";
 import * as path from "path";
 import * as fs from "fs";
+import * as os from "os";
 import axios from "axios";
 
 import {
@@ -128,7 +129,9 @@ class PreviewManager {
     cmd.push("--no-browser");
     cmd.push("--no-watch-inputs");
     cmd.push("--log", shQuote(this.outputSink_.outputFile()));
-    this.terminal_.sendText(cmd.join(" "), true);
+    const cmdText =
+      os.platform() === "win32" ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
+    this.terminal_.sendText(cmdText, true);
     this.terminal_.show(true);
   }
 
