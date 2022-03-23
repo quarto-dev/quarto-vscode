@@ -6,13 +6,14 @@
 import * as tmp from "tmp";
 import * as path from "path";
 import * as fs from "fs";
-import * as http from "http";
+import axios from "axios";
 
 import {
   commands,
   Terminal,
   TerminalOptions,
   TextDocument,
+  Uri,
   ViewColumn,
   window,
 } from "vscode";
@@ -25,15 +26,20 @@ import { isNotebook, isQuartoDoc } from "../../core/doc";
 // TODO: Simple Browser .Aside ends up being somewhat unstable w/ other windows
 //       Do we need to consider a 'Quarto Preview' fork for better control
 //       over the preview window
-// TODO: image being removed from disk causes reload
-// TODO: discover project context for .qmd files
+//       activate on in place render (add after http call for re-render)
+//       url doesn't change on reload!
+
 // TODO: progress within preview window (don't showTerminal after that)
+
+// TODO: client sends format and that is respected by startup and by in-place
+//       (including no format / default format -- some sniffing)
+// TODO: update required CLI version in preview command once this lands
 
 let previewManager: PreviewManager;
 
 export function activatePreview(quartoContext: QuartoContext): Command[] {
   previewManager = new PreviewManager(quartoContext);
-  return previewCommands();
+  return previewCommands(quartoContext);
 }
 
 export function canPreviewDoc(doc: TextDocument) {
@@ -54,21 +60,36 @@ class PreviewManager {
   public async preview(doc: TextDocument) {
     if (this.canReuseRunningPreview(doc)) {
       if (isQuartoDoc(doc)) {
-        http.get(this.serverUrl_ + "quarto-render/");
-        this.terminal_!.show(true);
+        const previewUri = Uri.parse(this.previewUrl_!);
+        try {
+          const requestUri =
+            previewUri.scheme +
+            "://" +
+            previewUri.authority +
+            "/B4AA6EED-A702-4ED2-9734-A20C6FDC4071" +
+            doc.uri.fsPath;
+          const response = await axios.get(requestUri);
+          if (response.status === 200) {
+            this.terminal_!.show(true);
+          } else {
+            this.startPreview(doc);
+          }
+        } catch (e) {
+          this.startPreview(doc);
+        }
+      } else if (isNotebook(doc)) {
+        this.showPreviewBrowser();
       }
-      // show the preview browser
-      this.showPreviewBrowser();
     } else {
-      // start a new preview
       this.startPreview(doc);
     }
   }
 
   private canReuseRunningPreview(doc: TextDocument) {
     return (
-      this.scope_ === doc.uri.fsPath &&
-      this.serverUrl_ &&
+      (isQuartoDoc(doc) ||
+        (isNotebook(doc) && this.scope_ === doc.uri.fsPath)) &&
+      this.previewUrl_ &&
       this.terminal_ &&
       this.terminal_.exitStatus === undefined
     );
@@ -89,7 +110,7 @@ class PreviewManager {
 
     // reset scope and server url (used to detect re-use of existing terminal)
     this.scope_ = doc.uri.fsPath;
-    this.serverUrl_ = undefined;
+    this.previewUrl_ = undefined;
 
     // create and show the terminal
     const options: TerminalOptions = {
@@ -115,24 +136,24 @@ class PreviewManager {
 
   private onPreviewOutput(output: string) {
     // detect preview and show in browser
-    if (!this.serverUrl_) {
-      const match = output.match(/Browse at (http:\/\/localhost\:\d+\/)/);
+    if (!this.previewUrl_) {
+      const match = output.match(/Browse at (http:\/\/localhost\:\d+\/[^\s]*)/);
       if (match) {
-        this.serverUrl_ = match[1];
+        this.previewUrl_ = match[1];
         this.showPreviewBrowser();
       }
     }
   }
 
   private showPreviewBrowser() {
-    commands.executeCommand("simpleBrowser.api.open", this.serverUrl_, {
+    commands.executeCommand("simpleBrowser.api.open", this.previewUrl_, {
       preserveFocus: true,
       viewColumn: ViewColumn.Beside,
     });
   }
 
   private scope_: string | undefined;
-  private serverUrl_: string | undefined;
+  private previewUrl_: string | undefined;
   private terminal_: Terminal | undefined;
 
   private readonly quartoContext_: QuartoContext;
