@@ -23,7 +23,6 @@ import { previewCommands } from "./commands";
 import { Command } from "../../core/command";
 import { isNotebook, isQuartoDoc } from "../../core/doc";
 
-// TODO: untitled notebook render uses root volume dir
 // TODO: test on windows
 
 // TODO: use quarto context on server, create pref for context, detect rstudio (createStatusBarItem)
@@ -43,6 +42,7 @@ export function canPreviewDoc(doc: TextDocument) {
 
 export async function previewDoc(doc: TextDocument, format?: string) {
   await commands.executeCommand("workbench.action.files.save");
+  doc = window.activeTextEditor?.document || doc;
   await previewManager.preview(doc, format);
 }
 
