@@ -24,12 +24,6 @@ import { previewCommands } from "./commands";
 import { Command } from "../../core/command";
 import { isNotebook, isQuartoDoc } from "../../core/doc";
 
-// TODO: use quarto context on server, create pref for context, detect rstudio (createStatusBarItem)
-
-// TODO: quarto preview webview
-
-// TODO: render project and preview project commands (in place render w/ those)
-
 let previewManager: PreviewManager;
 
 export function activatePreview(quartoContext: QuartoContext): Command[] {
