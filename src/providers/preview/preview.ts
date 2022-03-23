@@ -36,6 +36,8 @@ import { isNotebook, isQuartoDoc } from "../../core/doc";
 //       (including no format / default format -- some sniffing)
 // TODO: update required CLI version in preview command once this lands
 
+// TODO: pdf viewer seems to always show the sidebar (detect viewer?)
+
 let previewManager: PreviewManager;
 
 export function activatePreview(quartoContext: QuartoContext): Command[] {
@@ -47,9 +49,9 @@ export function canPreviewDoc(doc: TextDocument) {
   return isQuartoDoc(doc) || isNotebook(doc);
 }
 
-export async function previewDoc(doc: TextDocument) {
+export async function previewDoc(doc: TextDocument, format?: string) {
   await commands.executeCommand("workbench.action.files.save");
-  await previewManager.preview(doc);
+  await previewManager.preview(doc, format);
 }
 
 class PreviewManager {
@@ -58,31 +60,24 @@ class PreviewManager {
     this.outputSink_ = new PreviewOutputSink(this.onPreviewOutput.bind(this));
   }
 
-  public async preview(doc: TextDocument) {
+  public async preview(doc: TextDocument, format?: string) {
     if (this.canReuseRunningPreview(doc)) {
       if (isQuartoDoc(doc)) {
-        const previewUri = Uri.parse(this.previewUrl_!);
         try {
-          const requestUri =
-            previewUri.scheme +
-            "://" +
-            previewUri.authority +
-            "/B4AA6EED-A702-4ED2-9734-A20C6FDC4071" +
-            doc.uri.fsPath;
-          const response = await axios.get(requestUri);
+          const response = await this.previewRenderRequest(doc, format);
           if (response.status === 200) {
             this.terminal_!.show(true);
           } else {
-            this.startPreview(doc);
+            this.startPreview(doc, format);
           }
         } catch (e) {
-          this.startPreview(doc);
+          this.startPreview(doc, format);
         }
       } else if (isNotebook(doc)) {
         this.showPreviewBrowser();
       }
     } else {
-      this.startPreview(doc);
+      this.startPreview(doc, format);
     }
   }
 
@@ -96,7 +91,24 @@ class PreviewManager {
     );
   }
 
-  private startPreview(doc: TextDocument) {
+  private previewRenderRequest(doc: TextDocument, format?: string) {
+    const previewUri = Uri.parse(this.previewUrl_!);
+
+    const requestUri =
+      previewUri.scheme +
+      "://" +
+      previewUri.authority +
+      "/B4AA6EED-A702-4ED2-9734-A20C6FDC4071";
+    const params: Record<string, unknown> = {
+      path: doc.uri.fsPath,
+    };
+    if (format) {
+      params.format = format;
+    }
+    return axios.get(requestUri, { params });
+  }
+
+  private startPreview(doc: TextDocument, format?: string) {
     // dispose any existing preview terminals
     const kPreviewWindowTitle = "Quarto Preview";
     const terminal = window.terminals.find((terminal) => {
@@ -124,13 +136,15 @@ class PreviewManager {
       shQuote(quarto),
       "preview",
       shQuote(path.basename(doc.uri.fsPath)),
-      "--no-browser",
-      "--log",
-      shQuote(this.outputSink_.outputFile()),
     ];
+    if (format) {
+      cmd.push("--to", format);
+    }
+    cmd.push("--no-browser");
     if (isQuartoDoc(doc)) {
       cmd.push("--no-watch-inputs");
     }
+    cmd.push("--log", shQuote(this.outputSink_.outputFile()));
     this.terminal_.sendText(cmd.join(" "), true);
     this.terminal_.show(true);
   }
