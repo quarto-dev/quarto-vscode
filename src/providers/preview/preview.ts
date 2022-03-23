@@ -31,6 +31,7 @@ import { isNotebook, isQuartoDoc } from "../../core/doc";
 
 // TODO: progress within preview window (don't showTerminal after that)
 
+// TODO: test pdf and revealjs (including in project)
 // TODO: client sends format and that is respected by startup and by in-place
 //       (including no format / default format -- some sniffing)
 // TODO: update required CLI version in preview command once this lands
