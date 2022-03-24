@@ -54,6 +54,7 @@ export function canPreviewDoc(doc: TextDocument) {
 }
 
 export async function previewDoc(doc: TextDocument, format?: string) {
+  await doc.save();
   await commands.executeCommand("workbench.action.files.save");
   doc = window.activeTextEditor?.document || doc;
   await previewManager.preview(doc, format);
