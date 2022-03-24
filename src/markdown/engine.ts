@@ -8,7 +8,7 @@ import MarkdownIt from "markdown-it";
 import Token from "markdown-it/lib/token";
 import * as vscode from "vscode";
 import { MarkdownTextDocument } from "./document";
-import { mathPlugin } from "./math";
+import { mathPlugin } from "../shared/markdownit-math";
 
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 

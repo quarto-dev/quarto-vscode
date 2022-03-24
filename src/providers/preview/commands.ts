@@ -7,7 +7,7 @@ import semver from "semver";
 
 import { window } from "vscode";
 import { Command } from "../../core/command";
-import { QuartoContext } from "../../core/quarto";
+import { QuartoContext } from "../../shared/quarto";
 import { canPreviewDoc, previewDoc } from "./preview";
 
 export function previewCommands(quartoContext: QuartoContext): Command[] {

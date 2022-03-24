@@ -13,7 +13,7 @@ import { quartoCellExecuteCodeLensProvider } from "./providers/cell/codelens";
 import { activateQuartoAssistPanel } from "./providers/assist/panel";
 import { activateCommon } from "./extension";
 import { activatePreview } from "./providers/preview/preview";
-import { initQuartoContext } from "./core/quarto";
+import { initQuartoContext } from "./shared/quarto";
 
 export function activate(context: vscode.ExtensionContext) {
   // create markdown engine
@@ -23,7 +23,9 @@ export function activate(context: vscode.ExtensionContext) {
   const commands = cellCommands(engine);
 
   // get quarto context (some features conditional on it)
-  const quartoContext = initQuartoContext();
+  const config = vscode.workspace.getConfiguration("quarto");
+  const quartoPath = config.get("path") as string | undefined;
+  const quartoContext = initQuartoContext(quartoPath);
   if (quartoContext.available) {
     // lsp
     activateLsp(context, engine);

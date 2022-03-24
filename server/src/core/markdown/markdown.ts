@@ -8,7 +8,7 @@ import { Range, Position } from "vscode-languageserver/node";
 import Token from "markdown-it/lib/token";
 
 import MarkdownIt from "markdown-it";
-import { mathPlugin } from "./markdownit-math";
+import { mathPlugin } from "../../shared/markdownit-math";
 import { TextDocument } from "vscode-languageserver-textdocument";
 
 export function mathRange(doc: TextDocument, pos: Position) {

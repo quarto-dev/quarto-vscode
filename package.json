@@ -485,6 +485,12 @@
           ],
           "default": "dark",
           "markdownDescription": "Theme for MathJax preview (`light` or `dark`)."
+        },
+        "quarto.path": {
+          "scope": "window",
+          "type": "string",
+          "default": "",
+          "markdownDescription": "A path to the `quarto` CLI executable. By default, the extension looks for `quarto` in the `PATH`, but if set, will use the path specified instead."
         }
       }
     }

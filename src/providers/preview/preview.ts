@@ -20,7 +20,7 @@ import {
   WebviewPanel,
   window,
 } from "vscode";
-import { QuartoContext } from "../../core/quarto";
+import { QuartoContext } from "../../shared/quarto";
 import { shQuote } from "../../core/strings";
 import { previewCommands } from "./commands";
 import { Command } from "../../core/command";

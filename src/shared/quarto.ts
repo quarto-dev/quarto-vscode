@@ -3,6 +3,8 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as fs from "fs";
+import * as os from "os";
 import * as child_process from "child_process";
 
 export interface QuartoContext {
@@ -12,15 +14,30 @@ export interface QuartoContext {
   resourcePath: string;
 }
 
-export function initQuartoContext() {
+export function initQuartoContext(path?: string) {
   try {
+    if (path) {
+      if (!fs.existsSync(path)) {
+        console.log("Unabled to find specified quarto binary '" + path + "'");
+        path = "quarto";
+      }
+    } else {
+      path = "quarto";
+    }
+    const quartoCmd = (...args: string[]) => {
+      const cmd = [shQuote(path!), ...args];
+      const cmdText =
+        os.platform() === "win32" ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
+      return cmdText;
+    };
+
     const version = (
-      child_process.execSync("quarto --version", {
+      child_process.execSync(quartoCmd("--version"), {
         encoding: "utf-8",
       }) as unknown as string
     ).trim();
     const paths = (
-      child_process.execSync("quarto --paths", {
+      child_process.execSync(quartoCmd("--paths"), {
         encoding: "utf-8",
       }) as unknown as string
     ).split(/\r?\n/);
@@ -41,4 +58,8 @@ export function initQuartoContext() {
       resourcePath: "",
     };
   }
+}
+
+function shQuote(value: string): string {
+  return `"${value}"`;
 }

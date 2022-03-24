@@ -11,6 +11,7 @@ import { Position, Range, CompletionItem } from "vscode-languageserver-types";
 import { isQuartoDoc, isQuartoRevealDoc, isQuartoYaml } from "../core/doc";
 import { initializeAttrCompletionProvider, AttrToken } from "./quarto-attr";
 import { initializeQuartoYamlModule, QuartoYamlModule } from "./quarto-yaml";
+import { initQuartoContext } from "../shared/quarto";
 
 export interface EditorContext {
   path: string;
@@ -117,15 +118,16 @@ export interface Quarto {
 
 export let quarto: Quarto | undefined;
 
-export function initializeQuarto() {
-  let paths = child_process.execSync("quarto --paths", { encoding: "utf-8" });
-  const resources = (paths as unknown as string).split(/\r?\n/)[1];
-  initializeQuartoYamlModule(resources)
+export function initializeQuarto(quartoPath?: string) {
+  const quartoContext = initQuartoContext(quartoPath);
+  initializeQuartoYamlModule(quartoContext.resourcePath)
     .then((mod) => {
       const quartoModule = mod as QuartoYamlModule;
       quarto = {
         getYamlCompletions: quartoModule.getCompletions,
-        getAttrCompletions: initializeAttrCompletionProvider(resources),
+        getAttrCompletions: initializeAttrCompletionProvider(
+          quartoContext.resourcePath
+        ),
         getYamlDiagnostics: quartoModule.getLint,
         getHover: quartoModule.getHover,
       };

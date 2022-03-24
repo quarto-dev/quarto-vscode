@@ -8,9 +8,7 @@ import {
   createConnection,
   Diagnostic,
   DidChangeConfigurationNotification,
-  Hover,
   InitializeParams,
-  Position,
   ProposedFeatures,
   TextDocumentIdentifier,
   TextDocuments,
@@ -29,9 +27,6 @@ import { provideDiagnostics } from "./providers/diagnostics";
 
 import { initializeQuarto } from "./quarto/quarto";
 import { mathjaxLoadExtensions } from "./core/mathjax";
-
-// initialize connection to quarto
-initializeQuarto();
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
@@ -89,6 +84,9 @@ connection.onInitialized(async () => {
       undefined
     );
     connection.onDidChangeConfiguration(syncConfiguration);
+
+    // initialize connection to quarto
+    initializeQuarto(config.quartoPath());
   }
 });
 
