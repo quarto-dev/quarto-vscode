@@ -14,6 +14,7 @@ import { activateQuartoAssistPanel } from "./providers/assist/panel";
 import { activateCommon } from "./extension";
 import { activatePreview } from "./providers/preview/preview";
 import { initQuartoContext } from "./shared/quarto";
+import { activateStatusBar } from "./providers/statusbar";
 
 export function activate(context: vscode.ExtensionContext) {
   // create markdown engine
@@ -27,6 +28,9 @@ export function activate(context: vscode.ExtensionContext) {
   const quartoPath = config.get("path") as string | undefined;
   const quartoContext = initQuartoContext(quartoPath);
   if (quartoContext.available) {
+    // status bar
+    activateStatusBar(quartoContext);
+
     // lsp
     activateLsp(context, engine);
 
