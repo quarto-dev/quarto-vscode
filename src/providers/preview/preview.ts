@@ -70,15 +70,16 @@ class PreviewManager {
   dispose() {
     this.activeView_?.dispose();
     this.activeView_ = undefined;
+    this.outputSink_.dispose();
   }
 
   public async preview(doc: TextDocument, format?: string) {
+    this.previewOutput_ = "";
     if (this.canReuseRunningPreview()) {
       try {
         const response = await this.previewRenderRequest(doc, format);
         if (response.status === 200) {
           this.terminal_!.show(true);
-          this.revealWebview();
         } else {
           this.startPreview(doc, format);
         }
@@ -187,15 +188,25 @@ class PreviewManager {
   }
 
   private onPreviewOutput(output: string) {
-    // detect preview and show in browser
+    this.previewOutput_ += output;
     if (!this.previewUrl_) {
-      const match = output.match(/Browse at (http:\/\/localhost\:\d+\/[^\s]*)/);
+      // detect new preview and show in browser
+      const match = this.previewOutput_.match(
+        /Browse at (http:\/\/localhost\:\d+\/[^\s]*)/
+      );
       if (match) {
         this.previewUrl_ = match[1];
         this.showWebview(this.previewUrl_, {
           preserveFocus: true,
           viewColumn: ViewColumn.Beside,
         });
+      }
+    } else {
+      // detect update to existing preview and activate browser
+      if (
+        this.previewOutput_.trimEnd().endsWith("Watching files for changes")
+      ) {
+        this.revealWebview();
       }
     }
   }
@@ -205,10 +216,11 @@ class PreviewManager {
   private activeView_?: QuartoPreviewView;
 
   private readonly outputSink_: PreviewOutputSink;
+  private previewOutput_ = "";
 }
 
 class PreviewOutputSink {
-  constructor(handler: (output: string) => void) {
+  constructor(readonly handler_: (output: string) => void) {
     // allocate a directory for preview output
     tmp.setGracefulCleanup();
     const previewDir = tmp.dirSync({ prefix: "quarto-preview" });
@@ -221,9 +233,13 @@ class PreviewOutputSink {
         : 0;
       if (lastModified > this.lastModified_) {
         this.lastModified_ = lastModified;
-        handler(fs.readFileSync(this.outputFile_, { encoding: "utf-8" }));
+        this.readOutput();
       }
     }, 200);
+  }
+
+  public dispose() {
+    this.reset();
   }
 
   public outputFile() {
@@ -232,6 +248,10 @@ class PreviewOutputSink {
 
   public reset() {
     try {
+      if (this.outputFd_ !== -1) {
+        fs.closeSync(this.outputFd_);
+        this.outputFd_ = -1;
+      }
       if (fs.existsSync(this.outputFile_)) {
         fs.unlinkSync(this.outputFile_);
       }
@@ -241,6 +261,29 @@ class PreviewOutputSink {
     }
   }
 
-  private readonly outputFile_: string;
+  private readOutput() {
+    // open file on demand
+    if (this.outputFd_ === -1) {
+      try {
+        this.outputFd_ = fs.openSync(this.outputFile_, "r");
+      } catch (error) {
+        console.log("error opening preview output file: " + error.message);
+        return;
+      }
+    }
+    const kBufferSize = 2048;
+    const buffer = new Buffer(kBufferSize);
+    const readBuffer = () => {
+      return fs.readSync(this.outputFd_, buffer, 0, kBufferSize, null);
+    };
+    let bytesRead = readBuffer();
+    while (bytesRead > 0) {
+      this.handler_(buffer.toString("utf8", 0, bytesRead));
+      bytesRead = readBuffer();
+    }
+  }
+
   private lastModified_ = 0;
+  private outputFd_ = -1;
+  private readonly outputFile_: string;
 }
