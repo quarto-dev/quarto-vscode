@@ -47,8 +47,7 @@
   "browser": "./out/browser.js",
   "activationEvents": [
     "onLanguage:quarto",
-    "onLanguage:jupyter",
-    "onNotebook:jupyter-notebook",
+    "onCommand:quarto.render",
     "workspaceContains:**/_quarto.{yml,yaml}",
     "onWebviewPanel:quarto.previewView"
   ],
