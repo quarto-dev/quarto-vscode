@@ -19,7 +19,6 @@ import {
   ViewColumn,
   WebviewPanel,
   window,
-  workspace,
 } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { shQuote } from "../../core/strings";
@@ -106,7 +105,6 @@ class PreviewManager {
     // commands to work. this is likely a bug and this is
     // the best workaround we have found
     this.activeView_.show(url, { preserveFocus: false });
-
     if (window.activeTextEditor) {
       window.showTextDocument(
         window.activeTextEditor.document,

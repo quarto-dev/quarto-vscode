@@ -5,6 +5,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
+import * as path from "path";
 import { MarkdownEngine } from "./markdown/engine";
 import { kQuartoDocSelector } from "./core/doc";
 import { activateLsp } from "./lsp/client";
@@ -28,6 +29,11 @@ export function activate(context: vscode.ExtensionContext) {
   const quartoPath = config.get("path") as string | undefined;
   const quartoContext = initQuartoContext(quartoPath);
   if (quartoContext.available) {
+    context.environmentVariableCollection.prepend(
+      "PATH",
+      path.delimiter + quartoContext.binPath + path.delimiter
+    );
+
     // status bar
     activateStatusBar(quartoContext);
 
