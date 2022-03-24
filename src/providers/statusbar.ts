@@ -9,10 +9,10 @@ import { QuartoContext } from "../shared/quarto";
 export function activateStatusBar(quartoContext: QuartoContext) {
   const statusItem = window.createStatusBarItem(
     "quarto.version",
-    StatusBarAlignment.Right
+    StatusBarAlignment.Left
   );
   statusItem.name = "Quarto";
-  statusItem.text = `${quartoContext.version}`;
-  statusItem.tooltip = `${statusItem.name} v${statusItem.text}: ${quartoContext.binPath}`;
+  statusItem.text = `Quarto ${quartoContext.version}`;
+  statusItem.tooltip = `${statusItem.text}: ${quartoContext.binPath}`;
   statusItem.show();
 }
