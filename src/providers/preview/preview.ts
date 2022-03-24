@@ -19,6 +19,7 @@ import {
   ViewColumn,
   WebviewPanel,
   window,
+  workspace,
 } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { shQuote } from "../../core/strings";
@@ -96,7 +97,24 @@ class PreviewManager {
     const url = state?.url ?? "";
     const view = QuartoPreviewView.restore(this.extensionUri_, url, panel);
     this.registerWebviewListeners(view);
-    return;
+    this.activeView_ = view;
+
+    if (window.activeTextEditor) {
+      // we need to grab the focus b/c if we just allow the
+      // editor to take default focus it ends up not listening
+      // on the normal editor commands (save, etc.). only after
+      // bounding focus to the webview and back do we get the
+      // commands to work. this is likely a bug and this is
+      // the best workaround we have found
+      this.activeView_.show(url, { preserveFocus: false });
+
+      // focus the active editor
+      window.showTextDocument(
+        window.activeTextEditor.document,
+        undefined,
+        false
+      );
+    }
   }
 
   private showWebview(url: string, options?: ShowOptions): void {
