@@ -27,8 +27,12 @@ export function activate(context: vscode.ExtensionContext) {
   // get quarto context (some features conditional on it)
   const config = vscode.workspace.getConfiguration("quarto");
   const quartoPath = config.get("path") as string | undefined;
-  const quartoContext = initQuartoContext(quartoPath);
+  const workspaceFolder = vscode.workspace.workspaceFolders?.length
+    ? vscode.workspace.workspaceFolders[0].uri.fsPath
+    : undefined;
+  const quartoContext = initQuartoContext(quartoPath, workspaceFolder);
   if (quartoContext.available) {
+    // ensure quarto is on the path
     context.environmentVariableCollection.prepend(
       "PATH",
       path.delimiter + quartoContext.binPath + path.delimiter

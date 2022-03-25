@@ -14,6 +14,7 @@ import {
   TextDocuments,
   TextDocumentSyncKind,
 } from "vscode-languageserver/node";
+import { URI } from "vscode-uri";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { isQuartoDoc, isQuartoYaml } from "./core/doc";
 import { config } from "./core/config";
@@ -27,6 +28,7 @@ import { provideDiagnostics } from "./providers/diagnostics";
 
 import { initializeQuarto } from "./quarto/quarto";
 import { mathjaxLoadExtensions } from "./core/mathjax";
+import { uriToFilePath } from "vscode-languageserver/lib/node/files";
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
@@ -86,7 +88,11 @@ connection.onInitialized(async () => {
     connection.onDidChangeConfiguration(syncConfiguration);
 
     // initialize connection to quarto
-    initializeQuarto(config.quartoPath());
+    const workspaceFolders = await connection.workspace.getWorkspaceFolders();
+    const workspaceDir = workspaceFolders?.length
+      ? URI.parse(workspaceFolders[0].uri).fsPath
+      : undefined;
+    initializeQuarto(config.quartoPath(), workspaceDir);
   }
 });
 

@@ -17,7 +17,8 @@
     "markdown-it": "^12.3.2",
     "mathjax-full": "^3.2.0",
     "vscode-languageserver": "^7.0.0",
-    "vscode-languageserver-textdocument": "^1.0.4"
+    "vscode-languageserver-textdocument": "^1.0.4",
+    "vscode-uri": "^3.0.3"
   },
   "scripts": {},
   "devDependencies": {

@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from "fs";
+import * as path from "path";
 import * as os from "os";
 import * as child_process from "child_process";
 
@@ -14,18 +15,26 @@ export interface QuartoContext {
   resourcePath: string;
 }
 
-export function initQuartoContext(path?: string) {
+export function initQuartoContext(
+  quartoPath?: string,
+  workspaceFolder?: string
+) {
   try {
-    if (path) {
-      if (!fs.existsSync(path)) {
+    // resolve workspace relative paths
+    if (quartoPath && !path.isAbsolute(quartoPath) && workspaceFolder) {
+      quartoPath = path.join(workspaceFolder, quartoPath);
+    }
+
+    if (quartoPath) {
+      if (!fs.existsSync(quartoPath)) {
         console.log("Unabled to find specified quarto binary '" + path + "'");
-        path = "quarto";
+        quartoPath = "quarto";
       }
     } else {
-      path = "quarto";
+      quartoPath = "quarto";
     }
     const quartoCmd = (...args: string[]) => {
-      const cmd = [shQuote(path!), ...args];
+      const cmd = [shQuote(quartoPath!), ...args];
       const cmdText =
         os.platform() === "win32" ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
       return cmdText;

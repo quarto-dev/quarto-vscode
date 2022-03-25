@@ -118,8 +118,11 @@ export interface Quarto {
 
 export let quarto: Quarto | undefined;
 
-export function initializeQuarto(quartoPath?: string) {
-  const quartoContext = initQuartoContext(quartoPath);
+export function initializeQuarto(
+  quartoPath?: string,
+  workspaceFolder?: string
+) {
+  const quartoContext = initQuartoContext(quartoPath, workspaceFolder);
   initializeQuartoYamlModule(quartoContext.resourcePath)
     .then((mod) => {
       const quartoModule = mod as QuartoYamlModule;

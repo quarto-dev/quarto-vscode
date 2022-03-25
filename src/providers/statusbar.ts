@@ -12,7 +12,7 @@ export function activateStatusBar(quartoContext: QuartoContext) {
     StatusBarAlignment.Left
   );
   statusItem.name = "Quarto";
-  statusItem.text = `Quarto ${quartoContext.version}`;
-  statusItem.tooltip = `${statusItem.text}: ${quartoContext.binPath}`;
+  statusItem.text = `Quarto: ${quartoContext.version}`;
+  statusItem.tooltip = `${statusItem.text} (${quartoContext.binPath})`;
   statusItem.show();
 }
