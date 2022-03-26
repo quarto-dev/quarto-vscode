@@ -4,35 +4,112 @@
  *  Licensed under the MIT License. See KICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from "vscode";
+import {
+  Uri,
+  WebviewPanel,
+  window,
+  ViewColumn,
+  EventEmitter,
+  workspace,
+  env,
+  ExtensionContext,
+} from "vscode";
+
 import { Disposable } from "../../core/dispose";
 
 export interface ShowOptions {
   readonly preserveFocus?: boolean;
-  readonly viewColumn?: vscode.ViewColumn;
+  readonly viewColumn?: ViewColumn;
 }
 
-export class QuartoPreviewView extends Disposable {
+export class PreviewWebviewManager {
+  constructor(context: ExtensionContext) {
+    this.extensionUri_ = context.extensionUri;
+
+    context.subscriptions.push(
+      window.registerWebviewPanelSerializer(QuartoPreviewView.viewType, {
+        deserializeWebviewPanel: async (panel, state) => {
+          this.restoreWebvew(panel, state);
+        },
+      })
+    );
+  }
+
+  public showWebview(url: string, options?: ShowOptions): void {
+    if (this.activeView_) {
+      this.activeView_.show(url, options);
+    } else {
+      const view = QuartoPreviewView.create(this.extensionUri_, url, options);
+      this.registerWebviewListeners(view);
+      this.activeView_ = view;
+    }
+  }
+
+  public revealWebview() {
+    if (this.activeView_) {
+      this.activeView_.reveal();
+    }
+  }
+
+  private restoreWebvew(panel: WebviewPanel, state: any): void {
+    const url = state?.url ?? "";
+    const view = QuartoPreviewView.restore(this.extensionUri_, url, panel);
+    this.registerWebviewListeners(view);
+    this.activeView_ = view;
+
+    // we need to grab the focus b/c if we just allow the
+    // editor to take default focus it ends up not listening
+    // on the normal editor commands (save, etc.). only after
+    // bounding focus to the webview and back do we get the
+    // commands to work. this is likely a bug and this is
+    // the best workaround we have found
+    this.activeView_.show(url, { preserveFocus: false });
+    if (window.activeTextEditor) {
+      window.showTextDocument(
+        window.activeTextEditor.document,
+        undefined,
+        false
+      );
+    }
+  }
+
+  private registerWebviewListeners(view: QuartoPreviewView) {
+    view.onDispose(() => {
+      if (this.activeView_ === view) {
+        this.activeView_ = undefined;
+      }
+    });
+  }
+
+  public dispose() {
+    if (this.activeView_) {
+      this.activeView_.dispose();
+      this.activeView_ = undefined;
+    }
+  }
+  private activeView_?: QuartoPreviewView;
+  private readonly extensionUri_: Uri;
+}
+
+class QuartoPreviewView extends Disposable {
   public static readonly viewType = "quarto.previewView";
   private static readonly title = "Quarto Preview";
 
-  private readonly _webviewPanel: vscode.WebviewPanel;
+  private readonly _webviewPanel: WebviewPanel;
 
-  private readonly _onDidDispose = this._register(
-    new vscode.EventEmitter<void>()
-  );
+  private readonly _onDidDispose = this._register(new EventEmitter<void>());
   public readonly onDispose = this._onDidDispose.event;
 
   public static create(
-    extensionUri: vscode.Uri,
+    extensionUri: Uri,
     url: string,
     showOptions?: ShowOptions
   ): QuartoPreviewView {
-    const webview = vscode.window.createWebviewPanel(
+    const webview = window.createWebviewPanel(
       QuartoPreviewView.viewType,
       QuartoPreviewView.title,
       {
-        viewColumn: showOptions?.viewColumn ?? vscode.ViewColumn.Active,
+        viewColumn: showOptions?.viewColumn ?? ViewColumn.Active,
         preserveFocus: showOptions?.preserveFocus,
       },
       {
@@ -40,7 +117,7 @@ export class QuartoPreviewView extends Disposable {
         enableForms: true,
         retainContextWhenHidden: true,
         localResourceRoots: [
-          vscode.Uri.joinPath(extensionUri, "assets", "www", "preview"),
+          Uri.joinPath(extensionUri, "assets", "www", "preview"),
         ],
       }
     );
@@ -48,17 +125,17 @@ export class QuartoPreviewView extends Disposable {
   }
 
   public static restore(
-    extensionUri: vscode.Uri,
+    extensionUri: Uri,
     url: string,
-    webview: vscode.WebviewPanel
+    webview: WebviewPanel
   ): QuartoPreviewView {
     return new QuartoPreviewView(extensionUri, url, webview);
   }
 
   private constructor(
-    private readonly extensionUri: vscode.Uri,
+    private readonly extensionUri: Uri,
     url: string,
-    webviewPanel: vscode.WebviewPanel
+    webviewPanel: WebviewPanel
   ) {
     super();
 
@@ -69,8 +146,8 @@ export class QuartoPreviewView extends Disposable {
         switch (e.type) {
           case "openExternal":
             try {
-              const url = vscode.Uri.parse(e.url);
-              vscode.env.openExternal(url);
+              const url = Uri.parse(e.url);
+              env.openExternal(url);
             } catch {
               // Noop
             }
@@ -86,12 +163,11 @@ export class QuartoPreviewView extends Disposable {
     );
 
     this._register(
-      vscode.workspace.onDidChangeConfiguration((e) => {
+      workspace.onDidChangeConfiguration((e) => {
         if (
           e.affectsConfiguration("simpleBrowser.focusLockIndicator.enabled")
         ) {
-          const configuration =
-            vscode.workspace.getConfiguration("simpleBrowser");
+          const configuration = workspace.getConfiguration("simpleBrowser");
           this._webviewPanel.webview.postMessage({
             type: "didChangeFocusLockIndicatorEnabled",
             focusLockEnabled: configuration.get<boolean>(
@@ -121,7 +197,7 @@ export class QuartoPreviewView extends Disposable {
   }
 
   private getHtml(url: string) {
-    const configuration = vscode.workspace.getConfiguration("simpleBrowser");
+    const configuration = workspace.getConfiguration("simpleBrowser");
 
     const nonce = getNonce();
 
@@ -195,14 +271,14 @@ export class QuartoPreviewView extends Disposable {
     return ["assets", "www", "preview", asset];
   }
 
-  private extensionResourceUrl(parts: string[]): vscode.Uri {
+  private extensionResourceUrl(parts: string[]): Uri {
     return this._webviewPanel.webview.asWebviewUri(
-      vscode.Uri.joinPath(this.extensionUri, ...parts)
+      Uri.joinPath(this.extensionUri, ...parts)
     );
   }
 }
 
-function escapeAttribute(value: string | vscode.Uri): string {
+function escapeAttribute(value: string | Uri): string {
   return value.toString().replace(/"/g, "&quot;");
 }
 
