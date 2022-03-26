@@ -16,6 +16,7 @@ import {
   Uri,
   ViewColumn,
   window,
+  workspace,
 } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { shQuote } from "../../core/strings";
@@ -24,6 +25,7 @@ import { Command } from "../../core/command";
 import { isNotebook, isQuartoDoc } from "../../core/doc";
 import { PreviewWebviewManager } from "./preview-webview";
 import { PreviewOutputSink } from "./preview-output";
+import { isHtmlContent, isPdfContent } from "../../core/mime";
 
 let previewManager: PreviewManager;
 
@@ -123,8 +125,10 @@ class PreviewManager {
     // cleanup output
     this.outputSink_.reset();
 
-    // reset server url (used to detect re-use of existing terminal)
+    // reset preview state
+    this.previewDoc_ = doc.uri;
     this.previewUrl_ = undefined;
+    this.previewOutputFile_ = undefined;
 
     // create and show the terminal
     const options: TerminalOptions = {
@@ -158,24 +162,75 @@ class PreviewManager {
         /Browse at (http:\/\/localhost\:\d+\/[^\s]*)/
       );
       if (match) {
-        this.previewUrl_ = match[1];
-        this.webviewManager_.showWebview(this.previewUrl_, {
-          preserveFocus: true,
-          viewColumn: ViewColumn.Beside,
-        });
+        // capture output file
+        const fileMatch = this.previewOutput_.match(/Output created\: (.*?)\n/);
+        if (fileMatch) {
+          this.previewUrl_ = match[1];
+          this.previewOutputFile_ = this.outputFileUri(fileMatch[1]);
+          this.showPreview();
+        } else {
+          console.log("Matched browse at without output created");
+        }
       }
     } else {
       // detect update to existing preview and activate browser
       if (
         this.previewOutput_.trimEnd().endsWith("Watching files for changes")
       ) {
-        this.webviewManager_.revealWebview();
+        this.updatePreview();
       }
     }
   }
 
+  private showPreview() {
+    if (this.isBrowserPreviewable(this.previewOutputFile_)) {
+      this.webviewManager_.showWebview(this.previewUrl_!, {
+        preserveFocus: true,
+        viewColumn: ViewColumn.Beside,
+      });
+    } else {
+      this.showOuputFile();
+    }
+  }
+
+  private updatePreview() {
+    if (this.isBrowserPreviewable(this.previewOutputFile_)) {
+      this.webviewManager_.revealWebview();
+    } else {
+      this.showOuputFile();
+    }
+  }
+
+  private outputFileUri(file: string) {
+    if (path.isAbsolute(file)) {
+      return Uri.file(file);
+    } else {
+      return Uri.file(path.join(path.dirname(this.previewDoc_?.fsPath!), file));
+    }
+  }
+
+  private isBrowserPreviewable(uri?: Uri) {
+    return isHtmlContent(uri?.toString()) || isPdfContent(uri?.toString());
+  }
+
+  private async showOuputFile() {
+    // TODO: full restart happening every time
+    // TODO: activate existing
+    // TODO: readonly?
+    // TODO: consider rendered html for markdown?
+    // TODO: open non text files
+    await commands.executeCommand(
+      "vscode.open",
+      this.previewOutputFile_!.with({ fragment: "" }),
+      ViewColumn.Beside
+    );
+  }
+
   private previewOutput_ = "";
+  private previewDoc_: Uri | undefined;
   private previewUrl_: string | undefined;
+  private previewOutputFile_: Uri | undefined;
+
   private terminal_: Terminal | undefined;
 
   private readonly webviewManager_: PreviewWebviewManager;
