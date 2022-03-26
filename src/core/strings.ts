@@ -8,5 +8,9 @@ export function escapeRegExpCharacters(value: string): string {
 }
 
 export function shQuote(value: string): string {
-  return `"${value}"`;
+  if (/\s/g.test(value)) {
+    return `"${value}"`;
+  } else {
+    return value;
+  }
 }
