@@ -134,6 +134,9 @@ class PreviewManager {
     const options: TerminalOptions = {
       name: kPreviewWindowTitle,
       cwd: path.dirname(doc.uri.fsPath),
+      env: {
+        QUARTO_LOG: this.outputSink_.outputFile(),
+      },
     };
     this.terminal_ = window.createTerminal(options);
     const quarto = path.join(this.quartoContext_.binPath, "quarto");
@@ -147,7 +150,6 @@ class PreviewManager {
     }
     cmd.push("--no-browser");
     cmd.push("--no-watch-inputs");
-    cmd.push("--log", shQuote(this.outputSink_.outputFile()));
     const cmdText =
       os.platform() === "win32" ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
     this.terminal_.sendText(cmdText, true);
