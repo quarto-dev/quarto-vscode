@@ -54,23 +54,26 @@ export function canPreviewDoc(doc: TextDocument) {
 }
 
 export async function previewDoc(doc: TextDocument, format?: string) {
+  // save document
   await doc.save();
+  // extra save sometimes required for notbooks
   await commands.executeCommand("workbench.action.files.save");
+  // if we saved an untitled file we now need to get the path
   doc = window.activeTextEditor?.document || doc;
   await previewManager.preview(doc, format);
 }
 
 class PreviewManager {
   constructor(
-    private readonly extensionUri_: Uri,
+    extensionUri: Uri,
     private readonly quartoContext_: QuartoContext
   ) {
+    this.webviewManager_ = new PreviewWebviewManager(extensionUri);
     this.outputSink_ = new PreviewOutputSink(this.onPreviewOutput.bind(this));
   }
 
   dispose() {
-    this.activeView_?.dispose();
-    this.activeView_ = undefined;
+    this.webviewManager_.dispose();
     this.outputSink_.dispose();
   }
 
@@ -93,49 +96,7 @@ class PreviewManager {
   }
 
   public restoreWebvew(panel: WebviewPanel, state: any): void {
-    const url = state?.url ?? "";
-    const view = QuartoPreviewView.restore(this.extensionUri_, url, panel);
-    this.registerWebviewListeners(view);
-    this.activeView_ = view;
-
-    // we need to grab the focus b/c if we just allow the
-    // editor to take default focus it ends up not listening
-    // on the normal editor commands (save, etc.). only after
-    // bounding focus to the webview and back do we get the
-    // commands to work. this is likely a bug and this is
-    // the best workaround we have found
-    this.activeView_.show(url, { preserveFocus: false });
-    if (window.activeTextEditor) {
-      window.showTextDocument(
-        window.activeTextEditor.document,
-        undefined,
-        false
-      );
-    }
-  }
-
-  private showWebview(url: string, options?: ShowOptions): void {
-    if (this.activeView_) {
-      this.activeView_.show(url, options);
-    } else {
-      const view = QuartoPreviewView.create(this.extensionUri_, url, options);
-      this.registerWebviewListeners(view);
-      this.activeView_ = view;
-    }
-  }
-
-  private revealWebview() {
-    if (this.activeView_) {
-      this.activeView_.reveal();
-    }
-  }
-
-  private registerWebviewListeners(view: QuartoPreviewView) {
-    view.onDispose(() => {
-      if (this.activeView_ === view) {
-        this.activeView_ = undefined;
-      }
-    });
+    this.webviewManager_.restoreWebvew(panel, state);
   }
 
   private canReuseRunningPreview() {
@@ -212,7 +173,7 @@ class PreviewManager {
       );
       if (match) {
         this.previewUrl_ = match[1];
-        this.showWebview(this.previewUrl_, {
+        this.webviewManager_.showWebview(this.previewUrl_, {
           preserveFocus: true,
           viewColumn: ViewColumn.Beside,
         });
@@ -222,17 +183,75 @@ class PreviewManager {
       if (
         this.previewOutput_.trimEnd().endsWith("Watching files for changes")
       ) {
-        this.revealWebview();
+        this.webviewManager_.revealWebview();
       }
     }
   }
 
   private previewUrl_: string | undefined;
   private terminal_: Terminal | undefined;
-  private activeView_?: QuartoPreviewView;
-
-  private readonly outputSink_: PreviewOutputSink;
   private previewOutput_ = "";
+
+  private readonly webviewManager_: PreviewWebviewManager;
+  private readonly outputSink_: PreviewOutputSink;
+}
+
+class PreviewWebviewManager {
+  constructor(readonly extensionUri_: Uri) {}
+
+  public showWebview(url: string, options?: ShowOptions): void {
+    if (this.activeView_) {
+      this.activeView_.show(url, options);
+    } else {
+      const view = QuartoPreviewView.create(this.extensionUri_, url, options);
+      this.registerWebviewListeners(view);
+      this.activeView_ = view;
+    }
+  }
+
+  public revealWebview() {
+    if (this.activeView_) {
+      this.activeView_.reveal();
+    }
+  }
+
+  public restoreWebvew(panel: WebviewPanel, state: any): void {
+    const url = state?.url ?? "";
+    const view = QuartoPreviewView.restore(this.extensionUri_, url, panel);
+    this.registerWebviewListeners(view);
+    this.activeView_ = view;
+
+    // we need to grab the focus b/c if we just allow the
+    // editor to take default focus it ends up not listening
+    // on the normal editor commands (save, etc.). only after
+    // bounding focus to the webview and back do we get the
+    // commands to work. this is likely a bug and this is
+    // the best workaround we have found
+    this.activeView_.show(url, { preserveFocus: false });
+    if (window.activeTextEditor) {
+      window.showTextDocument(
+        window.activeTextEditor.document,
+        undefined,
+        false
+      );
+    }
+  }
+
+  private registerWebviewListeners(view: QuartoPreviewView) {
+    view.onDispose(() => {
+      if (this.activeView_ === view) {
+        this.activeView_ = undefined;
+      }
+    });
+  }
+
+  public dispose() {
+    if (this.activeView_) {
+      this.activeView_.dispose();
+      this.activeView_ = undefined;
+    }
+  }
+  private activeView_?: QuartoPreviewView;
 }
 
 class PreviewOutputSink {
