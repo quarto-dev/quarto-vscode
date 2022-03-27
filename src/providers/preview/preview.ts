@@ -5,6 +5,7 @@
 
 import * as path from "path";
 import * as os from "os";
+import * as uuid from "uuid";
 import axios from "axios";
 
 import {
@@ -16,7 +17,6 @@ import {
   Uri,
   ViewColumn,
   window,
-  workspace,
 } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { shQuote } from "../../core/strings";
@@ -60,6 +60,7 @@ class PreviewManager {
     context: ExtensionContext,
     private readonly quartoContext_: QuartoContext
   ) {
+    this.renderToken_ = uuid.v4();
     this.webviewManager_ = new PreviewWebviewManager(context);
     this.outputSink_ = new PreviewOutputSink(this.onPreviewOutput.bind(this));
   }
@@ -102,7 +103,8 @@ class PreviewManager {
       previewUri.scheme +
       "://" +
       previewUri.authority +
-      "/B4AA6EED-A702-4ED2-9734-A20C6FDC4071";
+      "/" +
+      this.renderToken_;
     const params: Record<string, unknown> = {
       path: doc.uri.fsPath,
     };
@@ -136,6 +138,7 @@ class PreviewManager {
       cwd: path.dirname(doc.uri.fsPath),
       env: {
         QUARTO_LOG: this.outputSink_.outputFile(),
+        QUARTO_RENDER_TOKEN: this.renderToken_,
       },
     };
     this.terminal_ = window.createTerminal(options);
@@ -235,6 +238,7 @@ class PreviewManager {
 
   private terminal_: Terminal | undefined;
 
+  private readonly renderToken_: string;
   private readonly webviewManager_: PreviewWebviewManager;
   private readonly outputSink_: PreviewOutputSink;
 }

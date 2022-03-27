@@ -502,6 +502,7 @@
     "markdown-it-highlightjs": "^3.6.0",
     "semver": "^7.3.5",
     "tmp": "^0.2.1",
+    "uuid": "^8.3.2",
     "vscode-languageclient": "^7.0.0",
     "vscode-nls": "^5.0.0"
   },
@@ -515,6 +516,7 @@
     "@types/node": "^8.10.25",
     "@types/semver": "^7.3.9",
     "@types/tmp": "^0.2.3",
+    "@types/uuid": "^8.3.4",
     "@types/vscode": "^1.55.0",
     "@types/webpack-env": "^1.16.3",
     "@vscode/test-web": "^0.0.22",
