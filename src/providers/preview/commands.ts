@@ -21,7 +21,7 @@ class RenderCommand implements Command {
     this.quartoContext_ = quartoContext;
   }
   async execute() {
-    const kRequiredVersion = "0.9.147";
+    const kRequiredVersion = "0.9.148";
     if (semver.gte(this.quartoContext_.version, kRequiredVersion)) {
       const activeDoc = window.activeTextEditor?.document;
       if (activeDoc && canPreviewDoc(activeDoc)) {
