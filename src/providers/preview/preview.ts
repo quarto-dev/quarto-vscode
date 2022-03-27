@@ -25,7 +25,7 @@ import { Command } from "../../core/command";
 import { isNotebook, isQuartoDoc } from "../../core/doc";
 import { PreviewWebviewManager } from "./preview-webview";
 import { PreviewOutputSink } from "./preview-output";
-import { isHtmlContent, isPdfContent } from "../../core/mime";
+import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
 
 let previewManager: PreviewManager;
 
@@ -219,7 +219,11 @@ class PreviewManager {
   }
 
   private isBrowserPreviewable(uri?: Uri) {
-    return isHtmlContent(uri?.toString()) || isPdfContent(uri?.toString());
+    return (
+      isHtmlContent(uri?.toString()) ||
+      isPdfContent(uri?.toString()) ||
+      isTextContent(uri?.toString())
+    );
   }
 
   private async showOuputFile() {
