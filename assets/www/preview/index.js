@@ -21,9 +21,16 @@ const forwardButton = header.querySelector(".forward-button");
 const backButton = header.querySelector(".back-button");
 const reloadButton = header.querySelector(".reload-button");
 const openExternalButton = header.querySelector(".open-external-button");
+const kQuartoPreviewReqId = "quartoPreviewReqId";
 
 window.addEventListener("message", (e) => {
   switch (e.data.type) {
+    case "navigate": {
+      const url = new URL(e.data.href);
+      url.searchParams.delete(kQuartoPreviewReqId);
+      input.value = url.toString();
+      break;
+    }
     case "focus": {
       iframe.focus();
       break;
@@ -97,7 +104,7 @@ onceDocumentLoaded(() => {
 
       // Try to bust the cache for the iframe
       // There does not appear to be any way to reliably do this except modifying the url
-      url.searchParams.append("quartoPreviewReqId", Date.now().toString());
+      url.searchParams.append(kQuartoPreviewReqId, Date.now().toString());
 
       iframe.src = url.toString();
     } catch {
