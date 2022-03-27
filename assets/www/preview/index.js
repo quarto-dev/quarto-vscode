@@ -97,7 +97,7 @@ onceDocumentLoaded(() => {
 
       // Try to bust the cache for the iframe
       // There does not appear to be any way to reliably do this except modifying the url
-      url.searchParams.append("vscodeBrowserReqId", Date.now().toString());
+      url.searchParams.append("quartoPreviewReqId", Date.now().toString());
 
       iframe.src = url.toString();
     } catch {
