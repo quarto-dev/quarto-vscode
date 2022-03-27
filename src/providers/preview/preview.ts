@@ -61,7 +61,7 @@ export async function previewDoc(editor: TextEditor, format?: string) {
   await previewManager.preview(doc, format);
 
   // focus the editor (sometimes the terminal takes focus on launch)
-  await window.showTextDocument(doc, undefined, false);
+  await window.showTextDocument(doc, editor.viewColumn, false);
 }
 
 class PreviewManager {
