@@ -25,13 +25,13 @@ class RenderCommand implements Command {
     if (semver.gte(this.quartoContext_.version, kRequiredVersion)) {
       const activeDoc = window.activeTextEditor?.document;
       if (activeDoc && canPreviewDoc(activeDoc)) {
-        await previewDoc(activeDoc);
+        await previewDoc(window.activeTextEditor!);
       } else {
         const visibleEditor = window.visibleTextEditors.find((editor) =>
           canPreviewDoc(editor.document)
         );
         if (visibleEditor) {
-          await previewDoc(visibleEditor.document);
+          await previewDoc(visibleEditor);
         } else {
           window.showInformationMessage(
             "No Quarto document available to render"

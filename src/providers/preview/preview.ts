@@ -14,6 +14,7 @@ import {
   Terminal,
   TerminalOptions,
   TextDocument,
+  TextEditor,
   Uri,
   ViewColumn,
   window,
@@ -45,8 +46,9 @@ export function canPreviewDoc(doc: TextDocument) {
   return isQuartoDoc(doc) || isNotebook(doc);
 }
 
-export async function previewDoc(doc: TextDocument, format?: string) {
+export async function previewDoc(editor: TextEditor, format?: string) {
   // save document
+  let doc = editor.document;
   await doc.save();
 
   // extra save sometimes required for notbooks
@@ -55,8 +57,11 @@ export async function previewDoc(doc: TextDocument, format?: string) {
     // if we saved an untitled file we now need to get the path
     doc = window.activeTextEditor?.document || doc;
   }
-
+  // execute the preview
   await previewManager.preview(doc, format);
+
+  // focus the editor (sometimes the terminal takes focus on launch)
+  await window.showTextDocument(doc, undefined, false);
 }
 
 class PreviewManager {
