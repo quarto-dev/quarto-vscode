@@ -8,7 +8,7 @@ import * as os from "os";
 import * as uuid from "uuid";
 import axios from "axios";
 
-import {
+import vscode, {
   commands,
   ExtensionContext,
   Terminal,
@@ -232,16 +232,7 @@ class PreviewManager {
   }
 
   private async showOuputFile() {
-    // TODO: full restart happening every time
-    // TODO: activate existing
-    // TODO: readonly?
-    // TODO: consider rendered html for markdown?
-    // TODO: open non text files
-    await commands.executeCommand(
-      "vscode.open",
-      this.previewOutputFile_!.with({ fragment: "" }),
-      ViewColumn.Beside
-    );
+    vscode.env.openExternal(this.previewOutputFile_!);
   }
 
   private previewOutput_ = "";
