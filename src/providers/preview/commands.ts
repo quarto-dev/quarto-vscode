@@ -26,6 +26,17 @@ class RenderCommand implements Command {
       const activeDoc = window.activeTextEditor?.document;
       if (activeDoc && canPreviewDoc(activeDoc)) {
         await previewDoc(activeDoc);
+      } else {
+        const visibleEditor = window.visibleTextEditors.find((editor) =>
+          canPreviewDoc(editor.document)
+        );
+        if (visibleEditor) {
+          await previewDoc(visibleEditor.document);
+        } else {
+          window.showInformationMessage(
+            "No Quarto document available to render"
+          );
+        }
       }
     } else {
       window.showWarningMessage(

@@ -48,10 +48,14 @@ export function canPreviewDoc(doc: TextDocument) {
 export async function previewDoc(doc: TextDocument, format?: string) {
   // save document
   await doc.save();
+
   // extra save sometimes required for notbooks
-  await commands.executeCommand("workbench.action.files.save");
-  // if we saved an untitled file we now need to get the path
-  doc = window.activeTextEditor?.document || doc;
+  if (doc.uri === window.activeTextEditor?.document.uri) {
+    await commands.executeCommand("workbench.action.files.save");
+    // if we saved an untitled file we now need to get the path
+    doc = window.activeTextEditor?.document || doc;
+  }
+
   await previewManager.preview(doc, format);
 }
 

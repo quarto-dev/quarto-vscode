@@ -156,7 +156,7 @@
         "command": "quarto.render",
         "title": "Render Document",
         "category": "Quarto",
-        "when": "!isWeb && editorLangId == quarto || !isWeb && notebookType == jupyter-notebook"
+        "when": "!isWeb"
       },
       {
         "command": "quarto.runSelection",
@@ -238,7 +238,7 @@
         "command": "quarto.render",
         "key": "ctrl+shift+r",
         "mac": "cmd+shift+r",
-        "when": "!isWeb && editorLangId == quarto && !inSearchEditor || !isWeb && notebookType == jupyter-notebook && !inSearchEditor"
+        "when": "!isWeb && !inSearchEditor"
       },
       {
         "command": "quarto.runSelection",
@@ -335,7 +335,7 @@
         },
         {
           "command": "quarto.render",
-          "when": "!isWeb && editorLangId == quarto || !isWeb && notebookType == jupyter-notebook"
+          "when": "!isWeb"
         }
       ],
       "view/title": [
