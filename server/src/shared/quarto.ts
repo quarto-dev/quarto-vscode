@@ -70,5 +70,11 @@ export function initQuartoContext(
 }
 
 function shQuote(value: string): string {
-  return `"${value}"`;
+  if (os.platform() === "win32") {
+    return value.replace(" ", "^ ");
+  } else if (/\s/g.test(value)) {
+    return `"${value}"`;
+  } else {
+    return value;
+  }
 }
