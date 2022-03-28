@@ -5,12 +5,14 @@
 
 import * as path from "path";
 import * as os from "os";
+import * as fs from "fs";
 import * as uuid from "uuid";
 import axios from "axios";
 
 import vscode, {
   commands,
   ExtensionContext,
+  MessageItem,
   Terminal,
   TerminalOptions,
   TextDocument,
@@ -27,6 +29,9 @@ import { isNotebook, isQuartoDoc } from "../../core/doc";
 import { PreviewWebviewManager } from "./preview-webview";
 import { PreviewOutputSink } from "./preview-output";
 import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
+
+import * as tmp from "tmp";
+tmp.setGracefulCleanup();
 
 let previewManager: PreviewManager;
 
@@ -232,7 +237,24 @@ class PreviewManager {
   }
 
   private async showOuputFile() {
-    vscode.env.openExternal(this.previewOutputFile_!);
+    if (this.previewOutputFile_) {
+      const outputFile = this.previewOutputFile_.fsPath;
+      const viewFile: MessageItem = { title: "View Preview" };
+      const result = await window.showInformationMessage<MessageItem>(
+        "Render complete for " + path.basename(outputFile),
+        viewFile
+      );
+      if (result === viewFile) {
+        const outputTempDir = tmp.dirSync();
+        const outputTemp = path.join(
+          outputTempDir.name,
+          path.basename(outputFile)
+        );
+        fs.copyFileSync(outputFile, outputTemp);
+        fs.chmodSync(outputTemp, fs.constants.S_IRUSR);
+        vscode.env.openExternal(Uri.file(outputTemp));
+      }
+    }
   }
 
   private previewOutput_ = "";
