@@ -13,6 +13,7 @@ import {
   workspace,
   env,
   ExtensionContext,
+  ColorThemeKind,
 } from "vscode";
 
 import { Disposable } from "../../core/dispose";
@@ -176,6 +177,18 @@ class QuartoPreviewView extends Disposable {
             ),
           });
         }
+      })
+    );
+
+    this._register(
+      window.onDidChangeActiveColorTheme((_e) => {
+        this._webviewPanel.webview.postMessage({
+          type: "didChangeActiveColorTheme",
+          theme:
+            window.activeColorTheme.kind == ColorThemeKind.Light
+              ? "light"
+              : "dark",
+        });
       })
     );
 

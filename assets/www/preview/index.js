@@ -22,12 +22,14 @@ const backButton = header.querySelector(".back-button");
 const reloadButton = header.querySelector(".reload-button");
 const openExternalButton = header.querySelector(".open-external-button");
 const kQuartoPreviewReqId = "quartoPreviewReqId";
+const kQuartoPreviewThemeCategory = "quartoPreviewThemeCategory";
 
 window.addEventListener("message", (e) => {
   switch (e.data.type) {
     case "navigate": {
       const url = new URL(e.data.href);
       url.searchParams.delete(kQuartoPreviewReqId);
+      url.searchParams.delete(kQuartoPreviewThemeCategory);
       input.value = url.toString();
       break;
     }
@@ -37,6 +39,11 @@ window.addEventListener("message", (e) => {
     }
     case "didChangeFocusLockIndicatorEnabled": {
       toggleFocusLockIndicatorEnabled(e.data.enabled);
+      break;
+    }
+
+    case "didChangeActiveColorTheme": {
+      navigateTo(input.value, e.data.theme);
       break;
     }
   }
@@ -97,23 +104,29 @@ onceDocumentLoaded(() => {
   input.value = settings.url;
 
   toggleFocusLockIndicatorEnabled(settings.focusLockIndicatorEnabled);
-
-  function navigateTo(rawUrl) {
-    try {
-      const url = new URL(rawUrl);
-
-      // Try to bust the cache for the iframe
-      // There does not appear to be any way to reliably do this except modifying the url
-      url.searchParams.append(kQuartoPreviewReqId, Date.now().toString());
-
-      iframe.src = url.toString();
-    } catch {
-      iframe.src = rawUrl;
-    }
-
-    vscode.setState({ url: rawUrl });
-  }
 });
+
+function navigateTo(rawUrl, theme) {
+  try {
+    const url = new URL(rawUrl);
+
+    // Try to bust the cache for the iframe
+    // There does not appear to be any way to reliably do this except modifying the url
+    url.searchParams.append(kQuartoPreviewReqId, Date.now().toString());
+
+    // detect theme category
+    theme =
+      theme ||
+      (document.body.classList.contains("vscode-light") ? "light" : "dark");
+    url.searchParams.append(kQuartoPreviewThemeCategory, theme);
+
+    iframe.src = url.toString();
+  } catch {
+    iframe.src = rawUrl;
+  }
+
+  vscode.setState({ url: rawUrl });
+}
 
 function toggleFocusLockIndicatorEnabled(enabled) {
   document.body.classList.toggle("enable-focus-lock-indicator", enabled);
