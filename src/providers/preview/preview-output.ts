@@ -55,7 +55,8 @@ export class PreviewOutputSink {
       try {
         this.outputFd_ = fs.openSync(this.outputFile_, "r");
       } catch (error) {
-        console.log("error opening preview output file: " + error.message);
+        console.log("error opening preview output file");
+        console.error(error);
         return;
       }
     }

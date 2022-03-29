@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.0 (Release on 29 March 2022)
+
+- Render command with integrated preview pane
+- Use same versions of Python and R as configured for their respective extensions
+- Preference to use alternate quarto binary
+
 ## 1.10.0 (Release on 15 March 2022)
 
 - Message when extensions required for cell execution aren't installed
