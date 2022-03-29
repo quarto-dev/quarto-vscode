@@ -158,6 +158,9 @@ const juliaCellExecutor: CellExecutor = {
   execute: async (code: string) => {
     const extension = extensions.getExtension("julialang.language-julia");
     if (extension) {
+      if (!extension.isActive) {
+        await extension.activate();
+      }
       extension.exports.executeInREPL(code, {});
     } else {
       window.showErrorMessage("Unable to execute code in Julia REPL");

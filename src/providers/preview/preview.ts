@@ -31,16 +31,19 @@ import { PreviewOutputSink } from "./preview-output";
 import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
 
 import * as tmp from "tmp";
+import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
+import { MarkdownEngine } from "../../markdown/engine";
 tmp.setGracefulCleanup();
 
 let previewManager: PreviewManager;
 
 export function activatePreview(
   context: ExtensionContext,
-  quartoContext: QuartoContext
+  quartoContext: QuartoContext,
+  engine: MarkdownEngine
 ): Command[] {
   // create preview manager
-  previewManager = new PreviewManager(context, quartoContext);
+  previewManager = new PreviewManager(context, quartoContext, engine);
   context.subscriptions.push(previewManager);
 
   // preview commands
@@ -72,11 +75,17 @@ export async function previewDoc(editor: TextEditor, format?: string) {
 class PreviewManager {
   constructor(
     context: ExtensionContext,
-    private readonly quartoContext_: QuartoContext
+    private readonly quartoContext_: QuartoContext,
+    engine: MarkdownEngine
   ) {
     this.renderToken_ = uuid.v4();
     this.webviewManager_ = new PreviewWebviewManager(context);
     this.outputSink_ = new PreviewOutputSink(this.onPreviewOutput.bind(this));
+    this.previewEnvManager_ = new PreviewEnvManager(
+      this.outputSink_,
+      this.renderToken_,
+      engine
+    );
   }
 
   dispose() {
@@ -86,25 +95,27 @@ class PreviewManager {
 
   public async preview(doc: TextDocument, format?: string) {
     this.previewOutput_ = "";
-    if (this.canReuseRunningPreview()) {
+    const prevewEnv = await this.previewEnvManager_.previewEnv(doc);
+    if (this.canReuseRunningPreview(prevewEnv)) {
       try {
         const response = await this.previewRenderRequest(doc, format);
         if (response.status === 200) {
           this.terminal_!.show(true);
         } else {
-          this.startPreview(doc, format);
+          this.startPreview(prevewEnv, doc, format);
         }
       } catch (e) {
-        this.startPreview(doc, format);
+        this.startPreview(prevewEnv, doc, format);
       }
     } else {
-      this.startPreview(doc, format);
+      this.startPreview(prevewEnv, doc, format);
     }
   }
 
-  private canReuseRunningPreview() {
+  private canReuseRunningPreview(previewEnv: PreviewEnv) {
     return (
       this.previewUrl_ &&
+      previewEnvsEqual(this.previewEnv_, previewEnv) &&
       this.terminal_ &&
       this.terminal_.exitStatus === undefined
     );
@@ -128,7 +139,11 @@ class PreviewManager {
     return axios.get(requestUri, { params });
   }
 
-  private startPreview(doc: TextDocument, format?: string) {
+  private startPreview(
+    previewEnv: PreviewEnv,
+    doc: TextDocument,
+    format?: string
+  ) {
     // dispose any existing preview terminals
     const kPreviewWindowTitle = "Quarto Preview";
     const terminal = window.terminals.find((terminal) => {
@@ -142,6 +157,7 @@ class PreviewManager {
     this.outputSink_.reset();
 
     // reset preview state
+    this.previewEnv_ = previewEnv;
     this.previewDoc_ = doc.uri;
     this.previewUrl_ = undefined;
     this.previewOutputFile_ = undefined;
@@ -150,9 +166,8 @@ class PreviewManager {
     const options: TerminalOptions = {
       name: kPreviewWindowTitle,
       cwd: path.dirname(doc.uri.fsPath),
-      env: {
-        QUARTO_LOG: this.outputSink_.outputFile(),
-        QUARTO_RENDER_TOKEN: this.renderToken_,
+      env: this.previewEnv_ as unknown as {
+        [key: string]: string | null | undefined;
       },
     };
     this.terminal_ = window.createTerminal(options);
@@ -258,6 +273,7 @@ class PreviewManager {
   }
 
   private previewOutput_ = "";
+  private previewEnv_: PreviewEnv | undefined;
   private previewDoc_: Uri | undefined;
   private previewUrl_: string | undefined;
   private previewOutputFile_: Uri | undefined;
@@ -265,6 +281,7 @@ class PreviewManager {
   private terminal_: Terminal | undefined;
 
   private readonly renderToken_: string;
+  private readonly previewEnvManager_: PreviewEnvManager;
   private readonly webviewManager_: PreviewWebviewManager;
   private readonly outputSink_: PreviewOutputSink;
 }
