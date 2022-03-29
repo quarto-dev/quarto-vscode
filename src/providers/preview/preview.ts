@@ -51,7 +51,7 @@ export function activatePreview(
 }
 
 export function canPreviewDoc(doc: TextDocument) {
-  return isQuartoDoc(doc) || isNotebook(doc);
+  return !!(isQuartoDoc(doc) || isNotebook(doc));
 }
 
 export async function previewDoc(editor: TextEditor, format?: string) {
@@ -66,10 +66,14 @@ export async function previewDoc(editor: TextEditor, format?: string) {
     doc = window.activeTextEditor?.document || doc;
   }
   // execute the preview
-  await previewManager.preview(doc, format);
+  await previewManager.preview(doc.uri, doc, format);
 
   // focus the editor (sometimes the terminal takes focus on launch)
   await window.showTextDocument(doc, editor.viewColumn, false);
+}
+
+export async function previewProject(target: Uri, format?: string) {
+  await previewManager.preview(target, undefined, format);
 }
 
 class PreviewManager {
@@ -93,22 +97,22 @@ class PreviewManager {
     this.outputSink_.dispose();
   }
 
-  public async preview(doc: TextDocument, format?: string) {
+  public async preview(uri: Uri, doc?: TextDocument, format?: string) {
     this.previewOutput_ = "";
-    const prevewEnv = await this.previewEnvManager_.previewEnv(doc);
-    if (this.canReuseRunningPreview(prevewEnv)) {
+    const prevewEnv = await this.previewEnvManager_.previewEnv(uri, doc);
+    if (doc && this.canReuseRunningPreview(prevewEnv)) {
       try {
         const response = await this.previewRenderRequest(doc, format);
         if (response.status === 200) {
           this.terminal_!.show(true);
         } else {
-          this.startPreview(prevewEnv, doc, format);
+          this.startPreview(prevewEnv, uri, doc, format);
         }
       } catch (e) {
-        this.startPreview(prevewEnv, doc, format);
+        this.startPreview(prevewEnv, uri, doc, format);
       }
     } else {
-      this.startPreview(prevewEnv, doc, format);
+      this.startPreview(prevewEnv, uri, doc, format);
     }
   }
 
@@ -141,7 +145,8 @@ class PreviewManager {
 
   private startPreview(
     previewEnv: PreviewEnv,
-    doc: TextDocument,
+    target: Uri,
+    doc?: TextDocument,
     format?: string
   ) {
     // dispose any existing preview terminals
@@ -158,14 +163,14 @@ class PreviewManager {
 
     // reset preview state
     this.previewEnv_ = previewEnv;
-    this.previewDoc_ = doc.uri;
+    this.previewTarget_ = target;
     this.previewUrl_ = undefined;
     this.previewOutputFile_ = undefined;
 
     // create and show the terminal
     const options: TerminalOptions = {
       name: kPreviewWindowTitle,
-      cwd: path.dirname(doc.uri.fsPath),
+      cwd: this.targetDir(),
       env: this.previewEnv_ as unknown as {
         [key: string]: string | null | undefined;
       },
@@ -175,11 +180,16 @@ class PreviewManager {
     const cmd: string[] = [
       shQuote(quarto),
       "preview",
-      shQuote(path.basename(doc.uri.fsPath)),
+      shQuote(this.targetFile()),
     ];
-    if (format) {
+    if (!doc) {
+      // project render
+      cmd.push("--render", format || "all");
+    } else if (format) {
+      // doc render
       cmd.push("--to", format);
     }
+
     cmd.push("--no-browser");
     cmd.push("--no-watch-inputs");
     const cmdText =
@@ -196,15 +206,13 @@ class PreviewManager {
         /Browse at (http:\/\/localhost\:\d+\/[^\s]*)/
       );
       if (match) {
+        this.previewUrl_ = match[1];
         // capture output file
         const fileMatch = this.previewOutput_.match(/Output created\: (.*?)\n/);
         if (fileMatch) {
-          this.previewUrl_ = match[1];
           this.previewOutputFile_ = this.outputFileUri(fileMatch[1]);
-          this.showPreview();
-        } else {
-          console.log("Matched browse at without output created");
         }
+        this.showPreview();
       }
     } else {
       // detect update to existing preview and activate browser
@@ -217,7 +225,10 @@ class PreviewManager {
   }
 
   private showPreview() {
-    if (this.isBrowserPreviewable(this.previewOutputFile_)) {
+    if (
+      !this.previewOutputFile_ || // no output file means project render/preview
+      this.isBrowserPreviewable(this.previewOutputFile_)
+    ) {
       this.webviewManager_.showWebview(this.previewUrl_!, {
         preserveFocus: true,
         viewColumn: ViewColumn.Beside,
@@ -235,11 +246,29 @@ class PreviewManager {
     }
   }
 
+  private targetDir() {
+    const targetPath = this.previewTarget_!.fsPath;
+    if (fs.statSync(targetPath).isDirectory()) {
+      return targetPath;
+    } else {
+      return path.dirname(targetPath);
+    }
+  }
+
+  private targetFile() {
+    const targetPath = this.previewTarget_!.fsPath;
+    if (fs.statSync(targetPath).isDirectory()) {
+      return ".";
+    } else {
+      return path.basename(targetPath);
+    }
+  }
+
   private outputFileUri(file: string) {
     if (path.isAbsolute(file)) {
       return Uri.file(file);
     } else {
-      return Uri.file(path.join(path.dirname(this.previewDoc_?.fsPath!), file));
+      return Uri.file(path.join(this.targetDir()!, file));
     }
   }
 
@@ -274,7 +303,7 @@ class PreviewManager {
 
   private previewOutput_ = "";
   private previewEnv_: PreviewEnv | undefined;
-  private previewDoc_: Uri | undefined;
+  private previewTarget_: Uri | undefined;
   private previewUrl_: string | undefined;
   private previewOutputFile_: Uri | undefined;
 

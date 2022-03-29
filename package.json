@@ -159,6 +159,18 @@
         "when": "!isWeb"
       },
       {
+        "command": "quarto.renderProject",
+        "title": "Render Project",
+        "category": "Quarto",
+        "when": "!isWeb"
+      },
+      {
+        "command": "quarto.previewProject",
+        "title": "Preview Project",
+        "category": "Quarto",
+        "when": "!isWeb"
+      },
+      {
         "command": "quarto.runSelection",
         "title": "Run Selected Line(s)",
         "category": "Quarto",
