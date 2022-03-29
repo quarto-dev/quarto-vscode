@@ -236,9 +236,9 @@
     "keybindings": [
       {
         "command": "quarto.render",
-        "key": "ctrl+shift+r",
-        "mac": "cmd+shift+r",
-        "when": "!isWeb && !inSearchEditor"
+        "key": "ctrl+shift+k",
+        "mac": "cmd+shift+k",
+        "when": "!isWeb"
       },
       {
         "command": "quarto.runSelection",

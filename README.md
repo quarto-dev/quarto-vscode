@@ -22,7 +22,7 @@ You can also install from the [VS Code Extension Marketplace](https://marketplac
 
 ### Render and Preview
 
-Render documents or projects using the `Quarto: Render Document` command (`Ctrl+Shift+R` or `Cmd+Shift+R` on the Mac). An integrated preview window displays the rendered document and automatically updates on re-render:
+Render documents or projects using the `Quarto: Render Document` command (`Ctrl+Shift+K` or `Cmd+Shift+K` on the Mac). An integrated preview window displays the rendered document and automatically updates on re-render:
 
 ![](https://quarto.org/docs/tools/images/vscode-render.png)
 
