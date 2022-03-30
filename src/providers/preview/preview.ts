@@ -32,7 +32,6 @@ import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
 
 import * as tmp from "tmp";
 import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
-import { MarkdownEngine } from "../../markdown/engine";
 import { isHugoMarkdown } from "../../core/hugo";
 tmp.setGracefulCleanup();
 
@@ -40,11 +39,10 @@ let previewManager: PreviewManager;
 
 export function activatePreview(
   context: ExtensionContext,
-  quartoContext: QuartoContext,
-  engine: MarkdownEngine
+  quartoContext: QuartoContext
 ): Command[] {
   // create preview manager
-  previewManager = new PreviewManager(context, quartoContext, engine);
+  previewManager = new PreviewManager(context, quartoContext);
   context.subscriptions.push(previewManager);
 
   // preview commands
@@ -80,16 +78,14 @@ export async function previewProject(target: Uri, format?: string) {
 class PreviewManager {
   constructor(
     context: ExtensionContext,
-    private readonly quartoContext_: QuartoContext,
-    engine: MarkdownEngine
+    private readonly quartoContext_: QuartoContext
   ) {
     this.renderToken_ = uuid.v4();
     this.webviewManager_ = new PreviewWebviewManager(context);
     this.outputSink_ = new PreviewOutputSink(this.onPreviewOutput.bind(this));
     this.previewEnvManager_ = new PreviewEnvManager(
       this.outputSink_,
-      this.renderToken_,
-      engine
+      this.renderToken_
     );
   }
 
@@ -100,7 +96,7 @@ class PreviewManager {
 
   public async preview(uri: Uri, doc?: TextDocument, format?: string) {
     this.previewOutput_ = "";
-    const prevewEnv = await this.previewEnvManager_.previewEnv(uri, doc);
+    const prevewEnv = await this.previewEnvManager_.previewEnv(uri);
     if (doc && this.canReuseRunningPreview(prevewEnv)) {
       try {
         const response = await this.previewRenderRequest(doc, format);
@@ -207,13 +203,15 @@ class PreviewManager {
         /Browse at (http:\/\/localhost\:\d+\/[^\s]*)/
       );
       if (match) {
+        // capture preview url and show preview
         this.previewUrl_ = match[1];
+        this.showPreview();
+
         // capture output file
         const fileMatch = this.previewOutput_.match(/Output created\: (.*?)\n/);
         if (fileMatch) {
           this.previewOutputFile_ = this.outputFileUri(fileMatch[1]);
         }
-        this.showPreview();
       }
     } else {
       // detect update to existing preview and activate browser

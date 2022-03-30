@@ -49,7 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
     commands.push(...assistCommands);
 
     // preview
-    const previewCommands = activatePreview(context, quartoContext, engine);
+    const previewCommands = activatePreview(context, quartoContext);
     commands.push(...previewCommands);
   }
 

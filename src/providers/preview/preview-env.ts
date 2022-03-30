@@ -4,9 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as os from "os";
-import { extensions, TextDocument, Uri, workspace } from "vscode";
-import { MarkdownEngine } from "../../markdown/engine";
-import { isExecutableLanguageBlockOf } from "../../markdown/language";
+import { extensions, Uri, workspace } from "vscode";
 
 import { PreviewOutputSink } from "./preview-output";
 
@@ -31,58 +29,59 @@ export function previewEnvsEqual(a?: PreviewEnv, b?: PreviewEnv) {
 export class PreviewEnvManager {
   constructor(
     outputSink: PreviewOutputSink,
-    private readonly renderToken_: string,
-    private readonly engine_: MarkdownEngine
+    private readonly renderToken_: string
   ) {
     this.outputFile_ = outputSink.outputFile();
   }
 
-  public async previewEnv(uri: Uri, doc?: TextDocument) {
+  public async previewEnv(uri: Uri) {
+    // get workspace for uri (if any)
+    const workspaceFolder = workspace.getWorkspaceFolder(uri);
+
     // base env
     const env: PreviewEnv = {
       QUARTO_LOG: this.outputFile_,
       QUARTO_RENDER_TOKEN: this.renderToken_,
     };
-    const tokens = doc ? await this.engine_.parse(doc) : undefined;
-    // add QUARTO_PYTHON if we have the python extensions
-    if (!tokens || tokens.find(isExecutableLanguageBlockOf("python"))) {
-      const extension = extensions.getExtension("ms-python.python");
-      if (extension) {
-        if (!extension.isActive) {
-          await extension.activate();
-        }
-        const execDetails = extension.exports.settings.getExecutionDetails(uri);
-        if (Array.isArray(execDetails?.execCommand)) {
-          env.QUARTO_PYTHON = execDetails.execCommand[0];
-        }
+    // QUARTO_PYTHON
+    const pyExtension = extensions.getExtension("ms-python.python");
+    if (pyExtension) {
+      if (!pyExtension.isActive) {
+        await pyExtension.activate();
+      }
+
+      const execDetails = pyExtension.exports.settings.getExecutionDetails(
+        workspaceFolder?.uri
+      );
+      if (Array.isArray(execDetails?.execCommand)) {
+        env.QUARTO_PYTHON = execDetails.execCommand[0];
       }
     }
-    // add QUARTO_R for projects or if there are r code blocks in the doc
-    // and the user has set a custom r.rpath for this platform
-    if (!tokens || tokens.find(isExecutableLanguageBlockOf("r"))) {
-      const extension = extensions.getExtension("Ikuyadeu.r");
-      if (extension) {
-        const rPath = workspace.getConfiguration("r.rpath", uri);
-        let quartoR: string | undefined;
-        switch (os.platform()) {
-          case "win32": {
-            quartoR = rPath.get("windows");
-            break;
-          }
-          case "darwin": {
-            quartoR = rPath.get("mac");
-            break;
-          }
-          case "linux": {
-            quartoR = rPath.get("linux");
-            break;
-          }
+
+    // QUARTO_R
+    const rExtension = extensions.getExtension("Ikuyadeu.r");
+    if (rExtension) {
+      const rPath = workspace.getConfiguration("r.rpath", workspaceFolder?.uri);
+      let quartoR: string | undefined;
+      switch (os.platform()) {
+        case "win32": {
+          quartoR = rPath.get("windows");
+          break;
         }
-        if (quartoR) {
-          env.QUARTO_R = quartoR;
+        case "darwin": {
+          quartoR = rPath.get("mac");
+          break;
+        }
+        case "linux": {
+          quartoR = rPath.get("linux");
+          break;
         }
       }
+      if (quartoR) {
+        env.QUARTO_R = quartoR;
+      }
     }
+
     return env;
   }
   private readonly outputFile_: string;
