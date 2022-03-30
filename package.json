@@ -136,8 +136,7 @@
         {
           "id": "quarto-panel",
           "title": "Quarto",
-          "icon": "assets/logo/quarto.svg",
-          "when": "!isWeb"
+          "icon": "assets/logo/quarto.svg"
         }
       ]
     },
@@ -146,8 +145,7 @@
         {
           "type": "webview",
           "id": "quarto-assist",
-          "name": "Quarto",
-          "when": "!isWeb"
+          "name": "Quarto"
         }
       ]
     },
@@ -155,210 +153,193 @@
       {
         "command": "quarto.render",
         "title": "Render Document",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.renderProject",
         "title": "Render Project",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.previewProject",
         "title": "Preview Project",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.runSelection",
         "title": "Run Selected Line(s)",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.runCurrentCell",
         "title": "Run Current Cell",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.runPreviousCell",
         "title": "Run Previous Cell",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.runNextCell",
         "title": "Run Next Cell",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.runCellsAbove",
         "title": "Run Cells Above",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.runCellsBelow",
         "title": "Run Cells Below",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.runAllCells",
         "title": "Run All Cells",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.goToNextCell",
         "title": "Go to Next Cell",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.goToPreviousCell",
         "title": "Go to Previous Cell",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.previewMath",
         "category": "Quarto",
-        "title": "Preview Math",
-        "when": "!isWeb"
+        "title": "Preview Math"
       },
       {
         "command": "quarto.assist.pin",
         "title": "Pin Assist Panel",
         "icon": "$(pin)",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       },
       {
         "command": "quarto.assist.unpin",
         "title": "Unpin Assist Panel",
         "icon": "$(pinned)",
-        "category": "Quarto",
-        "when": "!isWeb"
+        "category": "Quarto"
       }
     ],
     "keybindings": [
       {
         "command": "quarto.render",
         "key": "ctrl+shift+k",
-        "mac": "cmd+shift+k",
-        "when": "!isWeb"
+        "mac": "cmd+shift+k"
       },
       {
         "command": "quarto.runSelection",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "!isWeb && editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       },
       {
         "command": "quarto.runCurrentCell",
         "key": "ctrl+shift+enter",
         "mac": "cmd+shift+enter",
-        "when": "!isWeb && editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       },
       {
         "command": "quarto.runPreviousCell",
         "key": "ctrl+alt+p",
         "mac": "cmd+alt+p",
-        "when": "!isWeb && editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       },
       {
         "command": "quarto.runNextCell",
         "key": "ctrl+alt+n",
         "mac": "cmd+alt+n",
-        "when": "!isWeb && editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       },
       {
         "command": "quarto.runCellsBelow",
         "key": "ctrl+shift+alt+n",
         "mac": "cmd+shift+alt+n",
-        "when": "!isWeb && editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       },
       {
         "command": "quarto.runCellsAbove",
         "key": "ctrl+shift+alt+p",
         "mac": "cmd+shift+alt+p",
-        "when": "!isWeb && editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       },
       {
         "command": "quarto.runAllCells",
         "key": "ctrl+alt+r",
         "mac": "cmd+alt+r",
-        "when": "!isWeb && editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       }
     ],
     "menus": {
       "commandPalette": [
         {
           "command": "quarto.runSelection",
-          "when": "!isWeb && editorLangId == quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.runCurrentCell",
-          "when": "!isWeb && editorLangId == quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.runPreviousCell",
-          "when": "!isWeb && editorLangId == quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.runNextCell",
-          "when": "!isWeb && editorLangId == quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.runCellsBelow",
-          "when": "!isWeb && editorLangId == quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.runCellsAbove",
-          "when": "!isWeb && editorLangId == quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.runAllCells",
-          "when": "!isWeb && editorLangId == quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.goToNextCell",
-          "when": "!isWeb && editorLangId == quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.goToPreviousCell",
-          "when": "!isWeb && editorLangId == quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.previewMath",
-          "when": "!isWeb && editorLangId == quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.assist.pin",
-          "when": "!isWeb && && editorLangId == quarto && !quarto.assistView.isPinned"
+          "when": "editorLangId == quarto && !quarto.assistView.isPinned"
         },
         {
           "command": "quarto.assist.unpin",
-          "when": "!isWeb && editorLangId == quarto && quarto.assistView.isPinned"
+          "when": "editorLangId == quarto && quarto.assistView.isPinned"
         },
         {
-          "command": "quarto.render",
-          "when": "!isWeb"
+          "command": "quarto.render"
         }
       ],
       "view/title": [
         {
           "command": "quarto.assist.pin",
-          "when": "!isWeb && view == quarto-assist && !quarto.assistView.isPinned",
+          "when": "view == quarto-assist && !quarto.assistView.isPinned",
           "group": "navigation"
         },
         {
           "command": "quarto.assist.unpin",
-          "when": "!isWeb && view == quarto-assist && quarto.assistView.isPinned",
+          "when": "view == quarto-assist && quarto.assistView.isPinned",
           "group": "navigation"
         }
       ]
