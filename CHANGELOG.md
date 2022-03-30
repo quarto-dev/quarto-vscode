@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.11.1 (Release on 29 March 2022)
+
+- Use Ctrl+Shift+K as keyboard shortcut for render
+- Match current dark/light theme for text format preview
+
 ## 1.11.0 (Release on 29 March 2022)
 
 - Render command with integrated preview pane

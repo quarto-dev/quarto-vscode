@@ -78,12 +78,12 @@ Use the `Go to File` command (`Ctrl+P`) to navigate to other files and the `Go t
 
 You can alternatively download and install the extension from the command line as follows:
 
-1.  Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/visx/quarto-1.11.0.vsix)
+1.  Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/visx/quarto-1.11.1.vsix)
 
 2.  Install from the command line with:
 
     ```bash
-    code --install-extension quarto-1.11.0.vsix
+    code --install-extension quarto-1.11.1.vsix
     ```
 
 Note that in order to use the `code` command to perform the installation you may need to open the VS Code Command Palette (Ctrl+Shift+P) and type "shell command" to execute the `Shell Command: Install 'code' command in PATH` command. This will make sure that `code` can be invoked from the command line on your system.
