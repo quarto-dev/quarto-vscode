@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { TextDocument } from "vscode";
+import { Uri } from "vscode";
 
 export const Schemes = {
   http: "http:",
@@ -17,6 +17,6 @@ export const Schemes = {
   "vscode-insiders": "vscode-insiders:",
 };
 
-export function hasFileScheme(doc: TextDocument) {
-  return doc.uri.scheme === Schemes.file.slice(0, Schemes.file.length - 1);
+export function hasFileScheme(uri: Uri) {
+  return uri.scheme === Schemes.file.slice(0, Schemes.file.length - 1);
 }

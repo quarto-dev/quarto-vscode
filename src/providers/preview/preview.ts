@@ -33,6 +33,7 @@ import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
 import * as tmp from "tmp";
 import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
 import { MarkdownEngine } from "../../markdown/engine";
+import { isHugoMarkdown } from "../../core/hugo";
 tmp.setGracefulCleanup();
 
 let previewManager: PreviewManager;
@@ -218,10 +219,14 @@ class PreviewManager {
 
   private showPreview() {
     if (this.isBrowserPreviewable(this.previewOutputFile_)) {
-      this.webviewManager_.showWebview(this.previewUrl_!, {
-        preserveFocus: true,
-        viewColumn: ViewColumn.Beside,
-      });
+      // don't show preview for hugo markdown (as the user will be
+      // running hugo serve to do the preview)
+      if (!isHugoMarkdown(this.previewOutputFile_)) {
+        this.webviewManager_.showWebview(this.previewUrl_!, {
+          preserveFocus: true,
+          viewColumn: ViewColumn.Beside,
+        });
+      }
     } else {
       this.showOuputFile();
     }

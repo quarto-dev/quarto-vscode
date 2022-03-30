@@ -4,7 +4,6 @@
  * ------------------------------------------------------------------------------------------ */
 
 import { URL } from "url";
-import * as child_process from "child_process";
 
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { Position, Range, CompletionItem } from "vscode-languageserver-types";
