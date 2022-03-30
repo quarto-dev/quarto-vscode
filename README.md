@@ -2,6 +2,7 @@
 
 VS Code extension for the [Quarto](https://quarto.org) scientific and technical publishing system. This extension provides language support for Quarto `.qmd` files, including:
 
+- Render command with integrated preview pane
 - Syntax highlighting for markdown and embedded languages
 - Completion for embedded languages (e.g. Python, R, Julia, LaTeX, etc.)
 - Completion and diagnostics for project files and document/cell options
@@ -18,6 +19,12 @@ The easiest way to install is directly from within VS Code (search extensions fo
 You can also install from the [VS Code Extension Marketplace](https://marketplace.visualstudio.com/items?itemName=quarto.quarto) or directly from a [VISX extension file](#visx-install).
 
 ## Features
+
+### Render and Preview
+
+Render documents or projects using the `Quarto: Render Document` command (`Ctrl+Shift+K` or `Cmd+Shift+K` on the Mac). An integrated preview window displays the rendered document and automatically updates on re-render:
+
+![](https://quarto.org/docs/tools/images/vscode-render.png)
 
 ### Code Cells
 
@@ -71,12 +78,12 @@ Use the `Go to File` command (`Ctrl+P`) to navigate to other files and the `Go t
 
 You can alternatively download and install the extension from the command line as follows:
 
-1.  Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/visx/quarto-1.10.0.vsix)
+1.  Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/visx/quarto-1.11.1.vsix)
 
 2.  Install from the command line with:
 
     ```bash
-    code --install-extension quarto-1.10.0.vsix
+    code --install-extension quarto-1.11.1.vsix
     ```
 
 Note that in order to use the `code` command to perform the installation you may need to open the VS Code Command Palette (Ctrl+Shift+P) and type "shell command" to execute the `Shell Command: Install 'code' command in PATH` command. This will make sure that `code` can be invoked from the command line on your system.
