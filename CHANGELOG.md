@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.2 (Release on 30 March 2022)
+
+- Don't show preview in Hugo projects (hugo serve provides preview)
+- Render Project command for full render of all documents in project
+- Improved compatibility with VS Code web mode
+
 ## 1.11.1 (Release on 29 March 2022)
 
 - Use Ctrl+Shift+K as keyboard shortcut for render
