@@ -48,6 +48,10 @@
   "activationEvents": [
     "onLanguage:quarto",
     "onCommand:quarto.render",
+    "onCommand:quarto.newDocument",
+    "onCommand:quarto.fileNewDocument",
+    "onCommand:quarto.newPresentation",
+    "onCommand:quarto.fileNewPresentation",
     "workspaceContains:**/_quarto.{yml,yaml}",
     "onWebviewPanel:quarto.previewView"
   ],
@@ -150,6 +154,26 @@
       ]
     },
     "commands": [
+      {
+        "command": "quarto.newDocument",
+        "title": "New Document",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.fileNewDocument",
+        "title": "Quarto Document",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.newPresentation",
+        "title": "New Presentation",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.fileNewPresentation",
+        "title": "Quarto Presentation",
+        "category": "Quarto"
+      },
       {
         "command": "quarto.render",
         "title": "Render Document",
@@ -284,7 +308,21 @@
           "command": "quarto.render"
         }
       ],
+      "file/newFile": [
+        {
+          "command": "quarto.fileNewDocument"
+        },
+        {
+          "command": "quarto.fileNewPresentation"
+        }
+      ],
       "commandPalette": [
+        {
+          "command": "quarto.newDocument"
+        },
+        {
+          "command": "quarto.newPresentation"
+        },
         {
           "command": "quarto.render"
         },

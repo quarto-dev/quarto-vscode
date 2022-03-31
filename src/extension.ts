@@ -15,6 +15,7 @@ import { MarkdownEngine } from "./markdown/engine";
 import { activateBackgroundHighlighter } from "./providers/background";
 import { kQuartoDocSelector } from "./core/doc";
 import { Command, CommandManager } from "./core/command";
+import { newDocumentCommands } from "./providers/newdoc";
 
 export function activateCommon(
   context: vscode.ExtensionContext,
@@ -54,6 +55,9 @@ export function activateCommon(
   // commands (common + passed)
   const commandManager = new CommandManager();
   commandManager.register(new OpenLinkCommand(engine));
+  for (const cmd of newDocumentCommands()) {
+    commandManager.register(cmd);
+  }
   if (commands) {
     for (const cmd of commands) {
       commandManager.register(cmd);

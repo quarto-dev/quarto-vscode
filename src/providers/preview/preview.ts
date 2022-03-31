@@ -54,21 +54,19 @@ export function canPreviewDoc(doc: TextDocument) {
 }
 
 export async function previewDoc(editor: TextEditor, format?: string) {
-  // save document
-  let doc = editor.document;
-  await doc.save();
+  // save
+  await commands.executeCommand("workbench.action.files.save");
 
-  // extra save sometimes required for notbooks
-  if (doc.uri === window.activeTextEditor?.document.uri) {
-    await commands.executeCommand("workbench.action.files.save");
-    // if we saved an untitled file we now need to get the path
-    doc = window.activeTextEditor?.document || doc;
-  }
   // execute the preview
-  await previewManager.preview(doc.uri, doc, format);
+  const doc = window.activeTextEditor?.document;
+  if (doc) {
+    await previewManager.preview(doc.uri, doc, format);
 
-  // focus the editor (sometimes the terminal takes focus on launch)
-  await window.showTextDocument(doc, editor.viewColumn, false);
+    // focus the editor (sometimes the terminal steals focus)
+    if (!isNotebook(doc)) {
+      await window.showTextDocument(doc, editor.viewColumn, false);
+    }
+  }
 }
 
 export async function previewProject(target: Uri, format?: string) {

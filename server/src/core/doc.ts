@@ -5,8 +5,8 @@
 
 import { TextDocument } from "vscode-languageserver-textdocument";
 
-const kQuartoLanguageId = "quarto";
-const kYamlLanguageId = "yaml";
+export const kQuartoLanguageId = "quarto";
+export const kYamlLanguageId = "yaml";
 
 export enum DocType {
   None,

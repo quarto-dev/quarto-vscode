@@ -6,7 +6,7 @@
 import semver from "semver";
 import * as path from "path";
 
-import { TextDocument, window, Uri } from "vscode";
+import { TextDocument, window, Uri, workspace } from "vscode";
 import { Command } from "../../core/command";
 import { QuartoContext } from "../../shared/quarto";
 import { canPreviewDoc, previewDoc, previewProject } from "./preview";
@@ -54,6 +54,7 @@ class RenderProjectCommand extends RenderCommand implements Command {
   public readonly id = RenderProjectCommand.id;
 
   async doExecute() {
+    await workspace.saveAll(false);
     const targetEditor = findRenderTarget(canPreviewDoc);
     if (targetEditor) {
       // TODO: chase up the heirarchy to find project for editor
