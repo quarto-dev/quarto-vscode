@@ -54,8 +54,11 @@ export function canPreviewDoc(doc: TextDocument) {
 }
 
 export async function previewDoc(editor: TextEditor, format?: string) {
-  // save
+  // save (exit if we cancelled)
   await commands.executeCommand("workbench.action.files.save");
+  if (editor.document.isDirty) {
+    return;
+  }
 
   // execute the preview
   const doc = window.activeTextEditor?.document;
