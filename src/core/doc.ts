@@ -59,6 +59,12 @@ export async function resolveQuartoDocUri(
   return undefined;
 }
 
+export function getWholeRange(doc: vscode.TextDocument) {
+  const begin = new vscode.Position(0, 0);
+  const end = doc.lineAt(doc.lineCount - 1).range.end;
+  return new vscode.Range(begin, end);
+}
+
 async function tryResolveUriToQuartoDoc(
   resource: vscode.Uri
 ): Promise<vscode.TextDocument | undefined> {

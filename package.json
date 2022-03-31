@@ -156,12 +156,12 @@
     "commands": [
       {
         "command": "quarto.newDocument",
-        "title": "New Document",
+        "title": "New Document (qmd)",
         "category": "Quarto"
       },
       {
         "command": "quarto.fileNewDocument",
-        "title": "Quarto Document",
+        "title": "Quarto Document (qmd)",
         "category": "Quarto"
       },
       {
@@ -172,6 +172,16 @@
       {
         "command": "quarto.fileNewPresentation",
         "title": "Quarto Presentation",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.newNotebook",
+        "title": "New Notebook (ipynb)",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.fileNewNotebook",
+        "title": "Quarto Notebook (ipynb)",
         "category": "Quarto"
       },
       {
@@ -313,12 +323,18 @@
           "command": "quarto.fileNewDocument"
         },
         {
+          "command": "quarto.fileNewNotebook"
+        },
+        {
           "command": "quarto.fileNewPresentation"
         }
       ],
       "commandPalette": [
         {
           "command": "quarto.newDocument"
+        },
+        {
+          "command": "quarto.newNotebook"
         },
         {
           "command": "quarto.newPresentation"

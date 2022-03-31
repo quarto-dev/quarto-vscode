@@ -15,8 +15,8 @@ import {
   Uri,
   workspace,
   WorkspaceEdit,
-  Range,
 } from "vscode";
+import { getWholeRange } from "../core/doc";
 import { VirtualDoc } from "./vdoc";
 
 // one virtual doc per language file extension
@@ -98,10 +98,4 @@ function createVirtualDocTempFile(virtualDoc: VirtualDoc) {
   fs.writeFileSync(tmpPath, virtualDoc.content);
 
   return tmpPath;
-}
-
-function getWholeRange(doc: TextDocument) {
-  const begin = new Position(0, 0);
-  const end = doc.lineAt(doc.lineCount - 1).range.end;
-  return new Range(begin, end);
 }
