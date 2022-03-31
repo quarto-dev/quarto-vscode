@@ -161,11 +161,6 @@
         "category": "Quarto"
       },
       {
-        "command": "quarto.previewProject",
-        "title": "Preview Project",
-        "category": "Quarto"
-      },
-      {
         "command": "quarto.runSelection",
         "title": "Run Selected Line(s)",
         "category": "Quarto"
@@ -278,7 +273,21 @@
       }
     ],
     "menus": {
+      "editor/title": [
+        {
+          "command": "quarto.render",
+          "when": "editorLangId == quarto"
+        }
+      ],
+      "notebook/toolbar": [
+        {
+          "command": "quarto.render"
+        }
+      ],
       "commandPalette": [
+        {
+          "command": "quarto.render"
+        },
         {
           "command": "quarto.runSelection",
           "when": "editorLangId == quarto"
@@ -326,9 +335,6 @@
         {
           "command": "quarto.assist.unpin",
           "when": "editorLangId == quarto && quarto.assistView.isPinned"
-        },
-        {
-          "command": "quarto.render"
         }
       ],
       "view/title": [
