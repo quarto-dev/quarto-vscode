@@ -5,6 +5,7 @@
 
 import semver from "semver";
 import * as path from "path";
+import * as fs from "fs";
 
 import { TextDocument, window, Uri, workspace } from "vscode";
 import { Command } from "../../core/command";
@@ -55,25 +56,67 @@ class RenderProjectCommand extends RenderCommand implements Command {
 
   async doExecute() {
     await workspace.saveAll(false);
+    // start by using the currently active or visible source files
     const targetEditor = findRenderTarget(canPreviewDoc);
     if (targetEditor) {
-      // TODO: chase up the heirarchy to find project for editor
-      previewProject(Uri.file(path.dirname(targetEditor.document.uri.fsPath)));
+      const projectDir = projectDirForDocument(targetEditor.document);
+      if (projectDir) {
+        previewProject(Uri.file(projectDir));
+        return;
+      }
     }
-    // TODO: look at workspace
 
-    // TODO: error if can't find a project
+    // next check any open workspaces for a project file
+    if (workspace.workspaceFolders) {
+      for (const folder of workspace.workspaceFolders) {
+        if (hasQuartoProject(folder.uri.fsPath)) {
+          previewProject(folder.uri);
+          return;
+        }
+      }
+    }
 
-    // TODO: not re-using when single doc is rendered back into it (could be the uri
-    // we are using to call into the python extension with?)
+    // no project found!
+    window.showInformationMessage("No project available to render.");
   }
 }
 
-function findRenderTarget(filter: (doc: TextDocument) => boolean) {
+function projectDirForDocument(doc: TextDocument) {
+  let dir = path.dirname(doc.fileName);
+  while (true) {
+    if (hasQuartoProject(dir)) {
+      return dir;
+    } else {
+      const nextDir = path.dirname(dir);
+      if (nextDir !== dir) {
+        dir = nextDir;
+      } else {
+        break;
+      }
+    }
+  }
+  return undefined;
+}
+
+function hasQuartoProject(dir?: string) {
+  if (dir) {
+    return (
+      fs.existsSync(path.join(dir, "_quarto.yml")) ||
+      fs.existsSync(path.join(dir, "_quarto.yaml"))
+    );
+  } else {
+    return false;
+  }
+}
+
+function findRenderTarget(
+  filter: (doc: TextDocument) => boolean,
+  includeVisible = true
+) {
   const activeDoc = window.activeTextEditor?.document;
   if (activeDoc && filter(activeDoc)) {
     return window.activeTextEditor;
-  } else {
+  } else if (includeVisible) {
     const visibleEditor = window.visibleTextEditors.find((editor) =>
       canPreviewDoc(editor.document)
     );
@@ -82,5 +125,7 @@ function findRenderTarget(filter: (doc: TextDocument) => boolean) {
     } else {
       return undefined;
     }
+  } else {
+    return undefined;
   }
 }
