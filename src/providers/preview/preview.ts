@@ -33,27 +33,38 @@ import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
 import * as tmp from "tmp";
 import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
 import { isHugoMarkdown } from "../../core/hugo";
+import { MarkdownEngine } from "../../markdown/engine";
 tmp.setGracefulCleanup();
 
 let previewManager: PreviewManager;
 
 export function activatePreview(
   context: ExtensionContext,
-  quartoContext: QuartoContext
+  quartoContext: QuartoContext,
+  engine: MarkdownEngine
 ): Command[] {
   // create preview manager
   previewManager = new PreviewManager(context, quartoContext);
   context.subscriptions.push(previewManager);
 
   // preview commands
-  return previewCommands(quartoContext);
+  return previewCommands(quartoContext, engine);
 }
 
 export function canPreviewDoc(doc: TextDocument) {
   return !!(isQuartoDoc(doc) || isNotebook(doc));
 }
 
-export async function previewDoc(editor: TextEditor, format?: string) {
+export async function previewDoc(
+  editor: TextEditor,
+  format?: string,
+  slideIndex?: number
+) {
+  // set the slide index if its provided
+  if (slideIndex !== undefined) {
+    previewManager.setSlideIndex(slideIndex);
+  }
+
   // save (exit if we cancelled)
   await commands.executeCommand("workbench.action.files.save");
   if (editor.document.isDirty) {
@@ -112,6 +123,10 @@ class PreviewManager {
     } else {
       this.startPreview(prevewEnv, uri, doc, format);
     }
+  }
+
+  public setSlideIndex(slideIndex: number) {
+    this.webviewManager_.setSlideIndex(slideIndex);
   }
 
   private canReuseRunningPreview(previewEnv: PreviewEnv) {

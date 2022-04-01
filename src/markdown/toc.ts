@@ -18,6 +18,17 @@ export interface TocEntry {
   readonly location: vscode.Location;
 }
 
+export function getHeaderLevel(markup: string): number {
+  if (markup === "=") {
+    return 1;
+  } else if (markup === "-") {
+    return 2;
+  } else {
+    // '#', '##', ...
+    return markup.length;
+  }
+}
+
 export class MarkdownTableOfContents {
   public static async create(
     engine: MarkdownEngine,
@@ -93,7 +104,7 @@ export class MarkdownTableOfContents {
       toc.push({
         slug,
         text: MarkdownTableOfContents.getHeaderText(line.text),
-        level: MarkdownTableOfContents.getHeaderLevel(heading.markup),
+        level: getHeaderLevel(heading.markup),
         line: lineNumber,
         location: new vscode.Location(
           document.uri,
@@ -123,17 +134,6 @@ export class MarkdownTableOfContents {
         ),
       };
     });
-  }
-
-  private static getHeaderLevel(markup: string): number {
-    if (markup === "=") {
-      return 1;
-    } else if (markup === "-") {
-      return 2;
-    } else {
-      // '#', '##', ...
-      return markup.length;
-    }
   }
 
   private static getHeaderText(header: string): string {

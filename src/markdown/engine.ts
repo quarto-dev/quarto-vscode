@@ -9,6 +9,7 @@ import Token from "markdown-it/lib/token";
 import * as vscode from "vscode";
 import { MarkdownTextDocument } from "./document";
 import { mathPlugin } from "../shared/markdownit-math";
+import { frontMatterPlugin } from "../shared/markdownit-yaml";
 
 const UNICODE_NEWLINE_REGEX = /\u2028|\u2029/g;
 
@@ -49,17 +50,18 @@ export class MarkdownEngine {
         "code",
         "fence",
         "heading",
+        "lheading",
         "html_block",
         "list",
         "paragraph",
+        "hr",
         // exclude some blocks we don't care about
-        // "hr",
-        // "lheading",
         // "reference",
       ]);
       this.md.use(mathPlugin, {
         enableInlines: false,
       });
+      this.md.use(frontMatterPlugin);
     }
     return this.md;
   }

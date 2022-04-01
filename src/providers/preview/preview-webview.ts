@@ -24,6 +24,8 @@ export interface ShowOptions {
 }
 
 export class PreviewWebviewManager {
+  public static readonly slideIndex = "quarto.slideIndex";
+
   constructor(context: ExtensionContext) {
     this.extensionUri_ = context.extensionUri;
 
@@ -34,6 +36,12 @@ export class PreviewWebviewManager {
         },
       })
     );
+  }
+
+  public setSlideIndex(slideIndex: number) {
+    if (this.activeView_) {
+      this.activeView_.setSlideIndex(slideIndex);
+    }
   }
 
   public showWebview(url: string, options?: ShowOptions): void {
@@ -94,6 +102,7 @@ export class PreviewWebviewManager {
 
 class QuartoPreviewView extends Disposable {
   public static readonly viewType = "quarto.previewView";
+
   private static readonly title = "Quarto Preview";
 
   private readonly _webviewPanel: WebviewPanel;
@@ -207,6 +216,13 @@ class QuartoPreviewView extends Disposable {
 
   public reveal() {
     this._webviewPanel.reveal(undefined, true);
+  }
+
+  public setSlideIndex(slideIndex: number) {
+    this._webviewPanel.webview.postMessage({
+      type: "setSlideIndex",
+      index: slideIndex,
+    });
   }
 
   private getHtml(url: string) {

@@ -556,6 +556,7 @@
     "semver": "^7.3.5",
     "tmp": "^0.2.1",
     "uuid": "^8.3.2",
+    "js-yaml": "^4.1.0",
     "vscode-languageclient": "^7.0.0",
     "vscode-nls": "^5.0.0"
   },
@@ -575,7 +576,6 @@
     "@vscode/test-web": "^0.0.22",
     "concurrently": "^7.0.0",
     "esbuild": "^0.14.21",
-    "js-yaml": "^4.1.0",
     "npx": "^10.2.2",
     "ovsx": "^0.3.0",
     "plist": "^3.0.1",

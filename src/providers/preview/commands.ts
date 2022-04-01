@@ -11,10 +11,16 @@ import { TextDocument, window, Uri, workspace } from "vscode";
 import { Command } from "../../core/command";
 import { QuartoContext } from "../../shared/quarto";
 import { canPreviewDoc, previewDoc, previewProject } from "./preview";
+import { MarkdownEngine } from "../../markdown/engine";
+import { revealSlideIndex } from "./preview-reveal";
+import { isNotebook } from "../../core/doc";
 
-export function previewCommands(quartoContext: QuartoContext): Command[] {
+export function previewCommands(
+  quartoContext: QuartoContext,
+  engine: MarkdownEngine
+): Command[] {
   return [
-    new RenderDocumentCommand(quartoContext),
+    new RenderDocumentCommand(quartoContext, engine),
     new RenderProjectCommand(quartoContext),
   ];
 }
@@ -38,12 +44,28 @@ abstract class RenderCommand {
 }
 
 class RenderDocumentCommand extends RenderCommand implements Command {
+  constructor(
+    quartoContext: QuartoContext,
+    private readonly engine_: MarkdownEngine
+  ) {
+    super(quartoContext);
+  }
   private static readonly id = "quarto.render";
   public readonly id = RenderDocumentCommand.id;
   async doExecute() {
     const targetEditor = findRenderTarget(canPreviewDoc);
     if (targetEditor) {
-      await previewDoc(targetEditor);
+      // set the slide index from the source editor so we can
+      // navigate to it in the preview frame
+      const slideIndex = !isNotebook(targetEditor.document)
+        ? await revealSlideIndex(
+            targetEditor.selection.active,
+            targetEditor.document,
+            this.engine_
+          )
+        : undefined;
+
+      await previewDoc(targetEditor, undefined, slideIndex);
     } else {
       window.showInformationMessage("No Quarto document available to render");
     }

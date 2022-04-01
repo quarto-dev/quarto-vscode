@@ -23,18 +23,46 @@ const reloadButton = header.querySelector(".reload-button");
 const openExternalButton = header.querySelector(".open-external-button");
 const kQuartoPreviewReqId = "quartoPreviewReqId";
 const kQuartoPreviewThemeCategory = "quartoPreviewThemeCategory";
+let slideIndex = 0;
 
 window.addEventListener("message", (e) => {
-  switch (e.data.type) {
+  const updateAddressBar = (href) => {
+    const url = new URL(href);
+    url.searchParams.delete(kQuartoPreviewReqId);
+    url.searchParams.delete(kQuartoPreviewThemeCategory);
+    input.value = url.toString();
+  };
+
+  switch (e.data.type || e.data.message) {
     case "navigate": {
-      const url = new URL(e.data.href);
-      url.searchParams.delete(kQuartoPreviewReqId);
-      url.searchParams.delete(kQuartoPreviewThemeCategory);
-      input.value = url.toString();
+      updateAddressBar(e.data.href);
       break;
     }
     case "focus": {
       iframe.focus();
+      break;
+    }
+    case "setSlideIndex": {
+      slideIndex = e.data.index || 0;
+      break;
+    }
+    case "reveal-init": {
+      // set the slide index
+      const slides = e.data.data.slides;
+      const slide = slides[slideIndex];
+      if (slide) {
+        e.source.postMessage(
+          { message: "reveal-slide", data: slide },
+          e.origin
+        );
+      }
+
+      // let reveal know we are ready for additional messages
+      e.source.postMessage({ message: "reveal-ready" }, e.origin);
+      break;
+    }
+    case "reveal-hashchange": {
+      updateAddressBar(e.data.data.href);
       break;
     }
     case "didChangeFocusLockIndicatorEnabled": {
