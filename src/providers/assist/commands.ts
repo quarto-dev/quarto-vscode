@@ -7,7 +7,7 @@ import { Position, Selection, window, commands } from "vscode";
 import { Command } from "../../core/command";
 import { isQuartoDoc } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
-import { languageBlockAtPosition } from "../../vdoc/vdoc";
+import { languageBlockAtPosition } from "../../markdown/language";
 import { QuartoAssistViewProvider } from "./webview";
 
 export class PreviewMathCommand implements Command {

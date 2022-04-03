@@ -9,6 +9,7 @@ import { isQuartoDoc } from "../core/doc";
 import { MarkdownEngine } from "../markdown/engine";
 import {
   isExecutableLanguageBlock,
+  languageBlockAtPosition,
   languageNameFromBlock,
 } from "../markdown/language";
 import { embeddedLanguage, EmbeddedLanguage } from "./languages";
@@ -71,26 +72,6 @@ export async function virtualDocUri(virtualDoc: VirtualDoc, parentUri: Uri) {
   return virtualDoc.language.type === "content"
     ? virtualDocUriFromEmbeddedContent(virtualDoc, parentUri)
     : await virtualDocUriFromTempFile(virtualDoc);
-}
-
-export function languageBlockAtPosition(
-  tokens: Token[],
-  position: Position,
-  includeFence = false
-) {
-  for (const languageBlock of tokens.filter(isExecutableLanguageBlock)) {
-    if (languageBlock.map) {
-      let [begin, end] = languageBlock.map;
-      if (includeFence) {
-        begin--;
-        end++;
-      }
-      if (position.line > begin && position.line < end - 1) {
-        return languageBlock;
-      }
-    }
-  }
-  return undefined;
 }
 
 export function languageAtPosition(tokens: Token[], position: Position) {

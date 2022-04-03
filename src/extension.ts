@@ -16,6 +16,7 @@ import { activateBackgroundHighlighter } from "./providers/background";
 import { kQuartoDocSelector } from "./core/doc";
 import { Command, CommandManager } from "./core/command";
 import { newDocumentCommands } from "./providers/newdoc";
+import { insertCommands } from "./providers/insert";
 
 export function activateCommon(
   context: vscode.ExtensionContext,
@@ -56,6 +57,9 @@ export function activateCommon(
   const commandManager = new CommandManager();
   commandManager.register(new OpenLinkCommand(engine));
   for (const cmd of newDocumentCommands()) {
+    commandManager.register(cmd);
+  }
+  for (const cmd of insertCommands(engine)) {
     commandManager.register(cmd);
   }
   if (commands) {

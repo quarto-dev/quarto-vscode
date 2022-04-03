@@ -18,8 +18,8 @@ import { MarkdownEngine } from "../../markdown/engine";
 import {
   isExecutableLanguageBlockOf,
   languageNameFromBlock,
+  languageBlockAtPosition,
 } from "../../markdown/language";
-import { languageBlockAtPosition } from "../../vdoc/vdoc";
 import {
   blockHasExecutor,
   ensureRequiredExtension,

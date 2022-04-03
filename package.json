@@ -195,6 +195,11 @@
         "category": "Quarto"
       },
       {
+        "command": "quarto.insertCodeCell",
+        "title": "Insert Code Cell",
+        "category": "Quarto"
+      },
+      {
         "command": "quarto.runSelection",
         "title": "Run Selected Line(s)",
         "category": "Quarto"
@@ -264,6 +269,11 @@
         "mac": "cmd+shift+k"
       },
       {
+        "command": "quarto.insertCodeCell",
+        "key": "ctrl+shift+i",
+        "mac": "cmd+shift+i"
+      },
+      {
         "command": "quarto.runSelection",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
@@ -309,6 +319,10 @@
     "menus": {
       "editor/title": [
         {
+          "command": "quarto.insertCodeCell",
+          "when": "editorLangId == quarto"
+        },
+        {
           "command": "quarto.render",
           "when": "editorLangId == quarto"
         }
@@ -341,6 +355,10 @@
         },
         {
           "command": "quarto.render"
+        },
+        {
+          "command": "quarto.insertCodeCell",
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.runSelection",
@@ -426,7 +444,6 @@
         "editor.wordWrap": "on",
         "editor.quickSuggestions": true,
         "editor.quickSuggestionsDelay": 250,
-        "editor.snippetSuggestions": "none",
         "editor.wordBasedSuggestions": false,
         "editor.suggestOnTriggerCharacters": true,
         "editor.unicodeHighlight.ambiguousCharacters": false,
