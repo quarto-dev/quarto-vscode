@@ -29,6 +29,7 @@ export default class QuartoFoldingProvider
       this.getRegions(document),
       this.getHeaderFoldingRanges(document),
       this.getBlockFoldingRanges(document),
+      this.getDivFoldingRanges(document),
     ]);
     return foldables.flat().slice(0, rangeLimit);
   }
@@ -79,6 +80,18 @@ export default class QuartoFoldingProvider
       }
       return new vscode.FoldingRange(entry.line, endLine);
     });
+  }
+
+  private async getDivFoldingRanges(document: vscode.TextDocument) {
+    const tokens = await this.engine.parse(document);
+    const divTokens = tokens.filter(
+      (token) => token.type === "container__open"
+    );
+    return divTokens
+      .filter((token) => !!token.map)
+      .map((token) => {
+        return new vscode.FoldingRange(token.map![0], token.map![1]);
+      });
   }
 
   private async getBlockFoldingRanges(

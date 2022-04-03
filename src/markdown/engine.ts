@@ -6,6 +6,7 @@
 
 import MarkdownIt from "markdown-it";
 import Token from "markdown-it/lib/token";
+import containerPlugin from "markdown-it-container";
 import * as vscode from "vscode";
 import { MarkdownTextDocument } from "./document";
 import { mathPlugin } from "../shared/markdownit-math";
@@ -62,6 +63,11 @@ export class MarkdownEngine {
         enableInlines: false,
       });
       this.md.use(frontMatterPlugin);
+      this.md.use(containerPlugin, "", {
+        validate: (_params: string) => {
+          return true;
+        },
+      });
     }
     return this.md;
   }

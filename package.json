@@ -567,13 +567,14 @@
   "dependencies": {
     "axios": "^0.26.1",
     "highlight.js": "^11.4.0",
+    "js-yaml": "^4.1.0",
     "lodash.debounce": "^4.0.8",
     "markdown-it": "^12.0.2",
+    "markdown-it-container": "^3.0.0",
     "markdown-it-highlightjs": "^3.6.0",
     "semver": "^7.3.5",
     "tmp": "^0.2.1",
     "uuid": "^8.3.2",
-    "js-yaml": "^4.1.0",
     "vscode-languageclient": "^7.0.0",
     "vscode-nls": "^5.0.0"
   },
@@ -583,6 +584,7 @@
     "@types/js-yaml": "^3.12.2",
     "@types/lodash.debounce": "^4.0.6",
     "@types/markdown-it": "^12.0.2",
+    "@types/markdown-it-container": "^2.0.5",
     "@types/markdown-it-highlightjs": "^3.3.1",
     "@types/node": "^8.10.25",
     "@types/semver": "^7.3.9",
