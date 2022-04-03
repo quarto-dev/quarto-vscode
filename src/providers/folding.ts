@@ -101,7 +101,6 @@ export default class QuartoFoldingProvider
     return fmTokens
       .filter((token) => !!token.map)
       .map((token) => {
-        console.log(token);
         return new vscode.FoldingRange(
           token.map![0] + 1,
           token.map![0] + token.markup.split("\n").length - 2
