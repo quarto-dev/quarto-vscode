@@ -7,7 +7,11 @@
 import * as vscode from "vscode";
 import { MarkdownTextDocument } from "../markdown/document";
 import { MarkdownEngine } from "../markdown/engine";
-import { MarkdownTableOfContents, TocEntry } from "../markdown/toc";
+import {
+  MarkdownTableOfContents,
+  TocEntry,
+  TocEntryType,
+} from "../markdown/toc";
 
 interface MarkdownSymbol {
   readonly level: number;
@@ -62,7 +66,7 @@ export default class QuartoDocumentSymbolProvider
   private toSymbolInformation(entry: TocEntry): vscode.SymbolInformation {
     return new vscode.SymbolInformation(
       this.getSymbolName(entry),
-      vscode.SymbolKind.Constant,
+      this.tocEntrySymbolKind(entry),
       "",
       entry.location
     );
@@ -72,7 +76,7 @@ export default class QuartoDocumentSymbolProvider
     return new vscode.DocumentSymbol(
       this.getSymbolName(entry),
       "",
-      vscode.SymbolKind.Constant,
+      this.tocEntrySymbolKind(entry),
       entry.location.range,
       entry.location.range
     );
@@ -80,5 +84,19 @@ export default class QuartoDocumentSymbolProvider
 
   private getSymbolName(entry: TocEntry): string {
     return entry.text;
+  }
+
+  private tocEntrySymbolKind(entry: TocEntry): vscode.SymbolKind {
+    switch (entry.type) {
+      case TocEntryType.Title: {
+        return vscode.SymbolKind.File;
+      }
+      case TocEntryType.Heading: {
+        return vscode.SymbolKind.Constant;
+      }
+      case TocEntryType.CodeCell: {
+        return vscode.SymbolKind.Function;
+      }
+    }
   }
 }

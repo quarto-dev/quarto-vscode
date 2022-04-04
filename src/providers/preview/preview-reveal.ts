@@ -5,10 +5,9 @@
 
 import { Position, TextDocument } from "vscode";
 
-import * as yaml from "js-yaml";
-
 import { MarkdownEngine } from "../../markdown/engine";
 import { getHeaderLevel } from "../../markdown/toc";
+import { parseFrontMatterStr } from "../../core/yaml";
 
 export async function revealSlideIndex(
   cursorPos: Position,
@@ -113,14 +112,16 @@ async function revealEditorLocation(
 
 function slideLevelFromYaml(str: string) {
   try {
-    str = str.replace(/---\s*$/, "");
-    const meta = yaml.load(str);
-    const kSlideLevel = "slide-level";
-    return (
-      meta[kSlideLevel] || meta["format"]?.["revealjs"]?.[kSlideLevel] || null
-    );
+    const meta = parseFrontMatterStr(str);
+    if (meta) {
+      const kSlideLevel = "slide-level";
+      return (
+        meta[kSlideLevel] || meta["format"]?.["revealjs"]?.[kSlideLevel] || null
+      );
+    } else {
+      return null;
+    }
   } catch (error) {
-    console.log(error);
     return null;
   }
 }
