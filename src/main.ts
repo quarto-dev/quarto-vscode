@@ -16,6 +16,7 @@ import { activateCommon } from "./extension";
 import { activatePreview } from "./providers/preview/preview";
 import { initQuartoContext } from "./shared/quarto";
 import { activateStatusBar } from "./providers/statusbar";
+import { activateQuartoActivityBarPanel } from "./providers/activity/activity";
 
 export function activate(context: vscode.ExtensionContext) {
   // create markdown engine
@@ -47,6 +48,10 @@ export function activate(context: vscode.ExtensionContext) {
     // assist panel
     const assistCommands = activateQuartoAssistPanel(context, engine);
     commands.push(...assistCommands);
+
+    // activity bar
+    const activityBarCommands = activateQuartoActivityBarPanel(context, engine);
+    commands.push(...activityBarCommands);
 
     // preview
     const previewCommands = activatePreview(context, quartoContext, engine);

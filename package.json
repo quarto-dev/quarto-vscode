@@ -142,6 +142,13 @@
           "title": "Quarto",
           "icon": "assets/logo/quarto.svg"
         }
+      ],
+      "activitybar": [
+        {
+          "id": "quarto-activity-bar",
+          "title": "Quarto",
+          "icon": "assets/logo/quarto.svg"
+        }
       ]
     },
     "views": {
@@ -149,6 +156,13 @@
         {
           "type": "webview",
           "id": "quarto-assist",
+          "name": "Quarto"
+        }
+      ],
+      "quarto-activity-bar": [
+        {
+          "type": "webview",
+          "id": "quarto-activity-bar-view",
           "name": "Quarto"
         }
       ]
