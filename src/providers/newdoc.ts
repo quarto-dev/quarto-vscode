@@ -12,9 +12,8 @@ import {
   NotebookCellKind,
   WorkspaceEdit,
 } from "vscode";
-import { kQuartoLanguageId } from "../../server/src/core/doc";
 import { Command } from "../core/command";
-import { getWholeRange } from "../core/doc";
+import { getWholeRange, kQuartoLanguageId } from "../core/doc";
 
 export function newDocumentCommands(): Command[] {
   return [

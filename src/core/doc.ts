@@ -7,7 +7,7 @@
 import * as vscode from "vscode";
 import { extname } from "./path";
 
-const kQuartoLanguageId = "quarto";
+export const kQuartoLanguageId = "quarto";
 const kYamlLanguageId = "yaml";
 
 export const kQuartoDocSelector: vscode.DocumentSelector = {
