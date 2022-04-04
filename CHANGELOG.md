@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.12.0 (Release on 3 April 2022)
+
+- Insert code cell command (Ctrl+Shift+I)
+- Navigate revealjs preview to slide at cursor
+- Commands for creating documents and presentations
+- Code folding for divs and front matter
+
 ## 1.11.2 (Release on 30 March 2022)
 
 - Don't show preview in Hugo projects (hugo serve provides preview)
