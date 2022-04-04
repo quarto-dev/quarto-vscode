@@ -11,7 +11,7 @@
     "pandoc",
     "quarto"
   ],
-  "version": "1.12.0",
+  "version": "1.12.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/quarto-dev/quarto-vscode.git"
@@ -444,6 +444,7 @@
         "editor.wordWrap": "on",
         "editor.quickSuggestions": true,
         "editor.quickSuggestionsDelay": 250,
+        "editor.snippetSuggestions": "none",
         "editor.wordBasedSuggestions": false,
         "editor.suggestOnTriggerCharacters": true,
         "editor.unicodeHighlight.ambiguousCharacters": false,

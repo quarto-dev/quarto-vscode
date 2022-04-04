@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.12.1 (Release on 4 April 2022)
+
+- Disable snippet suggestions by default
+
 ## 1.12.0 (Release on 3 April 2022)
 
 - Insert code cell command (Ctrl+Shift+I)
