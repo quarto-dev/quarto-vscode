@@ -305,18 +305,20 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
       document
     );
     for (const entry of toc.entries) {
-      const replacementRange = new vscode.Range(
-        insertionRange.start,
-        position.translate({ characterDelta: context.linkSuffix.length })
-      );
-      yield {
-        kind: vscode.CompletionItemKind.Reference,
-        label: "#" + decodeURI(entry.slug),
-        range: {
-          inserting: insertionRange,
-          replacing: replacementRange,
-        },
-      };
+      if (entry.slug) {
+        const replacementRange = new vscode.Range(
+          insertionRange.start,
+          position.translate({ characterDelta: context.linkSuffix.length })
+        );
+        yield {
+          kind: vscode.CompletionItemKind.Reference,
+          label: "#" + decodeURI(entry.slug),
+          range: {
+            inserting: insertionRange,
+            replacing: replacementRange,
+          },
+        };
+      }
     }
   }
 
