@@ -186,7 +186,7 @@
       },
       {
         "command": "quarto.render",
-        "title": "Render Document",
+        "title": "Render",
         "category": "Quarto"
       },
       {
@@ -322,6 +322,12 @@
           "command": "quarto.insertCodeCell",
           "when": "editorLangId == quarto"
         },
+        {
+          "command": "quarto.render",
+          "when": "editorLangId == quarto"
+        }
+      ],
+      "editor/title/run": [
         {
           "command": "quarto.render",
           "when": "editorLangId == quarto"
