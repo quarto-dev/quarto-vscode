@@ -3,7 +3,9 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-// https://code.visualstudio.com/api/extension-guides/webview
+// https://github.com/HuyQLuong/vscode-webview-extension-with-react
+// https://code.visualstudio.com/blogs/2021/10/11/webview-ui-toolkit
+// https://github.com/microsoft/vscode-webview-ui-toolkit
 
 import {
   WebviewViewProvider,
@@ -13,13 +15,33 @@ import {
   CancellationToken,
   Disposable,
   ExtensionContext,
+  window,
 } from "vscode";
 
+import * as React from "react";
+import * as ReactDOMServer from "react-dom/server";
+
+import { Command } from "../../core/command";
 import { MarkdownEngine } from "../../markdown/engine";
 
-export class QuartoActivityBarViewProvider
-  implements WebviewViewProvider, Disposable
-{
+export function activateQuartoActivityBarPanel(
+  context: ExtensionContext,
+  engine: MarkdownEngine
+): Command[] {
+  const provider = new QuartoActivityBarViewProvider(context, engine);
+  context.subscriptions.push(provider);
+
+  context.subscriptions.push(
+    window.registerWebviewViewProvider(
+      QuartoActivityBarViewProvider.viewType,
+      provider
+    )
+  );
+
+  return [];
+}
+
+class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
   public static readonly viewType = "quarto-activity-bar-view";
 
   constructor(context: ExtensionContext, _engine: MarkdownEngine) {
@@ -49,10 +71,22 @@ export class QuartoActivityBarViewProvider
       this.view_ = undefined;
     });
 
-    webviewView.webview.html = "<body>foo</body>";
+    webviewView.webview.html = this.webviewHtml();
+  }
+
+  private webviewHtml() {
+    return ReactDOMServer.renderToString(<ActivityBar />);
   }
 
   private view_?: WebviewView;
   private readonly extensionUri_: Uri;
   private readonly _disposables: Disposable[] = [];
 }
+
+const ActivityBar = () => {
+  return (
+    <div className="panel-wrapper">
+      <span className="panel-info">The Message</span>
+    </div>
+  );
+};
