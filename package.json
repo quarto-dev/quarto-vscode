@@ -51,6 +51,7 @@
     "onCommand:quarto.newDocument",
     "onCommand:quarto.fileNewDocument",
     "onCommand:quarto.newPresentation",
+    "onCommand:quarto.newNotebook",
     "onCommand:quarto.fileNewPresentation",
     "workspaceContains:**/_quarto.{yml,yaml}",
     "onWebviewPanel:quarto.previewView"
