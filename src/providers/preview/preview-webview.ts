@@ -15,6 +15,7 @@ import {
   ExtensionContext,
   ColorThemeKind,
 } from "vscode";
+import { wwwAssetPath, wwwSharedAssetPath } from "../../core/assets";
 
 import { Disposable } from "../../core/dispose";
 
@@ -128,6 +129,7 @@ class QuartoPreviewView extends Disposable {
         retainContextWhenHidden: true,
         localResourceRoots: [
           Uri.joinPath(extensionUri, "assets", "www", "preview"),
+          Uri.joinPath(extensionUri, "assets", "www", "shared"),
         ],
       }
     );
@@ -233,7 +235,7 @@ class QuartoPreviewView extends Disposable {
     const mainJs = this.extensionResourceUrl(this.assetPath("index.js"));
     const mainCss = this.extensionResourceUrl(this.assetPath("main.css"));
     const codiconsUri = this.extensionResourceUrl(
-      this.assetPath("codicon.css")
+      wwwSharedAssetPath(["codicon.css"])
     );
 
     return /* html */ `<!DOCTYPE html>
@@ -297,7 +299,7 @@ class QuartoPreviewView extends Disposable {
   }
 
   private assetPath(asset: string): string[] {
-    return ["assets", "www", "preview", asset];
+    return wwwAssetPath(["preview", asset]);
   }
 
   private extensionResourceUrl(parts: string[]): Uri {

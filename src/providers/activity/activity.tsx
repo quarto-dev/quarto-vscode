@@ -7,6 +7,8 @@
 // https://code.visualstudio.com/blogs/2021/10/11/webview-ui-toolkit
 // https://github.com/microsoft/vscode-webview-ui-toolkit
 
+// https://github.com/microsoft/vscode-webview-ui-toolkit-samples/tree/main/react/hello-world-cra
+
 import {
   WebviewViewProvider,
   WebviewView,
@@ -23,6 +25,7 @@ import * as ReactDOMServer from "react-dom/server";
 
 import { Command } from "../../core/command";
 import { MarkdownEngine } from "../../markdown/engine";
+import { wwwAssetPath, wwwSharedAssetPath } from "../../core/assets";
 
 export function activateQuartoActivityBarPanel(
   context: ExtensionContext,
@@ -88,6 +91,9 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
       "dist",
       "toolkit.js", // A toolkit.min.js file is also available
     ]);
+    const codiconsUri = this.extensionResourceUrl(
+      wwwSharedAssetPath(["codicon.css"])
+    );
 
     return /* html */ `<!DOCTYPE html>
 			<html>
@@ -103,6 +109,7 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
 					">
 
 				<link rel="stylesheet" type="text/css" href="${activityCss}">
+        <link rel="stylesheet" type="text/css" href="${codiconsUri}">
 			</head>
 			<body>
 				<main>
@@ -115,7 +122,7 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
   }
 
   private assetPath(asset: string): string[] {
-    return ["assets", "www", "activity", asset];
+    return wwwAssetPath(["activity", asset]);
   }
 
   private extensionResourceUrl(parts: string[]): Uri {
@@ -141,7 +148,12 @@ const ActivityBar = () => {
   return (
     <>
       <h1>Hello World!</h1>
-      <vscode-button id="howdy">Howdy!</vscode-button>
+      <a href="command:quarto.render">
+        <vscode-button id="howdy">
+          Render It
+          <span slot="start" className="codicon codicon-add"></span>
+        </vscode-button>
+      </a>
     </>
   );
 };
