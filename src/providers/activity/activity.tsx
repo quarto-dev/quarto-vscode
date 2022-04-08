@@ -71,11 +71,49 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
       this.view_ = undefined;
     });
 
-    webviewView.webview.html = this.webviewHtml();
+    webviewView.webview.html = this.getHtml();
   }
 
-  private webviewHtml() {
-    return ReactDOMServer.renderToString(<ActivityBar />);
+  private getHtml() {
+    const nonce = getNonce();
+
+    const activityJs = this.extensionResourceUrl(this.assetPath("activity.js"));
+    const activityCss = this.extensionResourceUrl(
+      this.assetPath("activity.css")
+    );
+
+    return /* html */ `<!DOCTYPE html>
+			<html>
+			<head>
+				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+				<meta http-equiv="Content-Security-Policy" content="
+					default-src 'none';
+					font-src ${this.view_?.webview.cspSource};
+					style-src ${this.view_?.webview.cspSource};
+					script-src 'nonce-${nonce}';
+					frame-src *;
+					">
+
+				<link rel="stylesheet" type="text/css" href="${activityCss}">
+			</head>
+			<body>
+				<main>
+        ${ReactDOMServer.renderToString(<ActivityBar />)}
+        </main>
+				<script src="${activityJs}" nonce="${nonce}"></script>
+			</body>
+			</html>`;
+  }
+
+  private assetPath(asset: string): string[] {
+    return ["assets", "www", "activity", asset];
+  }
+
+  private extensionResourceUrl(parts: string[]): Uri {
+    return this.view_!.webview.asWebviewUri(
+      Uri.joinPath(this.extensionUri_, ...parts)
+    );
   }
 
   private view_?: WebviewView;
@@ -86,7 +124,17 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
 const ActivityBar = () => {
   return (
     <div className="panel-wrapper">
-      <span className="panel-info">The Message</span>
+      <span className="panel-info">The Message 2</span>
     </div>
   );
 };
+
+function getNonce() {
+  let text = "";
+  const possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for (let i = 0; i < 64; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+}
