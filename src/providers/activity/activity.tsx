@@ -81,6 +81,13 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
     const activityCss = this.extensionResourceUrl(
       this.assetPath("activity.css")
     );
+    const toolkitUri = this.extensionResourceUrl([
+      "node_modules",
+      "@vscode",
+      "webview-ui-toolkit",
+      "dist",
+      "toolkit.js", // A toolkit.min.js file is also available
+    ]);
 
     return /* html */ `<!DOCTYPE html>
 			<html>
@@ -101,6 +108,7 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
 				<main>
         ${ReactDOMServer.renderToString(<ActivityBar />)}
         </main>
+        <script type="module" src="${toolkitUri}" nonce="${nonce}"></script>
 				<script src="${activityJs}" nonce="${nonce}"></script>
 			</body>
 			</html>`;
@@ -121,11 +129,20 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
   private readonly _disposables: Disposable[] = [];
 }
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      ["vscode-button"]: any;
+    }
+  }
+}
+
 const ActivityBar = () => {
   return (
-    <div className="panel-wrapper">
-      <span className="panel-info">The Message 2</span>
-    </div>
+    <>
+      <h1>Hello World!</h1>
+      <vscode-button id="howdy">Howdy!</vscode-button>
+    </>
   );
 };
 

@@ -588,6 +588,7 @@
     }
   },
   "dependencies": {
+    "@vscode/webview-ui-toolkit": "^1.0.0",
     "axios": "^0.26.1",
     "highlight.js": "^11.4.0",
     "js-yaml": "^4.1.0",
