@@ -219,15 +219,15 @@ class PreviewManager {
         /Browse at (http:\/\/localhost\:\d+\/[^\s]*)/
       );
       if (match) {
-        // capture preview url and show preview
-        this.previewUrl_ = match[1];
-        this.showPreview();
-
         // capture output file
         const fileMatch = this.previewOutput_.match(/Output created\: (.*?)\n/);
         if (fileMatch) {
           this.previewOutputFile_ = this.outputFileUri(fileMatch[1]);
         }
+
+        // capture preview url and show preview
+        this.previewUrl_ = match[1];
+        this.showPreview();
       }
     } else {
       // detect update to existing preview and activate browser
