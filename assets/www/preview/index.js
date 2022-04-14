@@ -25,14 +25,15 @@ const kQuartoPreviewReqId = "quartoPreviewReqId";
 const kQuartoPreviewThemeCategory = "quartoPreviewThemeCategory";
 let slideIndex = 0;
 
-window.addEventListener("message", (e) => {
-  const updateAddressBar = (href) => {
-    const url = new URL(href);
-    url.searchParams.delete(kQuartoPreviewReqId);
-    url.searchParams.delete(kQuartoPreviewThemeCategory);
-    input.value = url.toString();
-  };
+const updateAddressBar = (href) => {
+  const url = new URL(href);
+  url.searchParams.delete(kQuartoPreviewReqId);
+  url.searchParams.delete(kQuartoPreviewThemeCategory);
+  input.value = url.toString();
+  vscode.setState({ url: url.toString() });
+};
 
+window.addEventListener("message", (e) => {
   switch (e.data.type || e.data.message) {
     case "navigate": {
       updateAddressBar(e.data.href);
