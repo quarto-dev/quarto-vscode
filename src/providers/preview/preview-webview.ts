@@ -17,6 +17,7 @@ import {
 } from "vscode";
 
 import { Disposable } from "../../core/dispose";
+import { isNotebook } from "../../core/doc";
 
 export interface ShowOptions {
   readonly preserveFocus?: boolean;
@@ -52,11 +53,31 @@ export class PreviewWebviewManager {
       this.registerWebviewListeners(view);
       this.activeView_ = view;
     }
+    if (options?.preserveFocus) {
+      this.preserveFocus();
+    }
   }
 
   public revealWebview() {
     if (this.activeView_) {
       this.activeView_.reveal();
+      this.preserveFocus();
+    }
+  }
+
+  private preserveFocus() {
+    // focus the editor (sometimes the terminal steals focus)
+    const activeEditor = window.activeTextEditor;
+    if (activeEditor) {
+      if (!isNotebook(activeEditor?.document)) {
+        setTimeout(() => {
+          window.showTextDocument(
+            activeEditor?.document,
+            activeEditor.viewColumn,
+            false
+          );
+        }, 200);
+      }
     }
   }
 
