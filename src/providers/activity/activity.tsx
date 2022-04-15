@@ -27,6 +27,8 @@ import { Command } from "../../core/command";
 import { MarkdownEngine } from "../../markdown/engine";
 import { wwwAssetPath, wwwSharedAssetPath } from "../../core/assets";
 
+import ActivityBar, { ActivityBarProps } from "./components/activitybar";
+
 export function activateQuartoActivityBarPanel(
   context: ExtensionContext,
   engine: MarkdownEngine
@@ -95,6 +97,10 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
       wwwSharedAssetPath(["codicon.css"])
     );
 
+    const props: ActivityBarProps = {
+      render: "quarto.render",
+    };
+
     return /* html */ `<!DOCTYPE html>
 			<html>
 			<head>
@@ -113,7 +119,7 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
 			</head>
 			<body>
 				<main>
-        ${ReactDOMServer.renderToString(<ActivityBar />)}
+        ${ReactDOMServer.renderToString(<ActivityBar {...props} />)}
         </main>
         <script type="module" src="${toolkitUri}" nonce="${nonce}"></script>
 				<script src="${activityJs}" nonce="${nonce}"></script>
@@ -143,20 +149,6 @@ declare global {
     }
   }
 }
-
-const ActivityBar = () => {
-  return (
-    <>
-      <h1>Hello World!</h1>
-      <a href="command:quarto.render">
-        <vscode-button id="howdy">
-          Render It
-          <span slot="start" className="codicon codicon-add"></span>
-        </vscode-button>
-      </a>
-    </>
-  );
-};
 
 function getNonce() {
   let text = "";
