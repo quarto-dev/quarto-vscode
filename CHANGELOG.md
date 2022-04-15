@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.13.0 (Release on 14 April 2022)
+
+- Render button on editor toolbar
+- Improved webview focus management
+- Activate when executing new notebook command
+
 ## 1.12.1 (Release on 4 April 2022)
 
 - Disable snippet suggestions by default
