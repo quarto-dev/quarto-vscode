@@ -65,6 +65,10 @@ export class PreviewWebviewManager {
     }
   }
 
+  public hasWebview() {
+    return !!this.activeView_;
+  }
+
   private preserveFocus() {
     // focus the editor (sometimes the terminal steals focus)
     const activeEditor = window.activeTextEditor;

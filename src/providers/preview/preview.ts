@@ -142,6 +142,7 @@ class PreviewManager {
       this.previewUrl_ &&
       previewEnvsEqual(this.previewEnv_, previewEnv) &&
       this.previewType_ === this.previewTypeConfig() &&
+      (this.previewType_ !== "internal" || this.webviewManager_.hasWebview()) &&
       this.terminal_ &&
       this.terminal_.exitStatus === undefined
     );
