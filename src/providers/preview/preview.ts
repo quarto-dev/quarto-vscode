@@ -57,7 +57,7 @@ export function canPreviewDoc(doc: TextDocument) {
 
 export async function previewDoc(
   editor: TextEditor,
-  format?: string,
+  format?: string | null,
   slideIndex?: number
 ) {
   // set the slide index if its provided
@@ -106,7 +106,14 @@ class PreviewManager {
     this.outputSink_.dispose();
   }
 
-  public async preview(uri: Uri, doc?: TextDocument, format?: string) {
+  public async preview(uri: Uri, doc?: TextDocument, format?: string | null) {
+    // resolve format if we need to
+    if (format === undefined) {
+      format = this.previewFormats_.get(uri.fsPath) || null;
+    } else {
+      this.previewFormats_.set(uri.fsPath, format);
+    }
+
     this.previewOutput_ = "";
     const prevewEnv = await this.previewEnvManager_.previewEnv(uri);
     if (doc && this.canReuseRunningPreview(prevewEnv)) {
@@ -115,13 +122,13 @@ class PreviewManager {
         if (response.status === 200) {
           this.terminal_!.show(true);
         } else {
-          this.startPreview(prevewEnv, uri, doc, format);
+          this.startPreview(prevewEnv, uri, format, doc);
         }
       } catch (e) {
-        this.startPreview(prevewEnv, uri, doc, format);
+        this.startPreview(prevewEnv, uri, format, doc);
       }
     } else {
-      this.startPreview(prevewEnv, uri, doc, format);
+      this.startPreview(prevewEnv, uri, format, doc);
     }
   }
 
@@ -138,7 +145,7 @@ class PreviewManager {
     );
   }
 
-  private previewRenderRequest(doc: TextDocument, format?: string) {
+  private previewRenderRequest(doc: TextDocument, format: string | null) {
     const previewUri = Uri.parse(this.previewUrl_!);
 
     const requestUri =
@@ -159,8 +166,8 @@ class PreviewManager {
   private startPreview(
     previewEnv: PreviewEnv,
     target: Uri,
-    doc?: TextDocument,
-    format?: string
+    format: string | null,
+    doc?: TextDocument
   ) {
     // dispose any existing preview terminals
     const kPreviewWindowTitle = "Quarto Preview";
@@ -329,4 +336,5 @@ class PreviewManager {
   private readonly previewEnvManager_: PreviewEnvManager;
   private readonly webviewManager_: PreviewWebviewManager;
   private readonly outputSink_: PreviewOutputSink;
+  private readonly previewFormats_ = new Map<string, string | null>();
 }

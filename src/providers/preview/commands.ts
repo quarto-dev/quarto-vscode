@@ -21,6 +21,10 @@ export function previewCommands(
 ): Command[] {
   return [
     new RenderDocumentCommand(quartoContext, engine),
+    new RenderShortcutCommand(quartoContext, engine),
+    new RenderDocumentHTMLCommand(quartoContext, engine),
+    new RenderDocumentPDFCommand(quartoContext, engine),
+    new RenderDocumentWordCommand(quartoContext, engine),
     new RenderProjectCommand(quartoContext),
   ];
 }
@@ -43,16 +47,14 @@ abstract class RenderCommand {
   private readonly quartoContext_: QuartoContext;
 }
 
-class RenderDocumentCommand extends RenderCommand implements Command {
+abstract class RenderDocumentCommandBase extends RenderCommand {
   constructor(
     quartoContext: QuartoContext,
     private readonly engine_: MarkdownEngine
   ) {
     super(quartoContext);
   }
-  private static readonly id = "quarto.render";
-  public readonly id = RenderDocumentCommand.id;
-  async doExecute() {
+  protected async renderFormat(format?: string | null) {
     const targetEditor = findRenderTarget(canPreviewDoc);
     if (targetEditor) {
       // set the slide index from the source editor so we can
@@ -65,10 +67,85 @@ class RenderDocumentCommand extends RenderCommand implements Command {
           )
         : undefined;
 
-      await previewDoc(targetEditor, undefined, slideIndex);
+      await previewDoc(targetEditor, format, slideIndex);
     } else {
       window.showInformationMessage("No Quarto document available to render");
     }
+  }
+}
+
+class RenderShortcutCommand
+  extends RenderDocumentCommandBase
+  implements Command
+{
+  constructor(quartoContext: QuartoContext, engine: MarkdownEngine) {
+    super(quartoContext, engine);
+  }
+  private static readonly id = "quarto.renderShortcut";
+  public readonly id = RenderShortcutCommand.id;
+
+  protected async doExecute() {
+    return super.renderFormat();
+  }
+}
+
+class RenderDocumentCommand
+  extends RenderDocumentCommandBase
+  implements Command
+{
+  constructor(quartoContext: QuartoContext, engine: MarkdownEngine) {
+    super(quartoContext, engine);
+  }
+  private static readonly id = "quarto.render";
+  public readonly id = RenderDocumentCommand.id;
+
+  protected async doExecute() {
+    return super.renderFormat(null);
+  }
+}
+
+class RenderDocumentHTMLCommand
+  extends RenderDocumentCommandBase
+  implements Command
+{
+  constructor(quartoContext: QuartoContext, engine: MarkdownEngine) {
+    super(quartoContext, engine);
+  }
+  private static readonly id = "quarto.renderHTML";
+  public readonly id = RenderDocumentHTMLCommand.id;
+
+  protected async doExecute() {
+    return super.renderFormat("html");
+  }
+}
+
+class RenderDocumentPDFCommand
+  extends RenderDocumentCommandBase
+  implements Command
+{
+  constructor(quartoContext: QuartoContext, engine: MarkdownEngine) {
+    super(quartoContext, engine);
+  }
+  private static readonly id = "quarto.renderPDF";
+  public readonly id = RenderDocumentPDFCommand.id;
+
+  protected async doExecute() {
+    return super.renderFormat("pdf");
+  }
+}
+
+class RenderDocumentWordCommand
+  extends RenderDocumentCommandBase
+  implements Command
+{
+  constructor(quartoContext: QuartoContext, engine: MarkdownEngine) {
+    super(quartoContext, engine);
+  }
+  private static readonly id = "quarto.renderWord";
+  public readonly id = RenderDocumentWordCommand.id;
+
+  protected async doExecute() {
+    return super.renderFormat("docx");
   }
 }
 

@@ -48,6 +48,9 @@
   "activationEvents": [
     "onLanguage:quarto",
     "onCommand:quarto.render",
+    "onCommand:quarto.renderHTML",
+    "onCommand:quarto.renderPDF",
+    "onCommand:quarto.renderWord",
     "onCommand:quarto.newDocument",
     "onCommand:quarto.fileNewDocument",
     "onCommand:quarto.newPresentation",
@@ -191,8 +194,23 @@
         "category": "Quarto"
       },
       {
-        "command": "quarto.renderProject",
-        "title": "Render Project",
+        "command": "quarto.renderShortcut",
+        "title": "Render",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.renderHTML",
+        "title": "Render HTML",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.renderPDF",
+        "title": "Render PDF",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.renderWord",
+        "title": "Render Word",
         "category": "Quarto"
       },
       {
@@ -265,7 +283,7 @@
     ],
     "keybindings": [
       {
-        "command": "quarto.render",
+        "command": "quarto.renderShortcut",
         "key": "ctrl+shift+k",
         "mac": "cmd+shift+k"
       },
@@ -322,21 +340,41 @@
         {
           "command": "quarto.insertCodeCell",
           "when": "editorLangId == quarto"
-        },
-        {
-          "command": "quarto.render",
-          "when": "editorLangId == quarto"
         }
       ],
       "editor/title/run": [
         {
           "command": "quarto.render",
           "when": "editorLangId == quarto"
+        },
+        {
+          "command": "quarto.renderHTML",
+          "title": "Render HTML",
+          "category": "Quarto"
+        },
+        {
+          "command": "quarto.renderPDF",
+          "title": "Render PDF",
+          "category": "Quarto"
+        },
+        {
+          "command": "quarto.renderWord",
+          "title": "Render Word",
+          "category": "Quarto"
         }
       ],
       "notebook/toolbar": [
         {
           "command": "quarto.render"
+        },
+        {
+          "command": "quarto.renderHTML"
+        },
+        {
+          "command": "quarto.renderPDF"
+        },
+        {
+          "command": "quarto.renderWord"
         }
       ],
       "file/newFile": [
@@ -361,7 +399,24 @@
           "command": "quarto.newPresentation"
         },
         {
-          "command": "quarto.render"
+          "command": "quarto.render",
+          "when": "editorLangId == quarto"
+        },
+        {
+          "command": "quarto.renderShortcut",
+          "when": "false"
+        },
+        {
+          "command": "quarto.renderHTML",
+          "when": "editorLangId == quarto"
+        },
+        {
+          "command": "quarto.renderPDF",
+          "when": "editorLangId == quarto"
+        },
+        {
+          "command": "quarto.renderWord",
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.insertCodeCell",
