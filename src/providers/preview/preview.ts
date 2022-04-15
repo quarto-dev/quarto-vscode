@@ -11,6 +11,7 @@ import axios from "axios";
 
 import vscode, {
   commands,
+  env,
   ExtensionContext,
   MessageItem,
   Terminal,
@@ -140,6 +141,7 @@ class PreviewManager {
     return (
       this.previewUrl_ &&
       previewEnvsEqual(this.previewEnv_, previewEnv) &&
+      this.previewType_ === this.previewTypeConfig() &&
       this.terminal_ &&
       this.terminal_.exitStatus === undefined
     );
@@ -184,6 +186,7 @@ class PreviewManager {
     // reset preview state
     this.previewEnv_ = previewEnv;
     this.previewTarget_ = target;
+    this.previewType_ = this.previewTypeConfig();
     this.previewUrl_ = undefined;
     this.previewOutputFile_ = undefined;
 
@@ -234,14 +237,25 @@ class PreviewManager {
 
         // capture preview url and show preview
         this.previewUrl_ = match[1];
-        this.showPreview();
+        if (this.previewType_ === "internal") {
+          this.showPreview();
+        } else if (this.previewType_ === "external") {
+          try {
+            const url = Uri.parse(this.previewUrl_);
+            env.openExternal(url);
+          } catch {
+            // Noop
+          }
+        }
       }
     } else {
       // detect update to existing preview and activate browser
       if (
         this.previewOutput_.trimEnd().endsWith("Watching files for changes")
       ) {
-        this.updatePreview();
+        if (this.previewType_ === "internal") {
+          this.updatePreview();
+        }
       }
     }
   }
@@ -303,6 +317,11 @@ class PreviewManager {
     );
   }
 
+  private previewTypeConfig(): "internal" | "external" | "none" {
+    const config = vscode.workspace.getConfiguration("quarto");
+    return config.get("renderPreview", "internal");
+  }
+
   private async showOuputFile() {
     if (this.previewOutputFile_) {
       const outputFile = this.previewOutputFile_.fsPath;
@@ -329,6 +348,7 @@ class PreviewManager {
   private previewTarget_: Uri | undefined;
   private previewUrl_: string | undefined;
   private previewOutputFile_: Uri | undefined;
+  private previewType_: "internal" | "external" | "none" | undefined;
 
   private terminal_: Terminal | undefined;
 
