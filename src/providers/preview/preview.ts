@@ -25,7 +25,7 @@ import { QuartoContext } from "../../shared/quarto";
 import { shQuote } from "../../core/strings";
 import { previewCommands } from "./commands";
 import { Command } from "../../core/command";
-import { isNotebook, isQuartoDoc } from "../../core/doc";
+import { isNotebook } from "../../core/doc";
 import { PreviewWebviewManager } from "./preview-webview";
 import { PreviewOutputSink } from "./preview-output";
 import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
@@ -49,10 +49,6 @@ export function activatePreview(
 
   // preview commands
   return previewCommands(quartoContext, engine);
-}
-
-export function canPreviewDoc(doc: TextDocument) {
-  return !!(isQuartoDoc(doc) || isNotebook(doc));
 }
 
 export async function previewDoc(

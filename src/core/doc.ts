@@ -23,6 +23,10 @@ export function isNotebook(doc?: vscode.TextDocument) {
   return doc && extname(doc.uri.fsPath).toLowerCase() === ".ipynb";
 }
 
+export function canPreviewDoc(doc: vscode.TextDocument) {
+  return !!(isQuartoDoc(doc) || isNotebook(doc));
+}
+
 export function isQuartoYaml(doc?: vscode.TextDocument) {
   return (
     doc &&

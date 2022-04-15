@@ -23,11 +23,15 @@ import {
 import * as React from "react";
 import * as ReactDOMServer from "react-dom/server";
 
+import * as path from "path";
+
 import { Command } from "../../core/command";
 import { MarkdownEngine } from "../../markdown/engine";
 import { wwwAssetPath, wwwSharedAssetPath } from "../../core/assets";
 
 import ActivityBar, { ActivityBarProps } from "./components/activitybar";
+import { activeRenderTarget } from "../../core/render";
+import { canPreviewDoc } from "../../core/doc";
 
 export function activateQuartoActivityBarPanel(
   context: ExtensionContext,
@@ -51,6 +55,22 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
 
   constructor(context: ExtensionContext, _engine: MarkdownEngine) {
     this.extensionUri_ = context.extensionUri;
+
+    window.onDidChangeActiveTextEditor(
+      () => {
+        this.render();
+      },
+      null,
+      this._disposables
+    );
+
+    window.onDidChangeVisibleTextEditors(
+      () => {
+        this.render();
+      },
+      null,
+      this._disposables
+    );
   }
 
   public dispose() {
@@ -76,7 +96,13 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
       this.view_ = undefined;
     });
 
-    webviewView.webview.html = this.getHtml();
+    this.render();
+  }
+
+  private render() {
+    if (this.view_) {
+      this.view_.webview.html = this.getHtml();
+    }
   }
 
   private getHtml() {
@@ -97,8 +123,15 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
       wwwSharedAssetPath(["codicon.css"])
     );
 
+    const target = activeRenderTarget(canPreviewDoc);
+
     const props: ActivityBarProps = {
-      render: "quarto.render",
+      document: target
+        ? {
+            name: path.basename(target.document.fileName),
+            path: target.document.fileName,
+          }
+        : undefined,
     };
 
     return /* html */ `<!DOCTYPE html>
@@ -140,14 +173,6 @@ class QuartoActivityBarViewProvider implements WebviewViewProvider, Disposable {
   private view_?: WebviewView;
   private readonly extensionUri_: Uri;
   private readonly _disposables: Disposable[] = [];
-}
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      ["vscode-button"]: any;
-    }
-  }
 }
 
 function getNonce() {

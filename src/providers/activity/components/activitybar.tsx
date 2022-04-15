@@ -6,19 +6,37 @@
 import * as React from "react";
 
 export interface ActivityBarProps {
-  render: string;
+  document?: {
+    name: string;
+    path: string;
+  };
+}
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      ["vscode-button"]: any;
+      ["vscode-dropdown"]: any;
+      ["vscode-option"]: any;
+    }
+  }
 }
 
 const ActivityBar = (props: ActivityBarProps) => {
   return (
     <>
-      <h1>Hello World!</h1>
-      <a href={"command:" + props.render}>
-        <vscode-button id="howdy">
-          Render It
-          <span slot="start" className="codicon codicon-add"></span>
-        </vscode-button>
-      </a>
+      {props.document ? (
+        <>
+          <a href={"command:quarto.render"}>
+            <vscode-button>Render</vscode-button>
+          </a>
+          <vscode-dropdown>
+            <vscode-option>HTML</vscode-option>
+            <vscode-option>PDF</vscode-option>
+            <vscode-option>DOCX</vscode-option>
+          </vscode-dropdown>
+        </>
+      ) : null}
     </>
   );
 };
