@@ -679,6 +679,7 @@
     "markdown-it-container": "^3.0.0",
     "markdown-it-highlightjs": "^3.6.0",
     "semver": "^7.3.5",
+    "strip-ansi": "^7.0.1",
     "tmp": "^0.2.1",
     "uuid": "^8.3.2",
     "vscode-languageclient": "^7.0.0",

@@ -6,10 +6,7 @@
 import * as os from "os";
 import { extensions, Uri, workspace } from "vscode";
 
-import { PreviewOutputSink } from "./preview-output";
-
 export interface PreviewEnv {
-  QUARTO_LOG: string;
   QUARTO_RENDER_TOKEN: string;
   QUARTO_PYTHON?: string;
   QUARTO_R?: string;
@@ -19,7 +16,6 @@ export function previewEnvsEqual(a?: PreviewEnv, b?: PreviewEnv) {
   return (
     a !== undefined &&
     b !== undefined &&
-    a?.QUARTO_LOG === b?.QUARTO_LOG &&
     a?.QUARTO_RENDER_TOKEN === b?.QUARTO_RENDER_TOKEN &&
     a?.QUARTO_PYTHON === b?.QUARTO_PYTHON &&
     a?.QUARTO_R === b?.QUARTO_R
@@ -27,12 +23,7 @@ export function previewEnvsEqual(a?: PreviewEnv, b?: PreviewEnv) {
 }
 
 export class PreviewEnvManager {
-  constructor(
-    outputSink: PreviewOutputSink,
-    private readonly renderToken_: string
-  ) {
-    this.outputFile_ = outputSink.outputFile();
-  }
+  constructor(private readonly renderToken_: string) {}
 
   public async previewEnv(uri: Uri) {
     // get workspace for uri (if any)
@@ -40,7 +31,6 @@ export class PreviewEnvManager {
 
     // base env
     const env: PreviewEnv = {
-      QUARTO_LOG: this.outputFile_,
       QUARTO_RENDER_TOKEN: this.renderToken_,
     };
     // QUARTO_PYTHON
@@ -84,5 +74,4 @@ export class PreviewEnvManager {
 
     return env;
   }
-  private readonly outputFile_: string;
 }
