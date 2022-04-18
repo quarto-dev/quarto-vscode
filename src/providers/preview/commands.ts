@@ -26,6 +26,7 @@ export function previewCommands(
     new RenderDocumentPDFCommand(quartoContext, engine),
     new RenderDocumentWordCommand(quartoContext, engine),
     new RenderProjectCommand(quartoContext),
+    new ClearCacheCommand(),
   ];
 }
 
@@ -178,6 +179,63 @@ class RenderProjectCommand extends RenderCommand implements Command {
     // no project found!
     window.showInformationMessage("No project available to render.");
   }
+}
+
+class ClearCacheCommand implements Command {
+  private static readonly id = "quarto.clearCache";
+  public readonly id = ClearCacheCommand.id;
+
+  async execute(): Promise<void> {
+    // see if there is a cache to clear
+    const doc = findRenderTarget(canPreviewDoc)?.document;
+    if (doc) {
+      const cacheDir = cacheDirForDocument(doc);
+      if (cacheDir) {
+        const result = await window.showInformationMessage(
+          "Clear Cache Directory",
+          { modal: true, detail: `Delete the cache directory at ${cacheDir}?` },
+          "Yes",
+          "No"
+        );
+        if (result === "Yes") {
+          await workspace.fs.delete(Uri.file(cacheDir), { recursive: true });
+        }
+      } else {
+        window.showInformationMessage("Unable to Clear Cache", {
+          modal: true,
+          detail:
+            "There is no cache associated with the current Quarto document.",
+        });
+      }
+      // see if there is an _cache directory for this file
+      // see if there is a .jupyter_cache directory for this file
+    } else {
+      window.showInformationMessage("Unable to Clear Cache", {
+        modal: true,
+        detail: "The current document is not a Quarto document.",
+      });
+    }
+  }
+}
+
+function cacheDirForDocument(doc: TextDocument) {
+  // directory for doc
+  const dir = path.dirname(doc.fileName);
+
+  // check for jupyter cache
+  const jupyterCacheDir = path.join(dir, ".jupyter_cache");
+  if (fs.existsSync(jupyterCacheDir)) {
+    return jupyterCacheDir;
+  }
+
+  // check for knitr cache
+  const stem = path.basename(doc.fileName, path.extname(doc.fileName));
+  const knitrCacheDir = path.join(dir, stem + "_cache");
+  if (fs.existsSync(knitrCacheDir)) {
+    return knitrCacheDir;
+  }
+
+  return undefined;
 }
 
 function projectDirForDocument(doc: TextDocument) {

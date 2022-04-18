@@ -189,6 +189,11 @@
         "category": "Quarto"
       },
       {
+        "command": "quarto.renderProject",
+        "title": "Render Project",
+        "category": "Quarto"
+      },
+      {
         "command": "quarto.render",
         "title": "Render",
         "category": "Quarto"
@@ -211,6 +216,11 @@
       {
         "command": "quarto.renderWord",
         "title": "Render Word",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.clearCache",
+        "title": "Clear Cache...",
         "category": "Quarto"
       },
       {
@@ -340,6 +350,10 @@
         {
           "command": "quarto.insertCodeCell",
           "when": "editorLangId == quarto"
+        },
+        {
+          "command": "quarto.clearCache",
+          "when": "editorLangId == quarto"
         }
       ],
       "editor/title/run": [
@@ -399,6 +413,9 @@
           "command": "quarto.newPresentation"
         },
         {
+          "command": "quarto.renderProject"
+        },
+        {
           "command": "quarto.render",
           "when": "editorLangId == quarto"
         },
@@ -416,6 +433,10 @@
         },
         {
           "command": "quarto.renderWord",
+          "when": "editorLangId == quarto"
+        },
+        {
+          "command": "quarto.clearCache",
           "when": "editorLangId == quarto"
         },
         {

@@ -3,6 +3,7 @@
 ## 1.14.0 (Unreleased)
 
 - Format specific render commands (HTML, PDF, Word)
+- Clear Cache command for Jupyter & Knitr caches
 - Preference to control preview location
 
 ## 1.13.0 (Release on 14 April 2022)
