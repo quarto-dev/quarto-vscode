@@ -223,6 +223,7 @@ class PreviewManager {
   }
 
   private onPreviewOutput(output: string) {
+    const kOutputCreatedPattern = /Output created\: (.*?)\n/;
     this.previewOutput_ += output;
     if (!this.previewUrl_) {
       // detect new preview and show in browser
@@ -231,7 +232,7 @@ class PreviewManager {
       );
       if (match) {
         // capture output file
-        const fileMatch = this.previewOutput_.match(/Output created\: (.*?)\n/);
+        const fileMatch = this.previewOutput_.match(kOutputCreatedPattern);
         if (fileMatch) {
           this.previewOutputFile_ = this.outputFileUri(fileMatch[1]);
         }
@@ -251,10 +252,8 @@ class PreviewManager {
       }
     } else {
       // detect update to existing preview and activate browser
-      if (
-        this.previewOutput_.trimEnd().endsWith("Watching files for changes")
-      ) {
-        if (this.previewType_ === "internal") {
+      if (this.previewOutput_.match(kOutputCreatedPattern)) {
+        if (this.previewType_ === "internal" && this.previewRevealConfig()) {
           this.updatePreview();
         }
       }
@@ -319,8 +318,15 @@ class PreviewManager {
   }
 
   private previewTypeConfig(): "internal" | "external" | "none" {
-    const config = vscode.workspace.getConfiguration("quarto");
-    return config.get("renderPreview", "internal");
+    return this.quartoConfig().get("render.previewType", "internal");
+  }
+
+  private previewRevealConfig(): boolean {
+    return this.quartoConfig().get("render.previewReveal", true);
+  }
+
+  private quartoConfig() {
+    return vscode.workspace.getConfiguration("quarto");
   }
 
   private async showOuputFile() {
