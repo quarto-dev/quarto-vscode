@@ -215,7 +215,7 @@ class PreviewManager {
     cmd.push("--no-watch-inputs");
     this.outputChannel_.show(true);
     this.outputChannel_.appendLine(`quarto ${cmd.map(shQuote).join(" ")}`);
-    this.previewProcess_ = spawn(quarto, cmd, options);
+    this.previewProcess_ = spawn(shQuote(quarto), cmd.map(shQuote), options);
     this.previewProcess_.stderr.setEncoding("UTF-8");
     this.previewProcess_.stderr.on("data", this.onPreviewOutput.bind(this));
   }
