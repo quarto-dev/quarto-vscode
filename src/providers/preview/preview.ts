@@ -35,6 +35,7 @@ import * as tmp from "tmp";
 import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
 import { isHugoMarkdown } from "../../core/hugo";
 import { MarkdownEngine } from "../../markdown/engine";
+import { shQuote } from "../../core/strings";
 tmp.setGracefulCleanup();
 
 let previewManager: PreviewManager;
@@ -123,6 +124,7 @@ class PreviewManager {
         if (response.status === 200) {
           this.outputChannel_.clear();
           this.outputChannel_.show(true);
+          this.outputChannel_.appendLine("quarto render and update preview");
         } else {
           this.startPreview(prevewEnv, uri, format, doc);
         }
@@ -212,6 +214,7 @@ class PreviewManager {
     cmd.push("--no-browser");
     cmd.push("--no-watch-inputs");
     this.outputChannel_.show(true);
+    this.outputChannel_.appendLine(`quarto ${cmd.map(shQuote).join(" ")}`);
     this.previewProcess_ = spawn(quarto, cmd, options);
     this.previewProcess_.stderr.setEncoding("UTF-8");
     this.previewProcess_.stderr.on("data", this.onPreviewOutput.bind(this));
