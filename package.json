@@ -364,18 +364,15 @@
         },
         {
           "command": "quarto.renderHTML",
-          "title": "Render HTML",
-          "category": "Quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.renderPDF",
-          "title": "Render PDF",
-          "category": "Quarto"
+          "when": "editorLangId == quarto"
         },
         {
           "command": "quarto.renderWord",
-          "title": "Render Word",
-          "category": "Quarto"
+          "when": "editorLangId == quarto"
         }
       ],
       "notebook/toolbar": [
