@@ -51,6 +51,7 @@
     "onCommand:quarto.renderHTML",
     "onCommand:quarto.renderPDF",
     "onCommand:quarto.renderWord",
+    "onCommand:quarto.renderShortcut",
     "onCommand:quarto.newDocument",
     "onCommand:quarto.fileNewDocument",
     "onCommand:quarto.newPresentation",
