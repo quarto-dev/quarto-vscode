@@ -3,6 +3,7 @@
 ## 1.14.0 (Unreleased)
 
 - Format specific render commands (HTML, PDF, Word)
+- Use output channel rather than terminal for preview
 - Clear Cache command for Jupyter & Knitr caches
 - Preference to control preview location
 
