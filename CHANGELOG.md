@@ -1,10 +1,11 @@
 # Changelog
 
-## 1.14.0 (Unreleased)
+## 1.14.0 (Release on 19 April 2022)
 
 - Format specific render commands (HTML, PDF, Word)
 - Use output channel rather than terminal for preview
 - Clear Cache command for Jupyter & Knitr caches
+- Auto-closing pair behavior for quotes
 - Preference to control preview location
 
 ## 1.13.0 (Release on 14 April 2022)
