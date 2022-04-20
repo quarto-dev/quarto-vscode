@@ -16,14 +16,20 @@ export async function yamlHover(
   if (!quarto?.getHover) {
     return null;
   }
-  const context = editorContext(doc, pos, true);
-  const result = await quarto.getHover(context);
-  if (result === null) return null;
-  return {
-    contents: {
-      kind: "markdown",
-      value: result.content,
-    },
-    range: result.range,
-  };
+  try {
+    const context = editorContext(doc, pos, true);
+    const result = await quarto.getHover(context);
+    if (result === null) {
+      return null;
+    }
+    return {
+      contents: {
+        kind: "markdown",
+        value: result.content,
+      },
+      range: result.range,
+    };
+  } catch {
+    return null;
+  }
 }
