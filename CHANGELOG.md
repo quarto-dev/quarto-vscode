@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.15.0 (Unreleased)
+## 1.15.0 (Release on 22 April 2022)
 
 - Icon for qmd file type
 - Terminate preview command
