@@ -224,6 +224,11 @@
         "category": "Quarto"
       },
       {
+        "command": "quarto.terminatePreview",
+        "title": "Terminate Preview",
+        "category": "Quarto"
+      },
+      {
         "command": "quarto.clearCache",
         "title": "Clear Cache...",
         "category": "Quarto"
@@ -492,6 +497,10 @@
         {
           "command": "quarto.assist.unpin",
           "when": "editorLangId == quarto && quarto.assistView.isPinned"
+        },
+        {
+          "command": "quarto.terminatePreview",
+          "when": "quarto.preview.isRunning"
         }
       ],
       "view/title": [

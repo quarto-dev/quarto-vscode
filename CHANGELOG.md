@@ -3,6 +3,8 @@
 ## 1.15.0 (Unreleased)
 
 - Icon for qmd file type
+- Terminate preview command
+- Don't auto-pair backticks
 
 ## 1.14.0 (Release on 19 April 2022)
 

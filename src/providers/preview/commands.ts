@@ -14,9 +14,11 @@ import { canPreviewDoc, previewDoc, previewProject } from "./preview";
 import { MarkdownEngine } from "../../markdown/engine";
 import { revealSlideIndex } from "./preview-reveal";
 import { isNotebook } from "../../core/doc";
+import { PreviewManager } from "./preview";
 
 export function previewCommands(
   quartoContext: QuartoContext,
+  previewManager: PreviewManager,
   engine: MarkdownEngine
 ): Command[] {
   return [
@@ -26,6 +28,7 @@ export function previewCommands(
     new RenderDocumentPDFCommand(quartoContext, engine),
     new RenderDocumentWordCommand(quartoContext, engine),
     new RenderProjectCommand(quartoContext),
+    new TerminatePreviewCommand(previewManager),
     new ClearCacheCommand(),
   ];
 }
@@ -178,6 +181,15 @@ class RenderProjectCommand extends RenderCommand implements Command {
 
     // no project found!
     window.showInformationMessage("No project available to render.");
+  }
+}
+
+class TerminatePreviewCommand implements Command {
+  private static readonly id = "quarto.terminatePreview";
+  public readonly id = TerminatePreviewCommand.id;
+  constructor(private readonly previewManager_: PreviewManager) {}
+  execute(): void {
+    this.previewManager_.terminatePreview(true);
   }
 }
 

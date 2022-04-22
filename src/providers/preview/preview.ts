@@ -50,7 +50,7 @@ export function activatePreview(
   context.subscriptions.push(previewManager);
 
   // preview commands
-  return previewCommands(quartoContext, engine);
+  return previewCommands(quartoContext, previewManager, engine);
 }
 
 export function canPreviewDoc(doc: TextDocument) {
@@ -89,7 +89,7 @@ export async function previewProject(target: Uri, format?: string) {
   await previewManager.preview(target, undefined, format);
 }
 
-class PreviewManager {
+export class PreviewManager {
   constructor(
     context: ExtensionContext,
     private readonly quartoContext_: QuartoContext
@@ -136,6 +136,19 @@ class PreviewManager {
     }
   }
 
+  public terminatePreview(revealOutput = false) {
+    if (this.previewProcess_) {
+      if (this.previewProcess_.exitCode === null) {
+        this.previewProcess_.kill();
+        this.setPreviewRunning(false);
+      }
+      this.previewProcess_ = undefined;
+    }
+    if (revealOutput) {
+      this.outputChannel_.show(true);
+    }
+  }
+
   public setSlideIndex(slideIndex: number) {
     this.webviewManager_.setSlideIndex(slideIndex);
   }
@@ -176,12 +189,7 @@ class PreviewManager {
     doc?: TextDocument
   ) {
     // kill existing process
-    if (this.previewProcess_) {
-      if (this.previewProcess_.exitCode !== null) {
-        this.previewProcess_.kill();
-      }
-      this.previewProcess_ = undefined;
-    }
+    this.terminatePreview();
 
     // clear existing output
     this.outputChannel_.clear();
@@ -219,14 +227,14 @@ class PreviewManager {
     this.previewProcess_ = spawn(quote(quarto), cmd.map(quote), options);
     this.previewProcess_.stderr.setEncoding("UTF-8");
     this.previewProcess_.stderr.on("data", this.onPreviewOutput.bind(this));
-    this.previewProcess_.on("exit", (code) => {
-      this.outputChannel_.appendLine(
-        `quarto preview exited with status ${code}`
-      );
+    this.previewProcess_.on("exit", () => {
+      this.setPreviewRunning(false);
+      this.outputChannel_.appendLine(`\quarto preview exited`);
     });
   }
 
   private onPreviewOutput(output: string) {
+    this.setPreviewRunning(true);
     output = stripAnsi(output);
     this.outputChannel_.append(output);
     const kOutputCreatedPattern = /Output created\: (.*?)\n/;
@@ -355,6 +363,16 @@ class PreviewManager {
       }
     }
   }
+
+  private setPreviewRunning(value: boolean) {
+    commands.executeCommand(
+      "setContext",
+      PreviewManager.kPreviewRunningContext,
+      value
+    );
+  }
+
+  private static readonly kPreviewRunningContext = "quarto.preview.isRunning";
 
   private previewOutput_ = "";
   private previewEnv_: PreviewEnv | undefined;
