@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.15.0 (Unreleased)
+
+- Icon for qmd file type
+
 ## 1.14.0 (Release on 19 April 2022)
 
 - Format specific render commands (HTML, PDF, Word)

@@ -74,6 +74,10 @@
         "extensions": [
           ".qmd"
         ],
+        "icon": {
+          "light": "./assets/icon/qmd.svg",
+          "dark": "./assets/icon/qmd.svg"
+        },
         "configuration": "./language-configuration.json"
       }
     ],
