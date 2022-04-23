@@ -86,14 +86,41 @@ export class MarkdownTableOfContents {
     engine: MarkdownEngine,
     document: MarkdownTextDocument
   ): Promise<TocEntry[]> {
+    const kFrontMatter = "front_matter";
+    const kHeadingOpen = "heading_open";
+    const kFence = "fence";
+    const kContainerOpen = "container__open";
+    const kContainerClose = "container__close";
+
     const toc: TocEntry[] = [];
     const tokens = await engine.parse(document);
 
     const existingSlugEntries = new Map<string, { count: number }>();
     let lastLevel = 2;
+    let callout = 0;
     for (const token of tokens.filter((token) =>
-      ["front_matter", "heading_open", "fence"].includes(token.type)
+      [
+        kFrontMatter,
+        kHeadingOpen,
+        kFence,
+        kContainerOpen,
+        kContainerClose,
+      ].includes(token.type)
     )) {
+      // track whether we are in a callout (skip if we are)
+      if (token.type === kContainerOpen) {
+        if (token.info.includes(".callout-") || callout > 0) {
+          callout++;
+        }
+      } else if (token.type === kContainerClose) {
+        if (callout > 0) {
+          callout--;
+        }
+      }
+      if (callout > 0) {
+        continue;
+      }
+
       if (!token.map) {
         continue;
       }
@@ -101,7 +128,7 @@ export class MarkdownTableOfContents {
       const lineNumber = token.map[0];
       const line = document.lineAt(lineNumber);
 
-      if (token.type === "heading_open") {
+      if (token.type === kHeadingOpen) {
         lastLevel = getHeaderLevel(token.markup);
 
         let slug = pandocAutoIdentifier(line.text);
@@ -123,7 +150,7 @@ export class MarkdownTableOfContents {
             new vscode.Range(lineNumber, 0, lineNumber, line.text.length)
           ),
         });
-      } else if (token.type === "front_matter") {
+      } else if (token.type === kFrontMatter) {
         const meta = parseFrontMatterStr(token.markup);
         if (meta["title"]) {
           toc.push({
@@ -142,7 +169,7 @@ export class MarkdownTableOfContents {
             ),
           });
         }
-      } else if (token.type === "fence") {
+      } else if (token.type === kFence) {
         if (isExecutableLanguageBlock(token)) {
           const match = token.content.match(/(?:#|\/\/|)\| label:\s+(.+)/);
           if (match && token.map) {
