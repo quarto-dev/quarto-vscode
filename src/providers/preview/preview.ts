@@ -139,6 +139,7 @@ export class PreviewManager {
   public terminatePreview(revealOutput = false) {
     if (this.previewProcess_) {
       if (this.previewProcess_.exitCode === null) {
+        this.outputChannel_.appendLine("\nTerminating Quarto Preview");
         this.previewProcess_.kill();
         this.setPreviewRunning(false);
       }
@@ -229,7 +230,6 @@ export class PreviewManager {
     this.previewProcess_.stderr.on("data", this.onPreviewOutput.bind(this));
     this.previewProcess_.on("exit", () => {
       this.setPreviewRunning(false);
-      this.outputChannel_.appendLine(`\quarto preview exited`);
     });
   }
 
