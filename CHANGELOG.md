@@ -1,9 +1,14 @@
 # Changelog
 
-## 1.16.0 (Release on 23 April 2023)
+## 1.17.0 (Release on 25 April 2022)
+
+- Getting started with Quarto walkthrough
+- Warn when files are saved with invalid extensions
+
+## 1.16.0 (Release on 23 April 2022)
 
 - Improved math syntax highlighting
-- Don't incude callout headers in toc
+- Don't include callout headers in toc
 
 ## 1.15.0 (Release on 22 April 2022)
 
