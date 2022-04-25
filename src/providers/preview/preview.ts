@@ -27,7 +27,11 @@ import vscode, {
 import { QuartoContext } from "../../shared/quarto";
 import { previewCommands } from "./commands";
 import { Command } from "../../core/command";
-import { isNotebook, isQuartoDoc } from "../../core/doc";
+import {
+  isNotebook,
+  isQuartoDoc,
+  validatateQuartoExtension,
+} from "../../core/doc";
 import { PreviewWebviewManager } from "./preview-webview";
 import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
 
@@ -77,6 +81,19 @@ export async function previewDoc(
   // save (exit if we cancelled)
   await commands.executeCommand("workbench.action.files.save");
   if (editor.document.isDirty) {
+    return;
+  }
+
+  window.showSaveDialog;
+
+  // error if we didn't save using a valid quarto extension
+  if (!validatateQuartoExtension(editor.document)) {
+    window.showErrorMessage("Unsupported File Extension", {
+      modal: true,
+      detail:
+        "This document cannot be rendered because it doesn't have a supported Quarto file extension. " +
+        "Save the file with a .qmd extension then try rendering again.",
+    });
     return;
   }
 

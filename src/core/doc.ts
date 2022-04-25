@@ -37,6 +37,11 @@ export function isMarkdownDoc(document?: vscode.TextDocument) {
   );
 }
 
+export function validatateQuartoExtension(document: vscode.TextDocument) {
+  const ext = extname(document.uri.toString()).toLowerCase();
+  return [".qmd", ".rmd", ".md", ".ipynb"].includes(ext);
+}
+
 export async function resolveQuartoDocUri(
   resource: vscode.Uri
 ): Promise<vscode.TextDocument | undefined> {
