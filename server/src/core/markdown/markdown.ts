@@ -62,7 +62,7 @@ function isCodeBlockAtPosition(pos: Position) {
 
 export function isLatexCodeBlock(token: Token) {
   return (
-    token.info &&
+    !!token.info &&
     ["tex", "latex"].includes(
       token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "")
     )

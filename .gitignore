@@ -17,4 +17,4 @@ test_data/
 yarn-error.log
 .vscode-test
 .vscode-test-web
-
+.Rproj.user

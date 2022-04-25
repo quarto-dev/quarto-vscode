@@ -57,6 +57,7 @@
     "onCommand:quarto.newPresentation",
     "onCommand:quarto.newNotebook",
     "onCommand:quarto.fileNewPresentation",
+    "onCommand:quarto.verifyInstallation",
     "workspaceContains:**/_quarto.{yml,yaml}",
     "onWebviewPanel:quarto.previewView"
   ],
@@ -297,6 +298,11 @@
         "title": "Unpin Assist Panel",
         "icon": "$(pinned)",
         "category": "Quarto"
+      },
+      {
+        "command": "quarto.walkthrough.newDocument",
+        "title": "New Document (qmd)",
+        "category": "Quarto"
       }
     ],
     "keybindings": [
@@ -418,6 +424,18 @@
           "command": "quarto.newPresentation"
         },
         {
+          "command": "quarto.fileNewDocument",
+          "when": "false"
+        },
+        {
+          "command": "quarto.fileNewNotebook",
+          "when": "false"
+        },
+        {
+          "command": "quarto.fileNewPresentation",
+          "when": "false"
+        },
+        {
           "command": "quarto.renderProject"
         },
         {
@@ -499,6 +517,10 @@
         {
           "command": "quarto.terminatePreview",
           "when": "quarto.preview.isRunning"
+        },
+        {
+          "command": "quarto.walkthrough.newDocument",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -677,7 +699,92 @@
           "markdownDescription": "Reveal the preview panel after document render."
         }
       }
-    }
+    },
+    "walkthroughs": [
+      {
+        "id": "quarto",
+        "title": "Get started with Quarto",
+        "description": "Learn the basics of using Quarto with VS Code",
+        "featuredFor": [
+          "*.qmd",
+          "_quarto.yml"
+        ],
+        "steps": [
+          {
+            "id": "install",
+            "title": "Install Quarto",
+            "description": "The core capabilities of Quarto are provided by a command line interface (CLI).\n\nBefore getting started, be sure that you've installed the latest version of the Quarto CLI from [https://quarto.org/](https://quarto.org/docs/get-started/)\n[Verify Installation](command:quarto.verifyInstallation)",
+            "media": {
+              "image": {
+                "dark": "assets/walkthrough/quarto-cli-dark.png",
+                "hc": "assets/walkthrough/quarto-cli-dark.png",
+                "light": "assets/walkthrough/quarto-cli-light.png",
+                "hcLight": "assets/walkthrough/quarto-cli-light.png"
+              },
+              "altText": "The output of the Quarto CLI help command"
+            },
+            "completionEvents": [
+              "onStepSelected"
+            ]
+          },
+          {
+            "id": "create",
+            "title": "Create a document",
+            "description": "Next, we'll create a simple Quarto .qmd markdown file.\n\n[Create Document](command:quarto.walkthrough.newDocument)",
+            "media": {
+              "markdown": "assets/walkthrough/empty.md"
+            },
+            "completionEvents": [
+              "onCommand:quarto.walkthrough.newDocument"
+            ]
+          },
+          {
+            "id": "render",
+            "title": "Render a document",
+            "description": "You can render documents to HTML, PDF, or other formats using the **Render** button on the editor toolbar, the **Cmd+Shift+K** keyboard shortcut, or the **Quarto: Render** command.\n\n[Render Document](command:quarto.renderShortcut)",
+            "media": {
+              "markdown": "assets/walkthrough/empty.md"
+            },
+            "completionEvents": [
+              "onCommand:quarto.renderShortcut"
+            ]
+          },
+          {
+            "id": "run-cell",
+            "title": "Run a code cell",
+            "description": "When rendering, code cells are automatically executed and their results included in output. When developing and debugging, you can also run individual cells interactively.\n\nClick the **Run Cell** button above the code cell in the qmd editor.",
+            "media": {
+              "markdown": "assets/walkthrough/empty.md"
+            },
+            "completionEvents": [
+              "onStepSelected"
+            ]
+          },
+          {
+            "id": "equation",
+            "title": "Edit an equation",
+            "description": "You can see a realtime preview of LaTeX equations as you edit them.\n\nClick the **Preview** button above the equation to activate the preview (you'll see it below alongside the terminal and output panes). The preview will update as you edit.",
+            "media": {
+              "markdown": "assets/walkthrough/empty.md"
+            },
+            "completionEvents": [
+              "onStepSelected"
+            ]
+          },
+          {
+            "id": "learn-more",
+            "title": "Learn more",
+            "description": "Learn more about using Quarto as well as the various features of the VS Code extension here:\n- [Quarto Tutorial](https://quarto.org/docs/get-started/hello/vscode.html)\n- [Using VS Code with Quarto](https://quarto.org/docs/tools/vscode.html)",
+            "media": {
+              "markdown": "assets/walkthrough/empty.md"
+            },
+            "completionEvents": [
+              "onStepSelected"
+            ]
+          }
+        ]
+      }
+    ]
   },
   "dependencies": {
     "axios": "^0.26.1",

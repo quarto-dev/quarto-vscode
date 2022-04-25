@@ -53,8 +53,8 @@ export function activatePreview(
   return previewCommands(quartoContext, previewManager, engine);
 }
 
-export function canPreviewDoc(doc: TextDocument) {
-  return !!(isQuartoDoc(doc) || isNotebook(doc));
+export function canPreviewDoc(doc?: TextDocument) {
+  return !!doc && !!(isQuartoDoc(doc) || isNotebook(doc));
 }
 
 export async function previewDoc(
@@ -66,6 +66,9 @@ export async function previewDoc(
   if (slideIndex !== undefined) {
     previewManager.setSlideIndex(slideIndex);
   }
+
+  // activate the editor
+  await window.showTextDocument(editor.document, editor.viewColumn, false);
 
   // save (exit if we cancelled)
   await commands.executeCommand("workbench.action.files.save");

@@ -11,6 +11,7 @@ import {
   NotebookCellData,
   NotebookCellKind,
   WorkspaceEdit,
+  ViewColumn,
 } from "vscode";
 import { Command } from "../core/command";
 import { getWholeRange, kQuartoLanguageId } from "../core/doc";
@@ -23,6 +24,7 @@ export function newDocumentCommands(): Command[] {
     new NewPresentationCommand("quarto.fileNewPresentation"),
     new NewNotebookCommand("quarto.newNotebook"),
     new NewNotebookCommand("quarto.fileNewNotebook"),
+    new WalkthroughNewDocumentCommand("quarto.walkthrough.newDocument"),
   ];
 }
 
@@ -62,7 +64,7 @@ class NewNotebookCommand implements Command {
 
 abstract class NewFileCommand implements Command {
   public readonly id: string;
-  constructor(cmdId: string) {
+  constructor(cmdId: string, private readonly viewColumn_?: ViewColumn) {
     this.id = cmdId;
   }
   async execute(): Promise<void> {
@@ -70,7 +72,7 @@ abstract class NewFileCommand implements Command {
       language: kQuartoLanguageId,
       content: this.scaffold(),
     });
-    await window.showTextDocument(doc, undefined, false);
+    await window.showTextDocument(doc, this.viewColumn_, false);
     await commands.executeCommand("cursorMove", { to: "viewPortBottom" });
   }
   protected abstract scaffold(): string;
@@ -105,3 +107,41 @@ format: html
 ---
 
 `;
+
+class WalkthroughNewDocumentCommand extends NewFileCommand {
+  constructor(cmdId: string) {
+    super(cmdId, ViewColumn.Beside);
+  }
+  protected scaffold(): string {
+    return `---
+title: "Hello, Quarto"
+format: html
+---
+
+## Markdown
+
+Markdown is an easy to read and write text format:
+
+- It's _plain text_ so works well with version control
+- It can be **rendered** into HTML, PDF, and more
+- Learn more at: <https://quarto.org/docs/authoring/>
+
+## Code Cell
+
+Here is a Python code cell:
+
+\`\`\`{python}
+import os
+os.cpu_count()
+\`\`\`
+
+## Equation
+
+Use LaTeX to write equations:
+
+$$
+chi' = sum_{i=1}^n k_i s_i^2
+$$
+`;
+  }
+}

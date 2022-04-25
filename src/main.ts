@@ -16,6 +16,7 @@ import { activateCommon } from "./extension";
 import { activatePreview } from "./providers/preview/preview";
 import { initQuartoContext } from "./shared/quarto";
 import { activateStatusBar } from "./providers/statusbar";
+import { walkthroughCommands } from "./providers/walkthrough";
 
 export function activate(context: vscode.ExtensionContext) {
   // create markdown engine
@@ -51,6 +52,9 @@ export function activate(context: vscode.ExtensionContext) {
     // preview
     const previewCommands = activatePreview(context, quartoContext, engine);
     commands.push(...previewCommands);
+
+    // walkthough
+    commands.push(...walkthroughCommands(quartoContext));
   }
 
   // provide code lens
