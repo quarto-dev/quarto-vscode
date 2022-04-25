@@ -6,10 +6,10 @@
 import { window, env, Uri, workspace, ViewColumn } from "vscode";
 
 import * as fs from "fs";
+import * as os from "os";
 import * as path from "path";
 
 import { Command } from "../core/command";
-import { defaultSaveDir } from "../core/doc";
 import { QuartoContext } from "../shared/quarto";
 import { hasRequiredExtension } from "./cell/executors";
 
@@ -129,5 +129,13 @@ $$
 chi' = sum_{i=1}^n k_i s_i^2
 $$
 `;
+  }
+}
+
+function defaultSaveDir() {
+  if (workspace.workspaceFolders && workspace.workspaceFolders[0]) {
+    return workspace.workspaceFolders[0].uri.fsPath;
+  } else {
+    return os.homedir();
   }
 }
