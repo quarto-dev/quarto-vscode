@@ -732,7 +732,7 @@
           {
             "id": "install",
             "title": "Install Quarto",
-            "description": "The core capabilities of Quarto are provided by a command line interface (CLI).\n\nBefore getting started, be sure that you've installed the latest version of the Quarto CLI from [https://quarto.org/](https://quarto.org/docs/get-started/)\n[Verify Installation](command:quarto.walkthrough.verifyInstallation)",
+            "description": "The core capabilities of Quarto are provided by a command line interface.\n\nBefore getting started, be sure that you've installed the latest version of the Quarto CLI from [https://quarto.org/](https://quarto.org/docs/get-started/)\n[Verify Installation](command:quarto.walkthrough.verifyInstallation)",
             "media": {
               "image": {
                 "dark": "assets/walkthrough/quarto-cli-dark.png",
@@ -793,7 +793,7 @@
           {
             "id": "learn-more",
             "title": "Learn more",
-            "description": "Learn more about using Quarto as well as the various features of the VS Code extension here:\n- [Quarto Tutorial](https://quarto.org/docs/get-started/hello/vscode.html)\n- [Using VS Code with Quarto](https://quarto.org/docs/tools/vscode.html)",
+            "description": "Learn more about using Quarto here:\n- [Quarto Tutorial](https://quarto.org/docs/get-started/hello/vscode.html)\n- [Using VS Code with Quarto](https://quarto.org/docs/tools/vscode.html)",
             "media": {
               "markdown": "assets/walkthrough/empty.md"
             },

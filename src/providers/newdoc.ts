@@ -15,6 +15,7 @@ import {
 } from "vscode";
 import { Command } from "../core/command";
 import { getWholeRange, kQuartoLanguageId } from "../core/doc";
+import { hasRequiredExtension } from "./cell/executors";
 
 export function newDocumentCommands(): Command[] {
   return [
@@ -113,6 +114,33 @@ class WalkthroughNewDocumentCommand extends NewFileCommand {
     super(cmdId, ViewColumn.Beside);
   }
   protected scaffold(): string {
+    // determine which code block to use (default to python)
+    const kPython = {
+      lang: "python",
+      desc: "a Python",
+      code: "import os\nos.cpu_count()",
+      suffix: ":",
+    };
+    const kR = {
+      lang: "r",
+      desc: "an R",
+      code: "summary(cars)",
+      suffix: ":",
+    };
+    const kJulia = {
+      lang: "julia",
+      desc: "a Julia",
+      code: "1 + 1",
+      suffix: ":",
+    };
+    const langBlock = [kPython, kR, kJulia].find((lang) => {
+      return hasRequiredExtension(lang.lang);
+    }) || {
+      ...kPython,
+      suffix:
+        ".\n\nInstall the VS Code Python Extension to enable\nrunning this cell interactively.",
+    };
+
     return `---
 title: "Hello, Quarto"
 format: html
@@ -128,11 +156,10 @@ Markdown is an easy to read and write text format:
 
 ## Code Cell
 
-Here is a Python code cell:
+Here is ${langBlock.desc} code cell${langBlock.suffix}
 
-\`\`\`{python}
-import os
-os.cpu_count()
+\`\`\`{${langBlock.lang}}
+${langBlock.code}
 \`\`\`
 
 ## Equation

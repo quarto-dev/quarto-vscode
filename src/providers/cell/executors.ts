@@ -45,6 +45,15 @@ export function hasCellExecutor(language: string) {
   return !!kCellExecutors.find((x) => x.language === language);
 }
 
+export function hasRequiredExtension(language: string) {
+  const executor = kCellExecutors.find((x) => x.language === language);
+  if (executor) {
+    return validateRequiredExtension(executor, true);
+  } else {
+    return false;
+  }
+}
+
 // ensure language extension is loaded (if required) by creating a
 // virtual doc for the language (under the hood this triggers extension
 // loading by sending a dummy hover-provider request)
@@ -92,7 +101,7 @@ export async function ensureRequiredExtension(
   return false;
 }
 
-function validateRequiredExtension(executor: CellExecutor) {
+function validateRequiredExtension(executor: CellExecutor, silent = false) {
   if (executor.requiredExtension) {
     const extensionName =
       executor.requiredExtensionName || executor.requiredExtension;
@@ -103,18 +112,22 @@ function validateRequiredExtension(executor: CellExecutor) {
         if (semver.gte(version, executor.requiredVersion)) {
           return true;
         } else {
-          window.showWarningMessage(
-            `Executing ${executor.language} cells requires v${executor.requiredVersion} of the ${extensionName} extension.`
-          );
+          if (!silent) {
+            window.showWarningMessage(
+              `Executing ${executor.language} cells requires v${executor.requiredVersion} of the ${extensionName} extension.`
+            );
+          }
           return false;
         }
       } else {
         return true;
       }
     } else {
-      window.showWarningMessage(
-        `Executing ${executor.language} cells requires the ${extensionName} extension.`
-      );
+      if (!silent) {
+        window.showWarningMessage(
+          `Executing ${executor.language} cells requires the ${extensionName} extension.`
+        );
+      }
       return false;
     }
   } else {
