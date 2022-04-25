@@ -76,7 +76,9 @@ export async function previewDoc(
   }
 
   // activate the editor
-  await window.showTextDocument(editor.document, editor.viewColumn, false);
+  if (!isNotebook(editor.document)) {
+    await window.showTextDocument(editor.document, editor.viewColumn, false);
+  }
 
   // save (exit if we cancelled)
   await commands.executeCommand("workbench.action.files.save");
