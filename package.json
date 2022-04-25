@@ -57,7 +57,8 @@
     "onCommand:quarto.newPresentation",
     "onCommand:quarto.newNotebook",
     "onCommand:quarto.fileNewPresentation",
-    "onCommand:quarto.verifyInstallation",
+    "onCommand:quarto.walkthrough.verifyInstallation",
+    "onCommand:quarto.walkthrough.newDocument",
     "workspaceContains:**/_quarto.{yml,yaml}",
     "onWebviewPanel:quarto.previewView"
   ],
@@ -303,6 +304,16 @@
         "command": "quarto.walkthrough.newDocument",
         "title": "New Document (qmd)",
         "category": "Quarto"
+      },
+      {
+        "command": "quarto.walkthrough.verifyInstallation",
+        "title": "Verify Installation",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.walkthrough.render",
+        "title": "Render",
+        "category": "Quarto"
       }
     ],
     "keybindings": [
@@ -521,6 +532,14 @@
         {
           "command": "quarto.walkthrough.newDocument",
           "when": "false"
+        },
+        {
+          "command": "quarto.walkthrough.verifyInstallation",
+          "when": "false"
+        },
+        {
+          "command": "quarto.walkthrough.render",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -713,7 +732,7 @@
           {
             "id": "install",
             "title": "Install Quarto",
-            "description": "The core capabilities of Quarto are provided by a command line interface (CLI).\n\nBefore getting started, be sure that you've installed the latest version of the Quarto CLI from [https://quarto.org/](https://quarto.org/docs/get-started/)\n[Verify Installation](command:quarto.verifyInstallation)",
+            "description": "The core capabilities of Quarto are provided by a command line interface (CLI).\n\nBefore getting started, be sure that you've installed the latest version of the Quarto CLI from [https://quarto.org/](https://quarto.org/docs/get-started/)\n[Verify Installation](command:quarto.walkthrough.verifyInstallation)",
             "media": {
               "image": {
                 "dark": "assets/walkthrough/quarto-cli-dark.png",
@@ -741,12 +760,12 @@
           {
             "id": "render",
             "title": "Render a document",
-            "description": "You can render documents to HTML, PDF, or other formats using the **Render** button on the editor toolbar, the **Cmd+Shift+K** keyboard shortcut, or the **Quarto: Render** command.\n\n[Render Document](command:quarto.renderShortcut)",
+            "description": "You can render documents to HTML, PDF, or other formats using the **Render** button on the editor toolbar, the **Cmd+Shift+K** keyboard shortcut, or the **Quarto: Render** command.\n\n[Render Document](command:quarto.walkthrough.render)",
             "media": {
               "markdown": "assets/walkthrough/empty.md"
             },
             "completionEvents": [
-              "onCommand:quarto.renderShortcut"
+              "onStepSelected"
             ]
           },
           {

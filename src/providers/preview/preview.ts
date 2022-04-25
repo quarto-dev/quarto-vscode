@@ -60,11 +60,15 @@ export function canPreviewDoc(doc?: TextDocument) {
 export async function previewDoc(
   editor: TextEditor,
   format?: string | null,
-  slideIndex?: number
+  slideIndex?: number,
+  onShow?: () => void
 ) {
-  // set the slide index if its provided
+  // set the slide index and onShow if its provided
   if (slideIndex !== undefined) {
     previewManager.setSlideIndex(slideIndex);
+  }
+  if (onShow !== undefined) {
+    previewManager.setOnShow(onShow);
   }
 
   // activate the editor
@@ -155,6 +159,10 @@ export class PreviewManager {
 
   public setSlideIndex(slideIndex: number) {
     this.webviewManager_.setSlideIndex(slideIndex);
+  }
+
+  public setOnShow(f: () => void) {
+    this.webviewManager_.setOnShow(f);
   }
 
   private canReuseRunningPreview(previewEnv: PreviewEnv) {

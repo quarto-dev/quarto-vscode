@@ -7,7 +7,7 @@ import semver from "semver";
 import * as path from "path";
 import * as fs from "fs";
 
-import { TextDocument, window, Uri, workspace } from "vscode";
+import { TextDocument, window, Uri, workspace, commands } from "vscode";
 import { Command } from "../../core/command";
 import { QuartoContext } from "../../shared/quarto";
 import { canPreviewDoc, previewDoc, previewProject } from "./preview";
@@ -29,6 +29,7 @@ export function previewCommands(
     new RenderDocumentWordCommand(quartoContext, engine),
     new RenderProjectCommand(quartoContext),
     new TerminatePreviewCommand(previewManager),
+    new WalkthroughRenderCommand(quartoContext, engine),
     new ClearCacheCommand(),
   ];
 }
@@ -58,7 +59,7 @@ abstract class RenderDocumentCommandBase extends RenderCommand {
   ) {
     super(quartoContext);
   }
-  protected async renderFormat(format?: string | null) {
+  protected async renderFormat(format?: string | null, onShow?: () => void) {
     const targetEditor = findRenderTarget(canPreviewDoc);
     if (targetEditor) {
       // set the slide index from the source editor so we can
@@ -71,7 +72,7 @@ abstract class RenderDocumentCommandBase extends RenderCommand {
           )
         : undefined;
 
-      await previewDoc(targetEditor, format, slideIndex);
+      await previewDoc(targetEditor, format, slideIndex, onShow);
     } else {
       window.showInformationMessage("No Quarto document available to render");
     }
@@ -227,6 +228,17 @@ class ClearCacheCommand implements Command {
         detail: "The current document is not a Quarto document.",
       });
     }
+  }
+}
+
+class WalkthroughRenderCommand extends RenderDocumentCommandBase {
+  private static readonly id = "quarto.walkthrough.render";
+  public readonly id = WalkthroughRenderCommand.id;
+
+  protected async doExecute() {
+    return super.renderFormat(null, () => {
+      commands.executeCommand("workbench.action.closeSidebar");
+    });
   }
 }
 

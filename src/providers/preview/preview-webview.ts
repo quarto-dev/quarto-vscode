@@ -45,6 +45,10 @@ export class PreviewWebviewManager {
     }
   }
 
+  public setOnShow(f: () => void) {
+    this.onShow_ = f;
+  }
+
   public showWebview(url: string, options?: ShowOptions): void {
     if (this.activeView_) {
       this.activeView_.show(url, options);
@@ -53,6 +57,7 @@ export class PreviewWebviewManager {
       this.registerWebviewListeners(view);
       this.activeView_ = view;
     }
+    this.resolveOnShow();
     if (options?.preserveFocus) {
       this.preserveFocus();
     }
@@ -61,12 +66,20 @@ export class PreviewWebviewManager {
   public revealWebview() {
     if (this.activeView_) {
       this.activeView_.reveal();
+      this.resolveOnShow();
       this.preserveFocus();
     }
   }
 
   public hasWebview() {
     return !!this.activeView_;
+  }
+
+  private resolveOnShow() {
+    if (this.onShow_) {
+      this.onShow_();
+      this.onShow_ = undefined;
+    }
   }
 
   private preserveFocus() {
@@ -107,6 +120,7 @@ export class PreviewWebviewManager {
     }
   }
   private activeView_?: QuartoPreviewView;
+  private onShow_?: () => void;
   private readonly extensionUri_: Uri;
 }
 
