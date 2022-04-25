@@ -6,6 +6,7 @@
 
 import * as vscode from "vscode";
 import { extname } from "./path";
+import * as os from "os";
 
 export const kQuartoLanguageId = "quarto";
 const kYamlLanguageId = "yaml";
@@ -68,6 +69,17 @@ export function getWholeRange(doc: vscode.TextDocument) {
   const begin = new vscode.Position(0, 0);
   const end = doc.lineAt(doc.lineCount - 1).range.end;
   return new vscode.Range(begin, end);
+}
+
+export function defaultSaveDir() {
+  if (
+    vscode.workspace.workspaceFolders &&
+    vscode.workspace.workspaceFolders[0]
+  ) {
+    return vscode.workspace.workspaceFolders[0].uri.fsPath;
+  } else {
+    return os.homedir();
+  }
 }
 
 async function tryResolveUriToQuartoDoc(

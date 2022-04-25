@@ -15,7 +15,6 @@ import {
 } from "vscode";
 import { Command } from "../core/command";
 import { getWholeRange, kQuartoLanguageId } from "../core/doc";
-import { hasRequiredExtension } from "./cell/executors";
 
 export function newDocumentCommands(): Command[] {
   return [
@@ -25,7 +24,6 @@ export function newDocumentCommands(): Command[] {
     new NewPresentationCommand("quarto.fileNewPresentation"),
     new NewNotebookCommand("quarto.newNotebook"),
     new NewNotebookCommand("quarto.fileNewNotebook"),
-    new WalkthroughNewDocumentCommand("quarto.walkthrough.newDocument"),
   ];
 }
 
@@ -108,67 +106,3 @@ format: html
 ---
 
 `;
-
-class WalkthroughNewDocumentCommand extends NewFileCommand {
-  constructor(cmdId: string) {
-    super(cmdId, ViewColumn.Beside);
-  }
-  protected scaffold(): string {
-    // determine which code block to use (default to python)
-    const kPython = {
-      lang: "python",
-      desc: "a Python",
-      code: "import os\nos.cpu_count()",
-      suffix: ":",
-    };
-    const kR = {
-      lang: "r",
-      desc: "an R",
-      code: "summary(cars)",
-      suffix: ":",
-    };
-    const kJulia = {
-      lang: "julia",
-      desc: "a Julia",
-      code: "1 + 1",
-      suffix: ":",
-    };
-    const langBlock = [kPython, kR, kJulia].find((lang) => {
-      return hasRequiredExtension(lang.lang);
-    }) || {
-      ...kPython,
-      suffix:
-        ".\n\nInstall the VS Code Python Extension to enable\nrunning this cell interactively.",
-    };
-
-    return `---
-title: "Hello, Quarto"
-format: html
----
-
-## Markdown
-
-Markdown is an easy to read and write text format:
-
-- It's _plain text_ so works well with version control
-- It can be **rendered** into HTML, PDF, and more
-- Learn more at: <https://quarto.org/docs/authoring/>
-
-## Code Cell
-
-Here is ${langBlock.desc} code cell${langBlock.suffix}
-
-\`\`\`{${langBlock.lang}}
-${langBlock.code}
-\`\`\`
-
-## Equation
-
-Use LaTeX to write equations:
-
-$$
-chi' = sum_{i=1}^n k_i s_i^2
-$$
-`;
-  }
-}

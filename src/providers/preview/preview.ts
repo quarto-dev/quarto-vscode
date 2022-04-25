@@ -84,8 +84,6 @@ export async function previewDoc(
     return;
   }
 
-  window.showSaveDialog;
-
   // error if we didn't save using a valid quarto extension
   if (!validatateQuartoExtension(editor.document)) {
     window.showErrorMessage("Unsupported File Extension", {
