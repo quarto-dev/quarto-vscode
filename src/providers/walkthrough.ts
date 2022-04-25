@@ -131,19 +131,3 @@ $$
 `;
   }
 }
-
-/*
-const saveDir = defaultSaveDir();
-    const saveOptions = {
-      defaultUri: Uri.file(
-        path.join(saveDir, editor.document.uri.fsPath + ".qmd")
-      ),
-      filters: {
-        Quarto: ["qmd"],
-      },
-    };
-
-    const target = await window.showSaveDialog(saveOptions);
-
-
-*/
