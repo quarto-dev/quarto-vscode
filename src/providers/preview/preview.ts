@@ -84,20 +84,21 @@ export async function previewDoc(
     return;
   }
 
-  // error if we didn't save using a valid quarto extension
-  if (!validatateQuartoExtension(editor.document)) {
-    window.showErrorMessage("Unsupported File Extension", {
-      modal: true,
-      detail:
-        "This document cannot be rendered because it doesn't have a supported Quarto file extension. " +
-        "Save the file with a .qmd extension then try rendering again.",
-    });
-    return;
-  }
-
   // execute the preview
   const doc = window.activeTextEditor?.document;
   if (doc) {
+    // error if we didn't save using a valid quarto extension
+    if (!isNotebook(doc) && !validatateQuartoExtension(doc)) {
+      window.showErrorMessage("Unsupported File Extension", {
+        modal: true,
+        detail:
+          "This document cannot be rendered because it doesn't have a supported Quarto file extension. " +
+          "Save the file with a .qmd extension then try rendering again.",
+      });
+      return;
+    }
+
+    // run the preview
     await previewManager.preview(doc.uri, doc, format);
 
     // focus the editor (sometimes the terminal steals focus)
