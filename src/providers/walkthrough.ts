@@ -89,7 +89,7 @@ class WalkthroughNewDocumentCommand implements Command {
     const kJulia = {
       lang: "julia",
       desc: "a Julia",
-      code: "1 + 1",
+      code: "A = [1 2 3; 4 1 6; 7 8 1]\ninv(A)",
       suffix: ":",
     };
     const langBlock = [kPython, kR, kJulia].find((lang) => {
