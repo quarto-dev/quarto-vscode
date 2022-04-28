@@ -39,7 +39,7 @@ import * as tmp from "tmp";
 import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
 import { isHugoMarkdown } from "../../core/hugo";
 import { MarkdownEngine } from "../../markdown/engine";
-import { shQuote } from "../../core/strings";
+import { lines, shQuote } from "../../core/strings";
 tmp.setGracefulCleanup();
 
 let previewManager: PreviewManager;
@@ -265,7 +265,14 @@ export class PreviewManager {
   private onPreviewOutput(output: string) {
     this.setPreviewRunning(true);
     output = stripAnsi(output);
-    this.outputChannel_.append(output);
+    const outputLines = lines(output);
+    for (let i = 0; i < outputLines.length; i++) {
+      if (i < outputLines.length - 1) {
+        this.outputChannel_.appendLine(outputLines[i]);
+      } else {
+        this.outputChannel_.append(outputLines[i]);
+      }
+    }
     const kOutputCreatedPattern = /Output created\: (.*?)\n/;
     this.previewOutput_ += output;
     if (!this.previewUrl_) {
