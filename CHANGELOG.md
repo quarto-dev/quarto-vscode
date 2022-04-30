@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.18.0 (Unreleased)
+
+- Revert to using terminal for quarto preview
+- Improved editor handling of shortcodes (autoclose, snippet)
+
 ## 1.17.0 (Release on 25 April 2022)
 
 - Getting started with Quarto walkthrough
