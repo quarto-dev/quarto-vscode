@@ -148,13 +148,13 @@ class PreviewManager {
         if (response.status === 200) {
           this.terminal_!.show(true);
         } else {
-          this.startPreview(prevewEnv, uri, format, doc);
+          await this.startPreview(prevewEnv, uri, format, doc);
         }
       } catch (e) {
-        this.startPreview(prevewEnv, uri, format, doc);
+        await this.startPreview(prevewEnv, uri, format, doc);
       }
     } else {
-      this.startPreview(prevewEnv, uri, format, doc);
+      await this.startPreview(prevewEnv, uri, format, doc);
     }
   }
 
@@ -178,14 +178,8 @@ class PreviewManager {
   }
 
   private previewRenderRequest(doc: TextDocument, format: string | null) {
-    const previewUri = Uri.parse(this.previewUrl_!);
+    const requestUri = this.previewServerRequestUri("/" + this.renderToken_);
 
-    const requestUri =
-      previewUri.scheme +
-      "://" +
-      previewUri.authority +
-      "/" +
-      this.renderToken_;
     const params: Record<string, unknown> = {
       path: doc.uri.fsPath,
     };
@@ -195,7 +189,26 @@ class PreviewManager {
     return axios.get(requestUri, { params });
   }
 
-  private startPreview(
+  private async previewTerminateRequest() {
+    const kTerminateToken = "4231F431-58D3-4320-9713-994558E4CC45";
+    try {
+      await axios.get(this.previewServerRequestUri("/" + kTerminateToken), {
+        timeout: 1000,
+      });
+    } catch (error) {
+      console.log(
+        "Error requesting preview server termination: " + error.toString()
+      );
+    }
+  }
+
+  private previewServerRequestUri(path: string) {
+    const previewUri = Uri.parse(this.previewUrl_!);
+    const requestUri = previewUri.scheme + "://" + previewUri.authority + path;
+    return requestUri;
+  }
+
+  private async startPreview(
     previewEnv: PreviewEnv,
     target: Uri,
     format: string | null,
@@ -207,6 +220,7 @@ class PreviewManager {
       return terminal.name === kPreviewWindowTitle;
     });
     if (terminal) {
+      await this.previewTerminateRequest();
       terminal.dispose();
     }
 
