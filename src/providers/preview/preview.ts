@@ -4,12 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from "path";
-import * as os from "os";
 import * as fs from "fs";
 import * as uuid from "uuid";
-import * as process from "process";
-import stripAnsi from "strip-ansi";
-import { spawn, ChildProcess, SpawnOptions } from "child_process";
+import * as os from "os";
 import axios from "axios";
 
 import vscode, {
@@ -17,7 +14,8 @@ import vscode, {
   env,
   ExtensionContext,
   MessageItem,
-  OutputChannel,
+  Terminal,
+  TerminalOptions,
   TextDocument,
   TextEditor,
   Uri,
@@ -33,13 +31,14 @@ import {
   validatateQuartoExtension,
 } from "../../core/doc";
 import { PreviewWebviewManager } from "./preview-webview";
+import { PreviewOutputSink } from "./preview-output";
 import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
 
 import * as tmp from "tmp";
 import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
 import { isHugoMarkdown } from "../../core/hugo";
 import { MarkdownEngine } from "../../markdown/engine";
-import { lines, shQuote } from "../../core/strings";
+import { shQuote } from "../../core/strings";
 tmp.setGracefulCleanup();
 
 let previewManager: PreviewManager;
@@ -54,7 +53,7 @@ export function activatePreview(
   context.subscriptions.push(previewManager);
 
   // preview commands
-  return previewCommands(quartoContext, previewManager, engine);
+  return previewCommands(quartoContext, engine);
 }
 
 export function canPreviewDoc(doc?: TextDocument) {
@@ -114,23 +113,23 @@ export async function previewProject(target: Uri, format?: string) {
   await previewManager.preview(target, undefined, format);
 }
 
-export class PreviewManager {
+class PreviewManager {
   constructor(
     context: ExtensionContext,
     private readonly quartoContext_: QuartoContext
   ) {
     this.renderToken_ = uuid.v4();
     this.webviewManager_ = new PreviewWebviewManager(context);
-    this.previewEnvManager_ = new PreviewEnvManager(this.renderToken_);
-    this.outputChannel_ = window.createOutputChannel("Quarto Preview");
+    this.outputSink_ = new PreviewOutputSink(this.onPreviewOutput.bind(this));
+    this.previewEnvManager_ = new PreviewEnvManager(
+      this.outputSink_,
+      this.renderToken_
+    );
   }
 
   dispose() {
-    try {
-      this.webviewManager_.dispose();
-      this.outputChannel_.dispose();
-      this.previewProcess_?.kill();
-    } catch {}
+    this.webviewManager_.dispose();
+    this.outputSink_.dispose();
   }
 
   public async preview(uri: Uri, doc?: TextDocument, format?: string | null) {
@@ -147,9 +146,7 @@ export class PreviewManager {
       try {
         const response = await this.previewRenderRequest(doc, format);
         if (response.status === 200) {
-          this.outputChannel_.clear();
-          this.outputChannel_.show(true);
-          this.outputChannel_.appendLine("quarto re-render\n");
+          this.terminal_!.show(true);
         } else {
           this.startPreview(prevewEnv, uri, format, doc);
         }
@@ -158,20 +155,6 @@ export class PreviewManager {
       }
     } else {
       this.startPreview(prevewEnv, uri, format, doc);
-    }
-  }
-
-  public terminatePreview(revealOutput = false) {
-    if (this.previewProcess_) {
-      if (this.previewProcess_.exitCode === null) {
-        this.outputChannel_.appendLine("\nTerminating Quarto Preview");
-        this.previewProcess_.kill();
-        this.setPreviewRunning(false);
-      }
-      this.previewProcess_ = undefined;
-    }
-    if (revealOutput) {
-      this.outputChannel_.show(true);
     }
   }
 
@@ -189,8 +172,8 @@ export class PreviewManager {
       previewEnvsEqual(this.previewEnv_, previewEnv) &&
       this.previewType_ === this.previewTypeConfig() &&
       (this.previewType_ !== "internal" || this.webviewManager_.hasWebview()) &&
-      this.previewProcess_ &&
-      this.previewProcess_.exitCode === null
+      this.terminal_ &&
+      this.terminal_.exitStatus === undefined
     );
   }
 
@@ -218,11 +201,17 @@ export class PreviewManager {
     format: string | null,
     doc?: TextDocument
   ) {
-    // kill existing process
-    this.terminatePreview();
+    // dispose any existing preview terminals
+    const kPreviewWindowTitle = "Quarto Preview";
+    const terminal = window.terminals.find((terminal) => {
+      return terminal.name === kPreviewWindowTitle;
+    });
+    if (terminal) {
+      terminal.dispose();
+    }
 
-    // clear existing output
-    this.outputChannel_.clear();
+    // cleanup output
+    this.outputSink_.reset();
 
     // reset preview state
     this.previewEnv_ = previewEnv;
@@ -231,17 +220,21 @@ export class PreviewManager {
     this.previewUrl_ = undefined;
     this.previewOutputFile_ = undefined;
 
-    // create the preview process
-    const quarto = path.join(this.quartoContext_.binPath, "quarto");
-    const options: SpawnOptions = {
+    // create and show the terminal
+    const options: TerminalOptions = {
+      name: kPreviewWindowTitle,
       cwd: this.targetDir(),
-      env: {
-        ...process.env,
-        ...this.previewEnv_,
+      env: this.previewEnv_ as unknown as {
+        [key: string]: string | null | undefined;
       },
-      shell: os.platform() === "win32",
     };
-    const cmd: string[] = ["preview", this.targetFile()];
+    this.terminal_ = window.createTerminal(options);
+    const quarto = path.join(this.quartoContext_.binPath, "quarto");
+    const cmd: string[] = [
+      shQuote(quarto),
+      "preview",
+      shQuote(this.targetFile()),
+    ];
     if (!doc) {
       // project render
       cmd.push("--render", format || "all");
@@ -249,30 +242,16 @@ export class PreviewManager {
       // doc render
       cmd.push("--to", format);
     }
+
     cmd.push("--no-browser");
     cmd.push("--no-watch-inputs");
-    this.outputChannel_.show(true);
-    this.outputChannel_.appendLine(`quarto ${cmd.map(shQuote).join(" ")}`);
-    const quote = os.platform() === "win32" ? shQuote : (arg: string) => arg;
-    this.previewProcess_ = spawn(quote(quarto), cmd.map(quote), options);
-    this.previewProcess_.stderr.setEncoding("UTF-8");
-    this.previewProcess_.stderr.on("data", this.onPreviewOutput.bind(this));
-    this.previewProcess_.on("exit", () => {
-      this.setPreviewRunning(false);
-    });
+    const cmdText =
+      os.platform() === "win32" ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
+    this.terminal_.sendText(cmdText, true);
+    this.terminal_.show(true);
   }
 
   private onPreviewOutput(output: string) {
-    this.setPreviewRunning(true);
-    output = stripAnsi(output);
-    const outputLines = lines(output);
-    for (let i = 0; i < outputLines.length; i++) {
-      if (i < outputLines.length - 1) {
-        this.outputChannel_.appendLine(outputLines[i]);
-      } else {
-        this.outputChannel_.append(outputLines[i]);
-      }
-    }
     const kOutputCreatedPattern = /Output created\: (.*?)\n/;
     this.previewOutput_ += output;
     if (!this.previewUrl_) {
@@ -400,16 +379,6 @@ export class PreviewManager {
     }
   }
 
-  private setPreviewRunning(value: boolean) {
-    commands.executeCommand(
-      "setContext",
-      PreviewManager.kPreviewRunningContext,
-      value
-    );
-  }
-
-  private static readonly kPreviewRunningContext = "quarto.preview.isRunning";
-
   private previewOutput_ = "";
   private previewEnv_: PreviewEnv | undefined;
   private previewTarget_: Uri | undefined;
@@ -417,11 +386,11 @@ export class PreviewManager {
   private previewOutputFile_: Uri | undefined;
   private previewType_: "internal" | "external" | "none" | undefined;
 
-  private previewProcess_: ChildProcess | undefined;
-  private readonly outputChannel_: OutputChannel;
+  private terminal_: Terminal | undefined;
 
   private readonly renderToken_: string;
   private readonly previewEnvManager_: PreviewEnvManager;
   private readonly webviewManager_: PreviewWebviewManager;
+  private readonly outputSink_: PreviewOutputSink;
   private readonly previewFormats_ = new Map<string, string | null>();
 }
