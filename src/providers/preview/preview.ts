@@ -196,9 +196,10 @@ class PreviewManager {
         timeout: 1000,
       });
     } catch (error) {
-      console.log(
-        "Error requesting preview server termination: " + error.toString()
-      );
+      /*
+      console.log("Error requesting preview server termination");
+      console.log(error);
+      */
     }
   }
 
