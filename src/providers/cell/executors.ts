@@ -103,9 +103,14 @@ export async function ensureRequiredExtension(
 
 function validateRequiredExtension(executor: CellExecutor, silent = false) {
   if (executor.requiredExtension) {
-    const extensionName =
-      executor.requiredExtensionName || executor.requiredExtension;
-    const extension = extensions.getExtension(executor?.requiredExtension);
+    const extensionName = executor.requiredExtensionName;
+    let extension: any;
+    for (const reqExtension of executor.requiredExtension) {
+      extension = extensions.getExtension(reqExtension);
+      if (extension) {
+        break;
+      }
+    }
     if (extension) {
       if (executor?.requiredVersion) {
         const version = (extension.packageJSON.version || "0.0.0") as string;
@@ -137,15 +142,15 @@ function validateRequiredExtension(executor: CellExecutor, silent = false) {
 
 interface CellExecutor {
   language: string;
-  requiredExtension?: string;
-  requiredExtensionName?: string;
+  requiredExtensionName: string;
+  requiredExtension?: string[];
   requiredVersion?: string;
   execute: (code: string) => Promise<void>;
 }
 
 const pythonCellExecutor: CellExecutor = {
   language: "python",
-  requiredExtension: "ms-python.python",
+  requiredExtension: ["ms-python.python"],
   requiredExtensionName: "Python",
   requiredVersion: "2021.8.0",
   execute: async (code: string) => {
@@ -155,7 +160,7 @@ const pythonCellExecutor: CellExecutor = {
 
 const rCellExecutor: CellExecutor = {
   language: "r",
-  requiredExtension: "Ikuyadeu.r",
+  requiredExtension: ["reditorsupport.r", "Ikuyadeu.r"],
   requiredExtensionName: "R",
   requiredVersion: "2.4.0",
   execute: async (code: string) => {
@@ -165,7 +170,7 @@ const rCellExecutor: CellExecutor = {
 
 const juliaCellExecutor: CellExecutor = {
   language: "julia",
-  requiredExtension: "julialang.language-julia",
+  requiredExtension: ["julialang.language-julia"],
   requiredExtensionName: "Julia",
   requiredVersion: "1.4.0",
   execute: async (code: string) => {
