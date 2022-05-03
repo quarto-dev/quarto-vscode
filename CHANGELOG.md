@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.18.1 (Release on 3 May 2022)
+
+- Support old and new (reditorsupport.r) R extension ids
+
 ## 1.18.0 (Release on 30 April 2022)
 
 - Revert to using terminal for quarto preview
