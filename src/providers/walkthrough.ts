@@ -12,6 +12,7 @@ import * as path from "path";
 import { Command } from "../core/command";
 import { QuartoContext } from "../shared/quarto";
 import { hasRequiredExtension } from "./cell/executors";
+import { promptForQuartoInstallation } from "../core/quarto";
 
 export function walkthroughCommands(quartoContext: QuartoContext): Command[] {
   return [
@@ -33,19 +34,7 @@ class VerifyInstallationCommand implements Command {
         detail: `Quarto version ${this.quartoContext_.version} installed at ${this.quartoContext_.binPath}`,
       });
     } else {
-      const installQuarto = { title: "Install Quarto" };
-      const result = await window.showWarningMessage(
-        "Quarto Installation Not Found",
-        {
-          modal: true,
-          detail:
-            "Please install the Quarto CLI before using the VS Code extension.",
-        },
-        installQuarto
-      );
-      if (result === installQuarto) {
-        env.openExternal(Uri.parse("https://quarto.org/docs/get-started/"));
-      }
+      await promptForQuartoInstallation("using the VS Code extension");
     }
   }
 }

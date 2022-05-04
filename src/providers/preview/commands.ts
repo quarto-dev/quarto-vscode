@@ -14,6 +14,7 @@ import { canPreviewDoc, previewDoc, previewProject } from "./preview";
 import { MarkdownEngine } from "../../markdown/engine";
 import { revealSlideIndex } from "./preview-reveal";
 import { isNotebook } from "../../core/doc";
+import { promptForQuartoInstallation } from "../../core/quarto";
 
 export function previewCommands(
   quartoContext: QuartoContext,
@@ -36,13 +37,18 @@ abstract class RenderCommand {
     this.quartoContext_ = quartoContext;
   }
   async execute() {
-    const kRequiredVersion = "0.9.149";
-    if (semver.gte(this.quartoContext_.version, kRequiredVersion)) {
-      await this.doExecute();
+    if (this.quartoContext_.available) {
+      const kRequiredVersion = "0.9.149";
+      if (semver.gte(this.quartoContext_.version, kRequiredVersion)) {
+        await this.doExecute();
+      } else {
+        window.showWarningMessage(
+          `Rendering requires Quarto version ${kRequiredVersion} or greater`,
+          { modal: true }
+        );
+      }
     } else {
-      window.showWarningMessage(
-        `Rendering requires Quarto version ${kRequiredVersion} or greater`
-      );
+      await promptForQuartoInstallation("rendering documents");
     }
   }
   protected abstract doExecute(): Promise<void>;

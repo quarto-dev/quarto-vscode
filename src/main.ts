@@ -49,13 +49,13 @@ export function activate(context: vscode.ExtensionContext) {
     const assistCommands = activateQuartoAssistPanel(context, engine);
     commands.push(...assistCommands);
 
-    // preview
-    const previewCommands = activatePreview(context, quartoContext, engine);
-    commands.push(...previewCommands);
-
     // walkthough
     commands.push(...walkthroughCommands(quartoContext));
   }
+
+  // provide preview
+  const previewCommands = activatePreview(context, quartoContext, engine);
+  commands.push(...previewCommands);
 
   // provide code lens
   vscode.languages.registerCodeLensProvider(

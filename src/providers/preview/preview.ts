@@ -49,8 +49,10 @@ export function activatePreview(
   engine: MarkdownEngine
 ): Command[] {
   // create preview manager
-  previewManager = new PreviewManager(context, quartoContext);
-  context.subscriptions.push(previewManager);
+  if (quartoContext.available) {
+    previewManager = new PreviewManager(context, quartoContext);
+    context.subscriptions.push(previewManager);
+  }
 
   // preview commands
   return previewCommands(quartoContext, engine);
