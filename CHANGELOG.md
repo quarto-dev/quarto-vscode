@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.19.0 (Release on 4 May 2022)
+
+- Prompt for installation on render if quarto not found
+- Print full proxied session URL when running under RSW
+
 ## 1.18.1 (Release on 3 May 2022)
 
 - Support old and new (reditorsupport.r) R extension ids
