@@ -204,7 +204,7 @@ class PreviewManager {
   }
 
   private previewServerRequestUri(path: string) {
-    const previewUri = Uri.parse(this.previewUrl_!);
+    const previewUri = Uri.parse(this.previewCommandUrl_!);
     const requestUri = previewUri.scheme + "://" + previewUri.authority + path;
     return requestUri;
   }
@@ -233,6 +233,7 @@ class PreviewManager {
     this.previewTarget_ = target;
     this.previewType_ = this.previewTypeConfig();
     this.previewUrl_ = undefined;
+    this.previewCommandUrl_ = undefined;
     this.previewOutputFile_ = undefined;
 
     // create and show the terminal
@@ -272,7 +273,7 @@ class PreviewManager {
     if (!this.previewUrl_) {
       // detect new preview and show in browser
       const match = this.previewOutput_.match(
-        /Browse at (http:\/\/localhost\:\d+\/[^\s]*)/
+        /(http:\/\/localhost\:\d+\/[^\s]*)/
       );
       if (match) {
         // capture output file
@@ -281,8 +282,17 @@ class PreviewManager {
           this.previewOutputFile_ = this.outputFileUri(fileMatch[1]);
         }
 
-        // capture preview url and show preview
-        this.previewUrl_ = match[1];
+        // capture preview command url and preview url
+        this.previewCommandUrl_ = match[1];
+        const browseMatch = this.previewOutput_.match(
+          /Browse at (https?:\/\/[^\s]*)/
+        );
+        if (browseMatch) {
+          this.previewUrl_ = browseMatch[1];
+        } else {
+          this.previewUrl_ = this.previewCommandUrl_;
+        }
+
         if (this.previewType_ === "internal") {
           this.showPreview();
         } else if (this.previewType_ === "external") {
@@ -398,6 +408,7 @@ class PreviewManager {
   private previewEnv_: PreviewEnv | undefined;
   private previewTarget_: Uri | undefined;
   private previewUrl_: string | undefined;
+  private previewCommandUrl_: string | undefined;
   private previewOutputFile_: Uri | undefined;
   private previewType_: "internal" | "external" | "none" | undefined;
 
