@@ -394,7 +394,6 @@ class PreviewManager {
         viewFile
       );
       if (result === viewFile) {
-        vscode.env.openExternal(Uri.parse(this.previewUrl_!));
         // open non localhost urls externally
         if (this.previewUrl_ && !this.previewUrl_.match(kLocalPreviewRegex)) {
           vscode.env.openExternal(Uri.parse(this.previewUrl_!));
