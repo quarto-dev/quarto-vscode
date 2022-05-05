@@ -41,6 +41,8 @@ import { MarkdownEngine } from "../../markdown/engine";
 import { shQuote } from "../../core/strings";
 tmp.setGracefulCleanup();
 
+const kLocalPreviewRegex = /(http:\/\/localhost\:\d+\/[^\s]*)/;
+
 let previewManager: PreviewManager;
 
 export function activatePreview(
@@ -274,9 +276,7 @@ class PreviewManager {
     this.previewOutput_ += output;
     if (!this.previewUrl_) {
       // detect new preview and show in browser
-      const match = this.previewOutput_.match(
-        /(http:\/\/localhost\:\d+\/[^\s]*)/
-      );
+      const match = this.previewOutput_.match(kLocalPreviewRegex);
       if (match) {
         // capture output file
         const fileMatch = this.previewOutput_.match(kOutputCreatedPattern);
@@ -394,14 +394,20 @@ class PreviewManager {
         viewFile
       );
       if (result === viewFile) {
-        const outputTempDir = tmp.dirSync();
-        const outputTemp = path.join(
-          outputTempDir.name,
-          path.basename(outputFile)
-        );
-        fs.copyFileSync(outputFile, outputTemp);
-        fs.chmodSync(outputTemp, fs.constants.S_IRUSR);
-        vscode.env.openExternal(Uri.file(outputTemp));
+        vscode.env.openExternal(Uri.parse(this.previewUrl_!));
+        // open non localhost urls externally
+        if (this.previewUrl_ && !this.previewUrl_.match(kLocalPreviewRegex)) {
+          vscode.env.openExternal(Uri.parse(this.previewUrl_!));
+        } else {
+          const outputTempDir = tmp.dirSync();
+          const outputTemp = path.join(
+            outputTempDir.name,
+            path.basename(outputFile)
+          );
+          fs.copyFileSync(outputFile, outputTemp);
+          fs.chmodSync(outputTemp, fs.constants.S_IRUSR);
+          vscode.env.openExternal(Uri.file(outputTemp));
+        }
       }
     }
   }
