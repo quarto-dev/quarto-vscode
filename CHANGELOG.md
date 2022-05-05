@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.19.1 (Release on 5 May 2022)
+
+- Open file preview externally for non-localhost
+
 ## 1.19.0 (Release on 4 May 2022)
 
 - Prompt for installation on render if quarto not found
