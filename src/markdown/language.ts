@@ -54,8 +54,12 @@ export function languageNameFromBlock(token: Token) {
   if (isDisplayMath(token)) {
     return "tex";
   } else {
-    const name = token.info.replace(/^[^\w]*/, "").replace(/[^\w]$/, "");
-    return name;
+    const match = token.info.match(/^\{?=?([a-zA-Z0-9_]+)/);
+    if (match) {
+      return match[1];
+    } else {
+      return "";
+    }
   }
 }
 
