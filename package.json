@@ -81,6 +81,19 @@
           "dark": "./assets/icon/qmd.svg"
         },
         "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "dot",
+        "aliases": [
+          "Graphviz (DOT)",
+          "dot"
+        ],
+        "extensions": [
+          ".dot",
+          ".DOT",
+          ".gv"
+        ],
+        "configuration": "dot/dot.configuration.json"
       }
     ],
     "grammars": [
@@ -134,14 +147,36 @@
           "meta.embedded.block.csharp": "csharp",
           "meta.embedded.block.fsharp": "fsharp",
           "meta.embedded.block.stan": "stan",
-          "meta.embedded.math.quarto": "latex"
+          "meta.embedded.math.quarto": "latex",
+          "meta.embedded.block.dot": "dot"
         }
+      },
+      {
+        "language": "dot",
+        "scopeName": "source.dot",
+        "path": "./languages/dot/syntaxes/dot.tmLanguage"
       }
     ],
     "snippets": [
       {
         "language": "quarto",
         "path": "./snippets/quarto.code-snippets"
+      },
+      {
+        "language": "dot",
+        "path": "./languages/dot/snippets/snippets/dot.json"
+      },
+      {
+        "language": "dot",
+        "path": "./languages/dot/snippets/snippets/principalNodeAttributes.json"
+      },
+      {
+        "language": "dot",
+        "path": "./languages/dot/snippets/snippets/principalEdgeAttributes.json"
+      },
+      {
+        "language": "dot",
+        "path": "./languages/dot/snippets/snippets/principalGraphAttributes.json"
       }
     ],
     "viewsContainers": {
