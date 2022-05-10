@@ -94,6 +94,16 @@
           ".gv"
         ],
         "configuration": "dot/dot.configuration.json"
+      },
+      {
+        "id": "mermaid",
+        "aliases": [
+          "Mermaid",
+          "mermaid"
+        ],
+        "extensions": [
+          ".mmd"
+        ]
       }
     ],
     "grammars": [
@@ -148,13 +158,19 @@
           "meta.embedded.block.fsharp": "fsharp",
           "meta.embedded.block.stan": "stan",
           "meta.embedded.math.quarto": "latex",
-          "meta.embedded.block.dot": "dot"
+          "meta.embedded.block.dot": "dot",
+          "meta.embedded.block.mermaid": "mermaid"
         }
       },
       {
         "language": "dot",
         "scopeName": "source.dot",
         "path": "./languages/dot/syntaxes/dot.tmLanguage"
+      },
+      {
+        "language": "mermaid",
+        "scopeName": "source.mmd",
+        "path": "./languages/mermaid/mermaid.tmLanguage.json"
       }
     ],
     "snippets": [

@@ -62,6 +62,12 @@ const languages = [
     source: "source.dot",
   },
   {
+    name: "mermaid",
+    language: "mermaid",
+    identifiers: ["mermaid"],
+    source: "source.mmd",
+  },
+  {
     name: "ruby",
     language: "ruby",
     identifiers: [
