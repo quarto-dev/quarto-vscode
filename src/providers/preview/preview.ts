@@ -30,7 +30,6 @@ import {
   isQuartoDoc,
   validatateQuartoExtension,
 } from "../../core/doc";
-import { PreviewWebviewManager } from "./preview-webview";
 import { PreviewOutputSink } from "./preview-output";
 import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
 
@@ -39,6 +38,10 @@ import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
 import { isHugoMarkdown } from "../../core/hugo";
 import { MarkdownEngine } from "../../markdown/engine";
 import { shQuote } from "../../core/strings";
+import {
+  QuartoPreviewWebview,
+  QuartoPreviewWebviewManager,
+} from "./preview-webview";
 tmp.setGracefulCleanup();
 
 const kLocalPreviewRegex = /(http:\/\/localhost\:\d+\/[^\s]*)/;
@@ -123,7 +126,12 @@ class PreviewManager {
     private readonly quartoContext_: QuartoContext
   ) {
     this.renderToken_ = uuid.v4();
-    this.webviewManager_ = new PreviewWebviewManager(context);
+    this.webviewManager_ = new QuartoPreviewWebviewManager(
+      context,
+      "quarto.previewView",
+      "Quarto Preview",
+      QuartoPreviewWebview
+    );
     this.outputSink_ = new PreviewOutputSink(this.onPreviewOutput.bind(this));
     this.previewEnvManager_ = new PreviewEnvManager(
       this.outputSink_,
@@ -423,7 +431,7 @@ class PreviewManager {
 
   private readonly renderToken_: string;
   private readonly previewEnvManager_: PreviewEnvManager;
-  private readonly webviewManager_: PreviewWebviewManager;
+  private readonly webviewManager_: QuartoPreviewWebviewManager;
   private readonly outputSink_: PreviewOutputSink;
   private readonly previewFormats_ = new Map<string, string | null>();
 }
