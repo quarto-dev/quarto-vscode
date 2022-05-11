@@ -3,15 +3,37 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ExtensionContext } from "vscode";
+import { ExtensionContext, languages } from "vscode";
 import { Command } from "../../core/command";
+import { kQuartoDocSelector } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
+import { diagramCodeLensProvider } from "./codelens";
 import { diagramCommands } from "./commands";
+import {
+  QuartoDiagramWebview,
+  QuartoDiagramWebviewManager,
+} from "./diagram-webview";
 
 export function activateDiagram(
-  _context: ExtensionContext,
+  context: ExtensionContext,
   engine: MarkdownEngine
 ): Command[] {
+  // initiaize manager
+  const diagramManager = new QuartoDiagramWebviewManager(
+    context,
+    "quarto.diagramView",
+    "Quarto: Diagram",
+    QuartoDiagramWebview
+  );
+
+  // code lens
+  context.subscriptions.push(
+    languages.registerCodeLensProvider(
+      kQuartoDocSelector,
+      diagramCodeLensProvider(engine)
+    )
+  );
+
   // diagram commands
-  return diagramCommands(engine);
+  return diagramCommands(diagramManager, engine);
 }

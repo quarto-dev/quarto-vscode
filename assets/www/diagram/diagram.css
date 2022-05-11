@@ -1,0 +1,16 @@
+body {
+  color: var(--vscode-editor-foreground);
+  background-color: var(--vscode-editor-background);
+}
+
+#main > * {
+  padding: 0;
+}
+
+.vscode-light .no-content {
+  color: rgb(113, 113, 113);
+}
+
+.vscode-dark .no-content {
+  color: rgb(146, 146, 146);
+}

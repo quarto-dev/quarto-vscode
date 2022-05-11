@@ -47,6 +47,8 @@
   "browser": "./out/browser.js",
   "activationEvents": [
     "onLanguage:quarto",
+    "onLanguage:mermaid",
+    "onLanguage:dot",
     "onCommand:quarto.render",
     "onCommand:quarto.renderHTML",
     "onCommand:quarto.renderPDF",
@@ -336,6 +338,16 @@
         "title": "Preview Math"
       },
       {
+        "command": "quarto.previewDiagram",
+        "category": "Quarto",
+        "title": "Preview Diagram"
+      },
+      {
+        "command": "quarto.previewShortcut",
+        "title": "Preview",
+        "category": "Quarto"
+      },
+      {
         "command": "quarto.assist.pin",
         "title": "Pin Assist Panel",
         "icon": "$(pin)",
@@ -368,6 +380,12 @@
         "command": "quarto.renderShortcut",
         "key": "ctrl+shift+k",
         "mac": "cmd+shift+k"
+      },
+      {
+        "command": "quarto.previewShortcut",
+        "key": "ctrl+shift+l",
+        "mac": "cmd+shift+l",
+        "when": "editorLangId == quarto || editorLangId == mermaid || editorLangId == dot"
       },
       {
         "command": "quarto.insertCodeCell",
@@ -444,6 +462,10 @@
         {
           "command": "quarto.renderWord",
           "when": "editorLangId == quarto"
+        },
+        {
+          "command": "quarto.previewShortcut",
+          "when": "editorLangId == mermaid || editorLangId == dot"
         }
       ],
       "notebook/toolbar": [
@@ -501,7 +523,15 @@
           "when": "editorLangId == quarto"
         },
         {
+          "command": "quarto.previewDiagram",
+          "when": "editorLangId == quarto || editorLangId == mermaid || editorLangId == dot"
+        },
+        {
           "command": "quarto.renderShortcut",
+          "when": "false"
+        },
+        {
+          "command": "quarto.previewShortcut",
           "when": "false"
         },
         {

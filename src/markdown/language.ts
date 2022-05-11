@@ -50,6 +50,13 @@ export function isDisplayMath(token: Token) {
   return token.type === "math_block";
 }
 
+export function isDiagram(token: Token) {
+  return (
+    isExecutableLanguageBlockOf("mermaid")(token) ||
+    isExecutableLanguageBlockOf("dot")(token)
+  );
+}
+
 export function languageNameFromBlock(token: Token) {
   if (isDisplayMath(token)) {
     return "tex";
