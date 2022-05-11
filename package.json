@@ -60,7 +60,8 @@
     "onCommand:quarto.walkthrough.verifyInstallation",
     "onCommand:quarto.walkthrough.newDocument",
     "workspaceContains:**/_quarto.{yml,yaml}",
-    "onWebviewPanel:quarto.previewView"
+    "onWebviewPanel:quarto.previewView",
+    "onWebviewPanel:quarto.diagramView"
   ],
   "capabilities": {
     "virtualWorkspaces": true

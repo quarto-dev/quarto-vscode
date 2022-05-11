@@ -17,6 +17,7 @@ import { kQuartoDocSelector } from "./core/doc";
 import { Command, CommandManager } from "./core/command";
 import { newDocumentCommands } from "./providers/newdoc";
 import { insertCommands } from "./providers/insert";
+import { activateDiagram } from "./providers/diagram/diagram";
 
 export function activateCommon(
   context: vscode.ExtensionContext,
@@ -53,6 +54,9 @@ export function activateCommon(
   // background highlighter
   activateBackgroundHighlighter(context, engine);
 
+  // diagramming
+  const diagramCommands = activateDiagram(context, engine);
+
   // commands (common + passed)
   const commandManager = new CommandManager();
   commandManager.register(new OpenLinkCommand(engine));
@@ -60,6 +64,9 @@ export function activateCommon(
     commandManager.register(cmd);
   }
   for (const cmd of insertCommands(engine)) {
+    commandManager.register(cmd);
+  }
+  for (const cmd of diagramCommands) {
     commandManager.register(cmd);
   }
   if (commands) {
