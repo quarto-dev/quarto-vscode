@@ -15,6 +15,7 @@ import { MarkdownEngine } from "../../markdown/engine";
 import { revealSlideIndex } from "./preview-reveal";
 import { isNotebook } from "../../core/doc";
 import { promptForQuartoInstallation } from "../../core/quarto";
+import { hasQuartoProject, projectDirForDocument } from "./preview-util";
 
 export function previewCommands(
   quartoContext: QuartoContext,
@@ -166,7 +167,7 @@ class RenderProjectCommand extends RenderCommand implements Command {
     // start by using the currently active or visible source files
     const targetEditor = findRenderTarget(canPreviewDoc);
     if (targetEditor) {
-      const projectDir = projectDirForDocument(targetEditor.document);
+      const projectDir = projectDirForDocument(targetEditor.document.uri);
       if (projectDir) {
         previewProject(Uri.file(projectDir));
         return;
@@ -254,34 +255,6 @@ function cacheDirForDocument(doc: TextDocument) {
   }
 
   return undefined;
-}
-
-function projectDirForDocument(doc: TextDocument) {
-  let dir = path.dirname(doc.fileName);
-  while (true) {
-    if (hasQuartoProject(dir)) {
-      return dir;
-    } else {
-      const nextDir = path.dirname(dir);
-      if (nextDir !== dir) {
-        dir = nextDir;
-      } else {
-        break;
-      }
-    }
-  }
-  return undefined;
-}
-
-function hasQuartoProject(dir?: string) {
-  if (dir) {
-    return (
-      fs.existsSync(path.join(dir, "_quarto.yml")) ||
-      fs.existsSync(path.join(dir, "_quarto.yaml"))
-    );
-  } else {
-    return false;
-  }
 }
 
 function findRenderTarget(
