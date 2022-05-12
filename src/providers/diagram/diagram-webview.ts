@@ -16,9 +16,6 @@ import { QuartoWebview, QuartoWebviewManager } from "../webview";
 
 const kDiagramViewId = "quarto.diagramView";
 
-// TODO: rendering errors
-// TODO: svg transitions with d3
-
 export interface DiagramState {
   engine: "mermaid" | "graphviz";
   src: string;
@@ -142,6 +139,10 @@ class QuartoDiagramWebview extends QuartoWebview<null> {
 
     const bodyHtml = `
       <div id="no-preview"></div>
+      <div id="preview-error" class="hidden">
+        <pre id="preview-error-message">
+        </pre>
+      </div>
       <div id="mermaid-preview" class="diagram-preview"></div>
       <div id="graphviz-preview" class="diagram-preview"></div>
     `;

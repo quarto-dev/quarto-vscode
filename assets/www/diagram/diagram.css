@@ -48,3 +48,20 @@ body.with-preview.mermaid #mermaid-preview {
 body.with-preview.graphviz #graphviz-preview {
   display: block;
 }
+
+#preview-error {
+  margin-top: 1em;
+  padding: 1em;
+  color: black;
+  background-color: #ffccd7;
+  border-color: #ffccd7;
+  border-radius: 5px;
+}
+
+#preview-error-message {
+  margin: 0;
+}
+
+.hidden {
+  display: none;
+}

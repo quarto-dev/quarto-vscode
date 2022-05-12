@@ -3,6 +3,16 @@
 (function () {
   const vscode = acquireVsCodeApi();
 
+  function reportError(message) {
+    const previewErrorMsg = document.getElementById("preview-error-message");
+    previewErrorMsg.innerText = message;
+    document.getElementById("preview-error").classList.remove("hidden");
+  }
+
+  function clearError() {
+    document.getElementById("preview-error").classList.add("hidden");
+  }
+
   // clear preview
   function clearPreview() {
     document.body.classList.remove("with-preview");
@@ -14,16 +24,30 @@
     previewDiv.appendChild(noPreview);
   }
 
-  // function to set the contents of the preview div
-  function updateMermaidPreview(el) {
+  function updateMermaidPreview(src) {
     document.body.classList.add("with-preview");
     document.body.classList.add("mermaid");
     document.body.classList.remove("graphviz");
-    const previewDiv = document.querySelector("#mermaid-preview");
-    while (previewDiv.firstChild) {
-      previewDiv.removeChild(previewDiv.firstChild);
+
+    // validate first
+    try {
+      window.mermaid.parse(src);
+    } catch (err) {
+      reportError(err.str);
+      return;
     }
-    previewDiv.appendChild(el);
+
+    // render
+    const kMermaidId = "mermaidSvg";
+    mermaidApi.render(kMermaidId, src, () => {
+      const mermaidEl = document.querySelector(`#${kMermaidId}`);
+      const previewDiv = document.querySelector("#mermaid-preview");
+      while (previewDiv.firstChild) {
+        previewDiv.removeChild(previewDiv.firstChild);
+      }
+      previewDiv.appendChild(mermaidEl);
+      clearError();
+    });
   }
 
   function updateGraphvizPreview(graphviz, dot) {
@@ -36,9 +60,11 @@
   // always start with no preview
   clearPreview();
 
-  // initialize mermaid and graphviz
+  // initialize mermaid
   const mermaidApi = window.mermaid.mermaidAPI;
   mermaidApi.initialize({ startOnLoad: false });
+
+  // initialize graphvix
   const hpccWasm = window["@hpcc-js/wasm"];
   hpccWasm.graphvizSync().then(() => {
     const graphviz = d3
@@ -50,6 +76,10 @@
       .on("initEnd", () => {
         vscode.postMessage({ type: "initialized" });
       });
+
+    // error handling
+    graphviz.onerror(reportError);
+    graphviz.on("layoutEnd", clearError);
 
     // remember the last message and skip processing if its identical
     // to the current message (e.g. would happen on selection change)
@@ -79,11 +109,7 @@
         try {
           switch (message.engine) {
             case "mermaid": {
-              const kMermaidId = "mermaidSvg";
-              mermaidApi.render(kMermaidId, message.src, () => {
-                const mermaidEl = document.querySelector(`#${kMermaidId}`);
-                updateMermaidPreview(mermaidEl);
-              });
+              updateMermaidPreview(message.src);
               break;
             }
             case "graphviz": {
