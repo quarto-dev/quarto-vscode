@@ -641,6 +641,12 @@
       "[latex]": {
         "editor.wordBasedSuggestions": false
       },
+      "[dot]": {
+        "editor.wordBasedSuggestions": false
+      },
+      "[mermaid]": {
+        "editor.wordBasedSuggestions": false
+      },
       "[yaml]": {
         "editor.quickSuggestions": true,
         "editor.quickSuggestionsDelay": 250,
