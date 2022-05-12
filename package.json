@@ -183,19 +183,19 @@
       },
       {
         "language": "dot",
-        "path": "./languages/dot/snippets/snippets/dot.json"
+        "path": "./languages/dot/snippets/dot.json"
       },
       {
         "language": "dot",
-        "path": "./languages/dot/snippets/snippets/principalNodeAttributes.json"
+        "path": "./languages/dot/snippets/principalNodeAttributes.json"
       },
       {
         "language": "dot",
-        "path": "./languages/dot/snippets/snippets/principalEdgeAttributes.json"
+        "path": "./languages/dot/snippets/principalEdgeAttributes.json"
       },
       {
         "language": "dot",
-        "path": "./languages/dot/snippets/snippets/principalGraphAttributes.json"
+        "path": "./languages/dot/snippets/principalGraphAttributes.json"
       }
     ],
     "viewsContainers": {
