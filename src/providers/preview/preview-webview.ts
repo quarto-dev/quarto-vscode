@@ -131,7 +131,7 @@ export class QuartoPreviewWebview extends QuartoWebview<string> {
     `;
 
     return this.webviewHTML(
-      this.assetPath("index.js"),
+      [this.assetPath("index.js")],
       this.assetPath("main.css"),
       headerHtml,
       bodyHtml

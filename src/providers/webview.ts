@@ -184,15 +184,28 @@ export abstract class QuartoWebview<T> extends Disposable {
   protected abstract getHtml(state: T): string;
 
   protected webviewHTML(
-    mainJS: string[],
-    mainCSS: string[],
+    js: Array<string[]>,
+    css: string[],
     headerHtml: string,
-    bodyHtml: string
+    bodyHtml: string,
+    allowUnsafe = false
   ) {
     const nonce = this.getNonce();
 
-    const mainJs = this.extensionResourceUrl(mainJS);
-    const mainCss = this.extensionResourceUrl(mainCSS);
+    if (!Array.isArray(js)) {
+      js = [js];
+    }
+
+    const jsHtml = js.reduce((html, script) => {
+      return (
+        html +
+        `<script src="${this.extensionResourceUrl(
+          script
+        )}" nonce="${nonce}"></script>\n`
+      );
+    }, "");
+
+    const mainCss = this.extensionResourceUrl(css);
     const codiconsUri = this.extensionResourceUrl([
       "assets",
       "www",
@@ -208,8 +221,11 @@ export abstract class QuartoWebview<T> extends Disposable {
 				<meta http-equiv="Content-Security-Policy" content="
 					default-src 'none';
 					font-src ${this._webviewPanel.webview.cspSource};
-					style-src ${this._webviewPanel.webview.cspSource};
-					script-src 'nonce-${nonce}';
+					style-src ${this._webviewPanel.webview.cspSource} ${
+      allowUnsafe ? "'unsafe-inline'" : ""
+    };
+					script-src 'nonce-${nonce}' ${allowUnsafe ? "'unsafe-eval'" : ""};
+          connect-src ${this._webviewPanel.webview.cspSource} ;
 					frame-src *;
 					">
 
@@ -220,7 +236,7 @@ export abstract class QuartoWebview<T> extends Disposable {
 			</head>
 			<body>
 				${bodyHtml}
-				<script src="${mainJs}" nonce="${nonce}"></script>
+				${jsHtml}
 			</body>
 			</html>`;
   }

@@ -32,13 +32,21 @@ export class QuartoDiagramWebview extends QuartoWebview<string> {
   protected getHtml(_state: string): string {
     const headerHtml = ``;
 
-    const bodyHtml = `body`;
+    const bodyHtml = `
+      <div id="graphDiv"></div>
+      <div id="graphvizDiv"></div>
+    `;
 
     return this.webviewHTML(
-      this.assetPath("diagram.js"),
+      [
+        this.assetPath("mermaid.min.js"),
+        this.assetPath("graphviz.min.js"),
+        this.assetPath("diagram.js"),
+      ],
       this.assetPath("diagram.css"),
       headerHtml,
-      bodyHtml
+      bodyHtml,
+      true
     );
   }
 
