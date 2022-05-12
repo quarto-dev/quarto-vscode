@@ -26,21 +26,30 @@
     previewDiv.appendChild(el);
   }
 
-  function updateGraphvizPreview(svg) {
+  function updateGraphvizPreview(graphviz, dot) {
     document.body.classList.add("with-preview");
     document.body.classList.add("graphviz");
     document.body.classList.remove("mermaid");
-    const previewDiv = document.querySelector("#graphviz-preview");
-    previewDiv.innerHTML = svg;
+    graphviz.renderDot(dot);
   }
+
+  // always start with no preview
+  clearPreview();
 
   // initialize mermaid and graphviz
   const mermaidApi = window.mermaid.mermaidAPI;
   mermaidApi.initialize({ startOnLoad: false });
   const hpccWasm = window["@hpcc-js/wasm"];
-  hpccWasm.graphvizSync().then((graphviz) => {
-    // always start with no preview
-    clearPreview();
+  hpccWasm.graphvizSync().then(() => {
+    const graphviz = d3
+      .select("#graphviz-preview")
+      .graphviz({ zoom: false, fit: true })
+      .transition(function () {
+        return d3.transition("main");
+      })
+      .on("initEnd", () => {
+        vscode.postMessage({ type: "initialized" });
+      });
 
     // remember the last message and skip processing if its identical
     // to the current message (e.g. would happen on selection change)
@@ -78,7 +87,7 @@
               break;
             }
             case "graphviz": {
-              updateGraphvizPreview(graphviz.layout(message.src, "svg", "dot"));
+              updateGraphvizPreview(graphviz, message.src);
               break;
             }
           }
@@ -89,8 +98,5 @@
         clearPreview();
       }
     });
-
-    // signal that we are ready to receive messages
-    vscode.postMessage({ type: "initialized" });
   });
 })();

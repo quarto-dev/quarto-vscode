@@ -60,7 +60,7 @@ export class QuartoDiagramWebviewManager extends QuartoWebviewManager<
       // get the active editor
       if (window.activeTextEditor) {
         const doc = window.activeTextEditor.document;
-        if (isQuartoDoc(doc)) {
+        if (isQuartoDoc(doc) && window.activeTextEditor.selection) {
           // if we are in a diagram block then send its contents
           const tokens = await this.engine_.parse(doc);
           const line = window.activeTextEditor.selection.start.line;
@@ -149,6 +149,7 @@ class QuartoDiagramWebview extends QuartoWebview<null> {
     return this.webviewHTML(
       [
         this.assetPath("mermaid.min.js"),
+        this.assetPath("d3.v5.min.js"),
         this.assetPath("graphviz.min.js"),
         this.assetPath("d3-graphviz.js"),
         this.assetPath("diagram.js"),
