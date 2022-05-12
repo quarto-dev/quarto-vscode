@@ -1,6 +1,25 @@
 body {
-  color: var(--vscode-editor-foreground);
   background-color: var(--vscode-editor-background);
+}
+
+body.vscode-light {
+  color: rgb(113, 113, 113);
+}
+
+body.vscode-dark {
+  color: rgb(146, 146, 146);
+}
+
+body.with-preview {
+  background-color: white;
+}
+
+body.with-preview.vscode-light {
+  color: rgb(113, 113, 113);
+}
+
+body.with-preview.vscode-dark {
+  color: rgb(146, 146, 146);
 }
 
 #diagram-preview {
@@ -9,10 +28,7 @@ body {
   padding: 8px;
 }
 
-.vscode-light .no-content {
-  color: rgb(113, 113, 113);
-}
-
-.vscode-dark .no-content {
-  color: rgb(146, 146, 146);
+#diagram-preview svg {
+  width: 100%;
+  height: 100%;
 }

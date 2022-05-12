@@ -12,11 +12,18 @@
     }
     // set innerHTML or append child as appropriate
     if (content) {
+      document.body.classList.add("with-preview");
       if (typeof content === "string" || content instanceof String) {
         previewDiv.innerHTML = content;
       } else {
         previewDiv.appendChild(content);
       }
+    } else {
+      document.body.classList.remove("with-preview");
+      const noPreview = document.createElement("p");
+      noPreview.id = "no-preview-available";
+      noPreview.innerText = "No diagram currently selected";
+      previewDiv.appendChild(noPreview);
     }
   }
 

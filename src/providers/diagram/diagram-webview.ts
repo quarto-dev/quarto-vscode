@@ -14,6 +14,7 @@ import {
 } from "../../markdown/language";
 import { QuartoWebview, QuartoWebviewManager } from "../webview";
 
+// TODO: dissapears on focus
 // TODO: rendering errors
 // TODO: progress treatment (and enque requests)
 // TODO: svg transitions with d3
@@ -117,6 +118,8 @@ class QuartoDiagramWebview extends QuartoWebview<null> {
               const state = this.pendingState_;
               this.pendingState_ = undefined;
               this.update(state);
+            } else {
+              this.update(undefined);
             }
             break;
         }
