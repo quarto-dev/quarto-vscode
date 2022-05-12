@@ -32,6 +32,9 @@
   mermaidApi.initialize({ startOnLoad: false });
   const hpccWasm = window["@hpcc-js/wasm"];
   hpccWasm.graphvizSync().then((graphviz) => {
+    // always start with no preview
+    updatePreview(null);
+
     // remember the last message and skip processing if its identical
     // to the current message (e.g. would happen on selection change)
     let lastMessage = undefined;
@@ -56,19 +59,24 @@
 
       // handle the message
       if (message.type === "render") {
-        switch (message.engine) {
-          case "mermaid": {
-            const kMermaidId = "mermaidSvg";
-            mermaidApi.render(kMermaidId, message.src, () => {
-              const mermaidEl = document.querySelector(`#${kMermaidId}`);
-              updatePreview(mermaidEl);
-            });
-            break;
+        vscode.postMessage({ type: "render-begin" });
+        try {
+          switch (message.engine) {
+            case "mermaid": {
+              const kMermaidId = "mermaidSvg";
+              mermaidApi.render(kMermaidId, message.src, () => {
+                const mermaidEl = document.querySelector(`#${kMermaidId}`);
+                updatePreview(mermaidEl);
+              });
+              break;
+            }
+            case "graphviz": {
+              updatePreview(graphviz.layout(message.src, "svg", "dot"));
+              break;
+            }
           }
-          case "graphviz": {
-            updatePreview(graphviz.layout(message.src, "svg", "dot"));
-            break;
-          }
+        } finally {
+          vscode.postMessage({ type: "render-end" });
         }
       } else if (message.type === "clear") {
         updatePreview(null);

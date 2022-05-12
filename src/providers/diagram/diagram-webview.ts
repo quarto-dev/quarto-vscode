@@ -14,12 +14,10 @@ import {
 } from "../../markdown/language";
 import { QuartoWebview, QuartoWebviewManager } from "../webview";
 
-// TODO: dissapears on focus
+const kDiagramViewId = "quarto.diagramView";
+
 // TODO: rendering errors
-// TODO: progress treatment (and enque requests)
 // TODO: svg transitions with d3
-// TODO: graphviz scaling
-// TODO: dark mode
 
 export interface DiagramState {
   engine: "mermaid" | "graphviz";
@@ -34,12 +32,7 @@ export class QuartoDiagramWebviewManager extends QuartoWebviewManager<
     context: ExtensionContext,
     private readonly engine_: MarkdownEngine
   ) {
-    super(
-      context,
-      "quarto.diagramView",
-      "Quarto: Diagram",
-      QuartoDiagramWebview
-    );
+    super(context, kDiagramViewId, "Quarto: Diagram", QuartoDiagramWebview);
 
     window.onDidChangeActiveTextEditor(
       () => {
@@ -64,9 +57,6 @@ export class QuartoDiagramWebviewManager extends QuartoWebviewManager<
 
   private async updatePreview() {
     if (this.isVisible()) {
-      // determine diagram state
-      let state: DiagramState | undefined;
-
       // get the active editor
       if (window.activeTextEditor) {
         const doc = window.activeTextEditor.document;
@@ -77,26 +67,23 @@ export class QuartoDiagramWebviewManager extends QuartoWebviewManager<
           const block = languageBlockAtPosition(tokens, new Position(line, 0));
           if (block && isDiagram(block)) {
             const language = languageNameFromBlock(block);
-            state = {
+            this.activeView_?.update({
               engine: language === "dot" ? "graphviz" : "mermaid",
               src: block.content,
-            };
+            });
           }
         } else if (isMermaidDoc(doc)) {
-          state = {
+          this.activeView_?.update({
             engine: "mermaid",
             src: doc.getText(),
-          };
+          });
         } else if (isGraphvizDoc(doc)) {
-          state = {
+          this.activeView_?.update({
             engine: "graphviz",
             src: doc.getText(),
-          };
+          });
         }
       }
-
-      // send the update
-      this.activeView_?.update(state);
     }
   }
 }
@@ -112,23 +99,31 @@ class QuartoDiagramWebview extends QuartoWebview<null> {
     this._register(
       this._webviewPanel.webview.onDidReceiveMessage((e) => {
         switch (e.type) {
-          case "initialized":
+          case "initialized": {
             this.initialized_ = true;
             if (this.pendingState_) {
-              const state = this.pendingState_;
-              this.pendingState_ = undefined;
-              this.update(state);
-            } else {
-              this.update(undefined);
+              this.flushPendingState();
             }
             break;
+          }
+          case "render-begin": {
+            this.rendering_ = true;
+            break;
+          }
+          case "render-end": {
+            this.rendering_ = false;
+            if (this.pendingState_) {
+              this.flushPendingState();
+            }
+            break;
+          }
         }
       })
     );
   }
 
   public update(state?: DiagramState) {
-    if (!this.initialized_) {
+    if (!this.initialized_ || this.rendering_) {
       this.pendingState_ = state;
     } else if (state) {
       this._webviewPanel.webview.postMessage({
@@ -160,10 +155,17 @@ class QuartoDiagramWebview extends QuartoWebview<null> {
     );
   }
 
+  private flushPendingState() {
+    const state = this.pendingState_;
+    this.pendingState_ = undefined;
+    this.update(state);
+  }
+
   private assetPath(asset: string) {
     return ["assets", "www", "diagram", asset];
   }
 
   private initialized_ = false;
+  private rendering_ = false;
   private pendingState_: DiagramState | undefined;
 }
