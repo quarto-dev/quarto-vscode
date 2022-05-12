@@ -11,6 +11,7 @@ import {
   ViewColumn,
   EventEmitter,
   ExtensionContext,
+  WebviewPanelOnDidChangeViewStateEvent,
 } from "vscode";
 
 import { Disposable } from "../core/dispose";
@@ -73,6 +74,12 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
     return !!this.activeView_;
   }
 
+  public isVisible() {
+    return this.activeView_ && this.activeView_.webviewPanel().visible;
+  }
+
+  protected onViewStateChanged(_event: WebviewPanelOnDidChangeViewStateEvent) {}
+
   private resolveOnShow() {
     if (this.onShow_) {
       this.onShow_();
@@ -121,7 +128,10 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
         retainContextWhenHidden: true,
       }
     );
-    return new this.webviewType_(extensionUri, state, webview);
+
+    const quartoWebview = new this.webviewType_(extensionUri, state, webview);
+
+    return quartoWebview;
   }
 
   private registerWebviewListeners(view: T) {
@@ -130,6 +140,9 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
         this.activeView_ = undefined;
       }
     });
+    view.webviewPanel().onDidChangeViewState((event) => {
+      this.onViewStateChanged(event);
+    });
   }
 
   public dispose() {
@@ -137,8 +150,14 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
       this.activeView_.dispose();
       this.activeView_ = undefined;
     }
+    let item: Disposable | undefined;
+    while ((item = this.disposables_.pop())) {
+      item.dispose();
+    }
   }
   protected activeView_?: T;
+  protected readonly disposables_: Disposable[] = [];
+
   private onShow_?: () => void;
   private readonly extensionUri_: Uri;
 }
@@ -179,6 +198,10 @@ export abstract class QuartoWebview<T> extends Disposable {
 
   public reveal() {
     this._webviewPanel.reveal(undefined, true);
+  }
+
+  public webviewPanel() {
+    return this._webviewPanel;
   }
 
   protected abstract getHtml(state: T): string;

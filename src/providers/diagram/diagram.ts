@@ -9,22 +9,14 @@ import { kQuartoDocSelector } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
 import { diagramCodeLensProvider } from "./codelens";
 import { diagramCommands } from "./commands";
-import {
-  QuartoDiagramWebview,
-  QuartoDiagramWebviewManager,
-} from "./diagram-webview";
+import { QuartoDiagramWebviewManager } from "./diagram-webview";
 
 export function activateDiagram(
   context: ExtensionContext,
   engine: MarkdownEngine
 ): Command[] {
   // initiaize manager
-  const diagramManager = new QuartoDiagramWebviewManager(
-    context,
-    "quarto.diagramView",
-    "Quarto: Diagram",
-    QuartoDiagramWebview
-  );
+  const diagramManager = new QuartoDiagramWebviewManager(context, engine);
 
   // code lens
   context.subscriptions.push(

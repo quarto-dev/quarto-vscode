@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { commands, Position, ViewColumn, window } from "vscode";
+import { commands, Position, ViewColumn, window, Selection } from "vscode";
 import { Command } from "../../core/command";
-import { isQuartoDoc } from "../../core/doc";
+import { isGraphvizDoc, isMermaidDoc, isQuartoDoc } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
 import {
   isDiagram,
@@ -19,18 +19,22 @@ export function diagramCommands(
   engine: MarkdownEngine
 ): Command[] {
   return [
-    new PreviewDiagramCommand(manager, engine),
+    new PreviewDiagramCommand(manager),
     new PreviewShortcutCommand(engine),
   ];
 }
 
 class PreviewDiagramCommand implements Command {
-  constructor(
-    private readonly manager_: QuartoDiagramWebviewManager,
-    private readonly engine_: MarkdownEngine
-  ) {}
-  execute(_line?: number): void {
-    this.manager_.showWebview("state", {
+  constructor(private readonly manager_: QuartoDiagramWebviewManager) {}
+  execute(line?: number): void {
+    // set selection to line
+    if (line && window.activeTextEditor) {
+      const selPos = new Position(line, 0);
+      window.activeTextEditor.selection = new Selection(selPos, selPos);
+    }
+
+    // ensure diagram view is visible
+    this.manager_.showWebview(null, {
       preserveFocus: true,
       viewColumn: ViewColumn.Beside,
     });
@@ -60,6 +64,9 @@ class PreviewShortcutCommand implements Command {
             return;
           }
         }
+      } else if (isMermaidDoc(doc) || isGraphvizDoc(doc)) {
+        commands.executeCommand("quarto.previewDiagram");
+        return;
       }
     }
     // info message

@@ -1,96 +1,74 @@
 //@js-check
 
 (function () {
-  // @ts-ignore
   const vscode = acquireVsCodeApi();
 
-  window.mermaid.mermaidAPI.initialize({ startOnLoad: false });
-
-  const kMermaidId = "mermaidId";
-  const graphDefinition = "graph TB\na-->b";
-  const graph = mermaid.mermaidAPI.render(
-    kMermaidId,
-    graphDefinition,
-    (svg) => {
-      const mermaidEl = document.querySelector(`#${kMermaidId}`);
-      const graphDiv = document.querySelector("#graphDiv");
-      graphDiv.appendChild(mermaidEl);
+  // function to set the contents of the preview div
+  function updatePreview(content) {
+    // first clear it out
+    const previewDiv = document.querySelector("#diagram-preview");
+    while (previewDiv.firstChild) {
+      previewDiv.removeChild(previewDiv.firstChild);
     }
-  );
+    // set innerHTML or append child as appropriate
+    if (content) {
+      if (typeof content === "string" || content instanceof String) {
+        previewDiv.innerHTML = content;
+      } else {
+        previewDiv.appendChild(content);
+      }
+    }
+  }
 
-  const dot = `
-            digraph G {
-                node [shape=rect];
-
-                subgraph cluster_0 {
-                    style=filled;
-                    color=lightgrey;
-                    node [style=filled,color=white];
-                    a0 -> a1 -> a2 -> a3;
-                    label = "Hello";
-                }
-
-                subgraph cluster_1 {
-                    node [style=filled];
-                    b0 -> b1 -> b2 -> b3;
-                    label = "World";
-                    color=blue
-                }
-
-                start -> a0;
-                start -> b0;
-                a1 -> b3;
-                b2 -> a3;
-                a3 -> a0;
-                a3 -> end;
-                b3 -> end;
-
-                start [shape=Mdiamond];
-                end [shape=Msquare];
-            }
-        `;
-
+  // initialize mermaid and graphviz
+  const mermaidApi = window.mermaid.mermaidAPI;
+  mermaidApi.initialize({ startOnLoad: false });
   const hpccWasm = window["@hpcc-js/wasm"];
-  hpccWasm.graphviz.layout(dot, "svg", "dot").then((svg) => {
-    const div = document.getElementById("graphvizDiv");
-    div.innerHTML = svg;
-  });
+  hpccWasm.graphvizSync().then((graphviz) => {
+    // remember the last message and skip processing if its identical
+    // to the current message (e.g. would happen on selection change)
+    let lastMessage = undefined;
 
-  const main = document.getElementById("main");
+    // handle messages sent from the extension to the webview
+    window.addEventListener("message", (event) => {
+      // get the message
+      const message = event.data;
 
-  // Handle messages sent from the extension to the webview
-  let contentShown = false;
-  window.addEventListener("message", (event) => {
-    const message = event.data; // The json data that the extension sent
-    switch (message.type) {
-      case "update": {
-        updateContent(message.body);
-        contentShown = true;
-        break;
+      // skip if its the same as the last message
+      if (
+        lastMessage &&
+        lastMessage.type === message.type &&
+        lastMessage.engine === message.engine &&
+        lastMessage.src === message.src
+      ) {
+        return;
       }
-      case "noContent": {
-        if (!contentShown) {
-          setNoContent(message.body);
-        } else if (message.updateMode === "live") {
-          setNoContent("");
+
+      // set last message
+      lastMessage = message;
+
+      // handle the message
+      if (message.type === "render") {
+        switch (message.engine) {
+          case "mermaid": {
+            const kMermaidId = "mermaidSvg";
+            mermaidApi.render(kMermaidId, message.src, () => {
+              const mermaidEl = document.querySelector(`#${kMermaidId}`);
+              updatePreview(mermaidEl);
+            });
+            break;
+          }
+          case "graphviz": {
+            updatePreview(graphviz.layout(message.src, "svg", "dot"));
+            break;
+          }
         }
-        break;
+      } else if (message.type === "clear") {
+        updatePreview(null);
       }
-    }
+    });
+
+    // signal that we are ready to receive messages
+    vscode.postMessage({ type: "initialized" });
   });
-
-  /**
-   * @param {string} contents
-   */
-  function updateContent(contents) {
-    main.innerHTML = contents;
-    window.scrollTo(0, 0);
-  }
-
-  /**
-   * @param {string} message
-   */
-  function setNoContent(message) {
-    main.innerHTML = `<p class="no-content">${message}</p>`;
-  }
 })();

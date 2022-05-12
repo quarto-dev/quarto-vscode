@@ -7,6 +7,8 @@
 import * as vscode from "vscode";
 import { extname } from "./path";
 export const kQuartoLanguageId = "quarto";
+const kMermaidLanguageId = "mermaid";
+const kDotLanguageId = "dot";
 const kYamlLanguageId = "yaml";
 
 export const kQuartoDocSelector: vscode.DocumentSelector = {
@@ -15,7 +17,19 @@ export const kQuartoDocSelector: vscode.DocumentSelector = {
 };
 
 export function isQuartoDoc(doc?: vscode.TextDocument) {
-  return !!doc && doc.languageId === kQuartoLanguageId;
+  return isLanguageDoc(kQuartoLanguageId, doc);
+}
+
+export function isMermaidDoc(doc?: vscode.TextDocument) {
+  return isLanguageDoc(kMermaidLanguageId, doc);
+}
+
+export function isGraphvizDoc(doc?: vscode.TextDocument) {
+  return isLanguageDoc(kDotLanguageId, doc);
+}
+
+function isLanguageDoc(languageId: string, doc?: vscode.TextDocument) {
+  return !!doc && doc.languageId === languageId;
 }
 
 export function isNotebook(doc?: vscode.TextDocument) {
