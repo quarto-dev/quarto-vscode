@@ -6,6 +6,15 @@
 import { Uri, WebviewPanel } from "vscode";
 import { QuartoWebview, QuartoWebviewManager } from "../webview";
 
+export interface DiagramState {
+  type: "mermaid" | "dot";
+}
+
+// https://marketplace.visualstudio.com/items?itemName=EFanZh.graphviz-preview
+
+// tempting to integrate w/ this
+// https://github.com/tintinweb/vscode-interactive-graphviz
+
 export class QuartoDiagramWebviewManager extends QuartoWebviewManager<
   QuartoDiagramWebview,
   string
