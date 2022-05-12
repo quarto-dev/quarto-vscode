@@ -42,6 +42,7 @@ import {
   QuartoPreviewWebview,
   QuartoPreviewWebviewManager,
 } from "./preview-webview";
+import { projectDirForDocument } from "./preview-util";
 tmp.setGracefulCleanup();
 
 const kLocalPreviewRegex = /(http:\/\/localhost\:\d+\/[^\s]*)/;
@@ -248,21 +249,25 @@ class PreviewManager {
     this.previewCommandUrl_ = undefined;
     this.previewOutputFile_ = undefined;
 
+    // determine project dir (if any)
+    const projectDir = fs.statSync(target.fsPath).isFile()
+      ? projectDirForDocument(target)
+      : undefined;
+    const targetFile = projectDir
+      ? path.relative(projectDir, target.fsPath)
+      : this.targetFile();
+
     // create and show the terminal
     const options: TerminalOptions = {
       name: kPreviewWindowTitle,
-      cwd: this.targetDir(),
+      cwd: projectDir || this.targetDir(),
       env: this.previewEnv_ as unknown as {
         [key: string]: string | null | undefined;
       },
     };
     this.terminal_ = window.createTerminal(options);
     const quarto = path.join(this.quartoContext_.binPath, "quarto");
-    const cmd: string[] = [
-      shQuote(quarto),
-      "preview",
-      shQuote(this.targetFile()),
-    ];
+    const cmd: string[] = [shQuote(quarto), "preview", shQuote(targetFile)];
     if (!doc) {
       // project render
       cmd.push("--render", format || "all");
