@@ -3,28 +3,35 @@
 (function () {
   const vscode = acquireVsCodeApi();
 
+  // clear preview
+  function clearPreview() {
+    document.body.classList.remove("with-preview");
+    document.body.classList.remove("mermaid");
+    document.body.classList.remove("graphviz");
+    const noPreview = document.createElement("p");
+    noPreview.innerText = "No diagram currently selected";
+    const previewDiv = document.querySelector("#no-preview");
+    previewDiv.appendChild(noPreview);
+  }
+
   // function to set the contents of the preview div
-  function updatePreview(content) {
-    // first clear it out
-    const previewDiv = document.querySelector("#diagram-preview");
+  function updateMermaidPreview(el) {
+    document.body.classList.add("with-preview");
+    document.body.classList.add("mermaid");
+    document.body.classList.remove("graphviz");
+    const previewDiv = document.querySelector("#mermaid-preview");
     while (previewDiv.firstChild) {
       previewDiv.removeChild(previewDiv.firstChild);
     }
-    // set innerHTML or append child as appropriate
-    if (content) {
-      document.body.classList.add("with-preview");
-      if (typeof content === "string" || content instanceof String) {
-        previewDiv.innerHTML = content;
-      } else {
-        previewDiv.appendChild(content);
-      }
-    } else {
-      document.body.classList.remove("with-preview");
-      const noPreview = document.createElement("p");
-      noPreview.id = "no-preview-available";
-      noPreview.innerText = "No diagram currently selected";
-      previewDiv.appendChild(noPreview);
-    }
+    previewDiv.appendChild(el);
+  }
+
+  function updateGraphvizPreview(svg) {
+    document.body.classList.add("with-preview");
+    document.body.classList.add("graphviz");
+    document.body.classList.remove("mermaid");
+    const previewDiv = document.querySelector("#graphviz-preview");
+    previewDiv.innerHTML = svg;
   }
 
   // initialize mermaid and graphviz
@@ -33,7 +40,7 @@
   const hpccWasm = window["@hpcc-js/wasm"];
   hpccWasm.graphvizSync().then((graphviz) => {
     // always start with no preview
-    updatePreview(null);
+    clearPreview();
 
     // remember the last message and skip processing if its identical
     // to the current message (e.g. would happen on selection change)
@@ -66,12 +73,12 @@
               const kMermaidId = "mermaidSvg";
               mermaidApi.render(kMermaidId, message.src, () => {
                 const mermaidEl = document.querySelector(`#${kMermaidId}`);
-                updatePreview(mermaidEl);
+                updateMermaidPreview(mermaidEl);
               });
               break;
             }
             case "graphviz": {
-              updatePreview(graphviz.layout(message.src, "svg", "dot"));
+              updateGraphvizPreview(graphviz.layout(message.src, "svg", "dot"));
               break;
             }
           }
@@ -79,7 +86,7 @@
           vscode.postMessage({ type: "render-end" });
         }
       } else if (message.type === "clear") {
-        updatePreview(null);
+        clearPreview();
       }
     });
 

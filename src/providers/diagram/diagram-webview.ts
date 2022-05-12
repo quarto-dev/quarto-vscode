@@ -140,12 +140,17 @@ class QuartoDiagramWebview extends QuartoWebview<null> {
   protected getHtml(_state: null): string {
     const headerHtml = ``;
 
-    const bodyHtml = `<div id="diagram-preview"></div>`;
+    const bodyHtml = `
+      <div id="no-preview"></div>
+      <div id="mermaid-preview" class="diagram-preview"></div>
+      <div id="graphviz-preview" class="diagram-preview"></div>
+    `;
 
     return this.webviewHTML(
       [
         this.assetPath("mermaid.min.js"),
         this.assetPath("graphviz.min.js"),
+        this.assetPath("d3-graphviz.js"),
         this.assetPath("diagram.js"),
       ],
       this.assetPath("diagram.css"),
