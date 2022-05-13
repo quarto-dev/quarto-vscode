@@ -126,6 +126,7 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
         enableScripts: true,
         enableForms: true,
         retainContextWhenHidden: true,
+        localResourceRoots: [Uri.joinPath(extensionUri, "assets", "www")],
       }
     );
 
