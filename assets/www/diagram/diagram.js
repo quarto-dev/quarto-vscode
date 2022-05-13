@@ -3,13 +3,14 @@
 (function () {
   const vscode = acquireVsCodeApi();
 
-  function reportError(message) {
+  const reportError = _.debounce((message) => {
     const previewErrorMsg = document.getElementById("preview-error-message");
     previewErrorMsg.innerText = message;
     document.getElementById("preview-error").classList.remove("hidden");
-  }
+  }, 2000);
 
   function clearError() {
+    reportError.cancel();
     document.getElementById("preview-error").classList.add("hidden");
   }
 

@@ -168,6 +168,7 @@ class QuartoDiagramWebview extends QuartoWebview<null> {
 
     return this.webviewHTML(
       [
+        this.assetPath("lodash.min.js"),
         this.assetPath("mermaid.min.js"),
         this.assetPath("d3.v5.min.js"),
         this.assetPath("graphviz.min.js"),
