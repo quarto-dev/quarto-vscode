@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { commands, Position, ViewColumn, window, Selection } from "vscode";
+import { commands, Position, window, Selection } from "vscode";
 import { Command } from "../../core/command";
 import { isGraphvizDoc, isMermaidDoc, isQuartoDoc } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
