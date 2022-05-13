@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.20.1 (Release on 13 May 2022)
+
+- Debounce reporting of errors in diagram preview
+- Correct path for graphviz language configuration
+
 ## 1.20.0 (Release on 12 May 2022)
 
 - Syntax highlighting, snippets and live preview for diagrams
