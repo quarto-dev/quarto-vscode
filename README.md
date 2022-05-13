@@ -113,10 +113,17 @@ automatically when the cursor is located on the function:
 
 ![](https://quarto.org/docs/computations/images/python-vscode.png)
 
-Here a preview of the currently edited LaTeX quation is shown in the
-same pane:
+## Live Preview
+
+While editing LaTeX math or Mermaid and Graphviz diagrams, click the **Preview** button above the code to open a live preview which will update automatically as you edit.
+
+Here we see a preview of the currently edited LaTeX equation displayed in the Quarto assist panel:
 
 ![](https://quarto.org/docs/tools/images/vscode-equation.png)
+
+Here we see a Graphviz diagram preview automatically updated as we edit:
+
+![](https://quarto.org/docs/authoring/images/vscode-graphviz.gif)
 
 ## YAML Intelligence
 
