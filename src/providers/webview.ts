@@ -75,7 +75,7 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
   }
 
   public isVisible() {
-    return this.activeView_ && this.activeView_.webviewPanel().visible;
+    return !!this.activeView_ && this.activeView_.webviewPanel().visible;
   }
 
   protected onViewStateChanged(_event: WebviewPanelOnDidChangeViewStateEvent) {}

@@ -34,10 +34,7 @@ class PreviewDiagramCommand implements Command {
     }
 
     // ensure diagram view is visible
-    this.manager_.showWebview(null, {
-      preserveFocus: true,
-      viewColumn: ViewColumn.Beside,
-    });
+    this.manager_.showDiagram();
   }
 
   private static readonly id = "quarto.previewDiagram";

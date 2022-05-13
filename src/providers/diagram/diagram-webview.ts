@@ -4,7 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import debounce from "lodash.debounce";
-import { ExtensionContext, Uri, WebviewPanel, window, Position } from "vscode";
+import {
+  ExtensionContext,
+  Uri,
+  WebviewPanel,
+  window,
+  Position,
+  ViewColumn,
+} from "vscode";
 import { isGraphvizDoc, isMermaidDoc, isQuartoDoc } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
 import {
@@ -46,6 +53,18 @@ export class QuartoDiagramWebviewManager extends QuartoWebviewManager<
       null,
       this.disposables_
     );
+  }
+
+  public showDiagram() {
+    this.setOnShow(this.updatePreview.bind(this));
+    if (this.activeView_) {
+      this.revealWebview();
+    } else {
+      this.showWebview(null, {
+        preserveFocus: true,
+        viewColumn: ViewColumn.Beside,
+      });
+    }
   }
 
   protected override onViewStateChanged(): void {
