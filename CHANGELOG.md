@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.20.0 (Release on 12 May 2022)
+
+- Syntax highlighting, snippets and live preview for diagrams
+- Run preview for project files from project root directory
+- Run cell for cells using inline knitr chunk options
+
 ## 1.19.1 (Release on 5 May 2022)
 
 - Open file preview externally for non-localhost

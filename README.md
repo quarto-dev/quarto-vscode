@@ -7,7 +7,8 @@ VS Code extension for the [Quarto](https://quarto.org) scientific and technical 
 - Completion for embedded languages (e.g. Python, R, Julia, LaTeX, etc.)
 - Completion and diagnostics for project files and document/cell options
 - Commands and key-bindings for running cells and selected line(s)
-- Assist panel for contextual help, image preview, and math preview.
+- Live preview for embedded mermaid and graphviz diagrams
+- Assist panel for contextual help, image preview, and math preview
 - Code snippets for common markdown constructs
 - Code folding and document outline for navigation within documents
 - Workspace symbol provider for navigation across project files
@@ -199,12 +200,12 @@ document front-matter, option names/values use YAML syntax.
 
 You can alternatively download and install the extension from the command line as follows:
 
-1.  Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/visx/quarto-1.19.1.vsix)
+1.  Download the extension file: [Quarto VS Code (VISX)](https://github.com/quarto-dev/quarto-vscode/raw/main/visx/quarto-1.20.0.vsix)
 
 2.  Install from the command line with:
 
     ```bash
-    code --install-extension quarto-1.19.1.vsix
+    code --install-extension quarto-1.20.0.vsix
     ```
 
 Note that in order to use the `code` command to perform the installation you may need to open the VS Code Command Palette (Ctrl+Shift+P) and type "shell command" to execute the `Shell Command: Install 'code' command in PATH` command. This will make sure that `code` can be invoked from the command line on your system.
