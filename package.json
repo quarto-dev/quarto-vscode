@@ -96,7 +96,7 @@
           ".DOT",
           ".gv"
         ],
-        "configuration": "dot/dot.configuration.json"
+        "configuration": "./languages/dot/dot.configuration.json"
       },
       {
         "id": "mermaid",
