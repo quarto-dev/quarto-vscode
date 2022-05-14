@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.20.2 (Unreleased)
+
+- Run preview from workspace root if there is no project
+
 ## 1.20.1 (Release on 13 May 2022)
 
 - Debounce reporting of errors in diagram preview

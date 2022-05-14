@@ -42,7 +42,7 @@ import {
   QuartoPreviewWebview,
   QuartoPreviewWebviewManager,
 } from "./preview-webview";
-import { projectDirForDocument } from "./preview-util";
+import { previewDirForDocument } from "./preview-util";
 tmp.setGracefulCleanup();
 
 const kLocalPreviewRegex = /(http:\/\/localhost\:\d+\/[^\s]*)/;
@@ -249,18 +249,18 @@ class PreviewManager {
     this.previewCommandUrl_ = undefined;
     this.previewOutputFile_ = undefined;
 
-    // determine project dir (if any)
-    const projectDir = fs.statSync(target.fsPath).isFile()
-      ? projectDirForDocument(target)
+    // determine preview dir (if any)
+    const previewDir = fs.statSync(target.fsPath).isFile()
+      ? previewDirForDocument(target)
       : undefined;
-    const targetFile = projectDir
-      ? path.relative(projectDir, target.fsPath)
+    const targetFile = previewDir
+      ? path.relative(previewDir, target.fsPath)
       : this.targetFile();
 
     // create and show the terminal
     const options: TerminalOptions = {
       name: kPreviewWindowTitle,
-      cwd: projectDir || this.targetDir(),
+      cwd: previewDir || this.targetDir(),
       env: this.previewEnv_ as unknown as {
         [key: string]: string | null | undefined;
       },

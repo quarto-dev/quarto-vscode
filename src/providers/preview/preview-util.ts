@@ -6,7 +6,22 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { Uri } from "vscode";
+import { Uri, workspace } from "vscode";
+
+export function previewDirForDocument(uri: Uri) {
+  // first check for a quarto project
+  const projectDir = projectDirForDocument(uri);
+  if (projectDir) {
+    return projectDir;
+  } else {
+    // now check if we are within a workspace root
+    const workspaceDir = workspace.getWorkspaceFolder(uri);
+    if (workspaceDir) {
+      return workspaceDir.uri.fsPath;
+    }
+  }
+  return undefined;
+}
 
 export function projectDirForDocument(uri: Uri) {
   let dir = path.dirname(uri.fsPath);
