@@ -1,8 +1,10 @@
 # Changelog
 
-## 1.20.2 (Unreleased)
+## 1.20.2 (Release on 19 May 2022)
 
 - Run preview from workspace root if there is no project
+- Tolerate space between # and | for yaml option completion
+- Trim trailing newline from selection for R execution
 
 ## 1.20.1 (Release on 13 May 2022)
 
