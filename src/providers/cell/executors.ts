@@ -164,7 +164,7 @@ const rCellExecutor: CellExecutor = {
   requiredExtensionName: "R",
   requiredVersion: "2.4.0",
   execute: async (code: string) => {
-    await commands.executeCommand("r.runSelection", code);
+    await commands.executeCommand("r.runSelection", code.trim());
   },
 };
 
