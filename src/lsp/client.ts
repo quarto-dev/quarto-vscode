@@ -231,7 +231,7 @@ function embeddedSignatureHelpProvider(engine: MarkdownEngine) {
 
 function isWithinYamlComment(doc: TextDocument, pos: Position) {
   const line = doc.lineAt(pos.line).text;
-  return !!line.match(/^\s*#\| /);
+  return !!line.match(/^\s*#\s*\| /);
 }
 
 async function syncColorThemeConfig() {
