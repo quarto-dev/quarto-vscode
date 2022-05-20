@@ -58,6 +58,7 @@
     "onCommand:quarto.fileNewDocument",
     "onCommand:quarto.newPresentation",
     "onCommand:quarto.newNotebook",
+    "onCommand:quarto.showAssist",
     "onCommand:quarto.fileNewPresentation",
     "onCommand:quarto.walkthrough.verifyInstallation",
     "onCommand:quarto.walkthrough.newDocument",
@@ -199,11 +200,12 @@
       }
     ],
     "viewsContainers": {
-      "panel": [
+      "activityBar": [
         {
           "id": "quarto-panel",
           "title": "Quarto",
-          "icon": "assets/logo/quarto.svg"
+          "icon": "assets/logo/quarto.svg",
+          "visibility": "hidden"
         }
       ]
     },
@@ -212,7 +214,8 @@
         {
           "type": "webview",
           "id": "quarto-assist",
-          "name": "Quarto"
+          "name": "Quarto",
+          "visibility": "hidden"
         }
       ]
     },
@@ -346,6 +349,11 @@
         "command": "quarto.previewShortcut",
         "title": "Preview",
         "category": "Quarto"
+      },
+      {
+        "command": "quarto.showAssist",
+        "category": "Quarto",
+        "title": "Show Assist Panel"
       },
       {
         "command": "quarto.assist.pin",
@@ -525,6 +533,9 @@
         {
           "command": "quarto.previewDiagram",
           "when": "editorLangId == quarto || editorLangId == mermaid || editorLangId == dot"
+        },
+        {
+          "command": "quarto.showAssist"
         },
         {
           "command": "quarto.renderShortcut",

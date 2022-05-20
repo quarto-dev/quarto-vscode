@@ -5,7 +5,7 @@
 
 import { Position, Selection, window, commands } from "vscode";
 import { Command } from "../../core/command";
-import { isQuartoDoc } from "../../core/doc";
+import { isQuartoDoc, preserveActiveEditorFocus } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
 import { languageBlockAtPosition } from "../../markdown/language";
 import { QuartoAssistViewProvider } from "./webview";
@@ -39,12 +39,26 @@ export class PreviewMathCommand implements Command {
           window.activeTextEditor.selection = new Selection(selPos, selPos);
         }
 
-        // attempt to activate (if we fail to the view has been closed so
-        // recreate it by calling focus)
-        if (!this.provider_.activate()) {
-          commands.executeCommand("quarto-assist.focus");
-        }
+        activateAssistPanel(this.provider_);
       }
     }
+  }
+}
+
+export class ShowAssistCommand implements Command {
+  private static readonly id = "quarto.showAssist";
+  public readonly id = ShowAssistCommand.id;
+  constructor(private readonly provider_: QuartoAssistViewProvider) {}
+  async execute(): Promise<void> {
+    activateAssistPanel(this.provider_);
+  }
+}
+
+function activateAssistPanel(provider: QuartoAssistViewProvider) {
+  // attempt to activate (if we fail to the view has been closed so
+  // recreate it by calling focus)
+  preserveActiveEditorFocus();
+  if (!provider.activate()) {
+    commands.executeCommand("quarto-assist.focus");
   }
 }

@@ -83,6 +83,22 @@ export function getWholeRange(doc: vscode.TextDocument) {
   return new vscode.Range(begin, end);
 }
 
+export function preserveActiveEditorFocus() {
+  // focus the editor (sometimes the terminal steals focus)
+  const activeEditor = vscode.window.activeTextEditor;
+  if (activeEditor) {
+    if (!isNotebook(activeEditor?.document)) {
+      setTimeout(() => {
+        vscode.window.showTextDocument(
+          activeEditor?.document,
+          activeEditor.viewColumn,
+          false
+        );
+      }, 200);
+    }
+  }
+}
+
 async function tryResolveUriToQuartoDoc(
   resource: vscode.Uri
 ): Promise<vscode.TextDocument | undefined> {

@@ -15,7 +15,7 @@ import {
 } from "vscode";
 
 import { Disposable } from "../core/dispose";
-import { isNotebook } from "../core/doc";
+import { isNotebook, preserveActiveEditorFocus } from "../core/doc";
 
 export interface ShowOptions {
   readonly preserveFocus?: boolean;
@@ -58,7 +58,7 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
     }
     this.resolveOnShow();
     if (options?.preserveFocus) {
-      this.preserveFocus();
+      preserveActiveEditorFocus();
     }
   }
 
@@ -66,7 +66,7 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
     if (this.activeView_) {
       this.activeView_.reveal();
       this.resolveOnShow();
-      this.preserveFocus();
+      preserveActiveEditorFocus();
     }
   }
 
@@ -84,22 +84,6 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
     if (this.onShow_) {
       this.onShow_();
       this.onShow_ = undefined;
-    }
-  }
-
-  private preserveFocus() {
-    // focus the editor (sometimes the terminal steals focus)
-    const activeEditor = window.activeTextEditor;
-    if (activeEditor) {
-      if (!isNotebook(activeEditor?.document)) {
-        setTimeout(() => {
-          window.showTextDocument(
-            activeEditor?.document,
-            activeEditor.viewColumn,
-            false
-          );
-        }, 200);
-      }
     }
   }
 

@@ -99,8 +99,7 @@ Note that you can quickly insert a new code cell using the
 
 ## Contextual Assistance
 
-You’ll notice a Quarto panel located at the bottom of VS Code alongside
-the existing Terminal and Output panels. This panel shows contextual
+Execute the **Quarto: Show Assist Panel** command to show a panel in the sidebar that shows contextual
 assistance depending on the current cursor location:
 
 1.  Help/documentation is shown when editing code

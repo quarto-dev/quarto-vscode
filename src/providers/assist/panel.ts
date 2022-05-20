@@ -8,7 +8,7 @@ import { Command } from "../../core/command";
 import { kQuartoDocSelector } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
 import { quartoLensCodeLensProvider } from "./codelens";
-import { PreviewMathCommand } from "./commands";
+import { PreviewMathCommand, ShowAssistCommand } from "./commands";
 import { QuartoAssistViewProvider } from "./webview";
 
 export function activateQuartoAssistPanel(
@@ -44,5 +44,8 @@ export function activateQuartoAssistPanel(
     })
   );
 
-  return [new PreviewMathCommand(provider, engine)];
+  return [
+    new ShowAssistCommand(provider),
+    new PreviewMathCommand(provider, engine),
+  ];
 }

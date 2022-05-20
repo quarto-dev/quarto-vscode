@@ -23,9 +23,9 @@ import {
 } from "vscode";
 import { escapeRegExpCharacters } from "../../core/strings";
 
-const kAssistHelp = "Help";
-const kAssistEquation = "Equation";
-const kAssistImage = "Image";
+const kAssistHelp = "Quarto: Help";
+const kAssistEquation = "Quarto: Equation";
+const kAssistImage = "Quarto: Image";
 
 export function renderWebviewHtml(webview: Webview, extensionUri: Uri) {
   const nonce = scriptNonce();
