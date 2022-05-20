@@ -15,7 +15,7 @@ import {
 } from "vscode";
 
 import { Disposable } from "../core/dispose";
-import { isNotebook, preserveActiveEditorFocus } from "../core/doc";
+import { preserveActiveEditorFocus } from "../core/doc";
 
 export interface ShowOptions {
   readonly preserveFocus?: boolean;
