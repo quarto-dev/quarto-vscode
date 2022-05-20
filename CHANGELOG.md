@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.21.0 (Release on 20 May 2022)
+
+- Move Quarto Assist panel to activity bar
+
 ## 1.20.2 (Release on 19 May 2022)
 
 - Run preview from workspace root if there is no project
