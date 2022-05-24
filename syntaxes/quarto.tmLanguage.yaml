@@ -8,8 +8,7 @@ patterns:
 repository:
   block:
     patterns:
-    - {include: '#double_dollar_math_block'}
-    - {include: '#single_dollar_math_block'}
+    - {include: '#math_block'}
     - {include: '#div'}
     - {include: '#separator'}
     - {include: '#heading'}
@@ -238,9 +237,7 @@ repository:
     - {include: '#italic'}
     - {include: '#reference'}
     - {include: '#shortcode'}
-    - {include: '#math_inline_double'}
-    - {include: '#math_inline_single'}
-    - {include: '#math_inline_block'}
+    - {include: '#math_inline'}
     - {include: '#raw'}
     - {include: '#strikethrough'}
     - {include: '#escape'}
@@ -520,7 +517,7 @@ repository:
       '3': {name: punctuation.definition.strikethrough.quarto}
     match: (~+)((?:[^~]|(?!(?<!~)\1(?!~))~)*+)(\1)
     name: markup.strikethrough.quarto
-  math_inline_single:
+  math_inline:
     name: markup.math.inline.quarto
     match: '(?<=\s|\W|^)(?<!\$)(\$)(.+?)(\$)(?!\$)(?=\s|\W|$)'
     captures:
@@ -529,35 +526,10 @@ repository:
       '2':
         name: meta.embedded.math.quarto
         patterns:
-          - {include: '#math'}
+          - {include: 'text.html.markdown.math#math'}
       '3':
         name: keyword.control.import.math.end.quarto
-  math_inline_double:
-    name: markup.math.inline.quarto
-    match: '(?<=\s|\W|^)(?<!\$)(\$\$)(.+?)(\$\$)(?!\$)(?=\s|\W|$)'
-    captures:
-        '1':
-            name: keyword.control.import.math.begin.quarto
-        '2':
-            name: meta.embedded.math.markdown
-            patterns:
-                - {include: '#math'}
-        '3':
-            name: keyword.control.import.math.end.quarto
-  math_inline_block:
-    name: markup.math.inline.quarto
-    contentName: meta.embedded.math.quarto
-    begin: '(?<=\s|^)(\${2})'
-    beginCaptures:
-      '2':
-        name: keyword.control.import.math.begin.quarto
-    end: '(\${2})(?=\s|$)'
-    endCaptures:
-      '2':
-        name: keyword.control.import.math.end.quarto
-    patterns:
-        - {include: '#math'}
-  double_dollar_math_block:
+  math_block:
     name: markup.math.block.quarto
     contentName: meta.embedded.math.quarto
     begin: '(?<=^\s*)(\${2})(?![^$]*\${2})'
@@ -569,76 +541,14 @@ repository:
       '1':
         name: meta.embedded.math.quarto
         patterns:
-          - {include: '#math'}
+          - {include: 'text.html.markdown.math#math'}
       '2':
         name: keyword.control.import.math.end.quarto
     patterns:
       - begin: (^|\G)
         while: '(^|\G)(?!.*(\${2}))'
         patterns:
-          - {include: '#math'}
-  single_dollar_math_block:
-    name: markup.math.block.quarto
-    contentName: meta.embedded.math.markdown
-    begin: '(?<=^\s*)(\$)(?![^$]*\$|\d)'
-    beginCaptures:
-        '1':
-            name: keyword.control.import.math.begin.quarto
-    end: '(.*)(\${1})'
-    endCaptures:
-        '1':
-            name: meta.embedded.math.quarto
-            patterns:
-                - {include: '#math'}
-        '2':
-            name:  keyword.control.import.math.end.quarto
-    patterns:
-        - begin: (^|\G)
-          while: '(^|\G)(?!.*(\${1}))'
-          patterns:
-            - {include: '#math'}
-  math:
-     patterns:
-        - name: comment.line.math.tex
-          match: '((?<!\\)%)(.+)$'
-          captures:
-              '1': {name: punctuation.definition.comment.math.tex}
-        - name: line.separator.math.tex
-          match: (\\\\)$
-          captures:
-              '1': {name: punctuation.line.separator.math.tex}
-        - name: meta.function.math.tex
-          begin: '((\\)([a-zA-Z_]+))\s*(\{)'
-          beginCaptures:
-              '1': {name: storage.type.function.math.tex}
-              '2': {name: punctuation.definition.function.math.tex}
-              '3': {name: entity.name.function.math.tex}
-              '4': {name: punctuation.definition.arguments.begin.math.tex}
-          end: '\}'
-          endCaptures:
-              '0': {name: punctuation.definition.arguments.end.math.tex}
-          patterns:
-              - {include: $self}
-        - captures:
-              '1': {name: punctuation.definition.constant.math.tex}
-          match: '(\\)([a-zA-Z_]+)\b'
-          name: constant.character.math.tex
-        - captures:
-              '1': {name: punctuation.definition.constant.math.tex}
-          match: '(\\)(?!begin\*\{|verb)([A-Za-z]+)'
-          name: constant.other.general.math.tex
-        - match: '(?<!\\)\{'
-          name: punctuation.math.begin.bracket.curly
-        - match: '(?<!\\)\}'
-          name: punctuation.math.end.bracket.curly
-        - match: \(
-          name: punctuation.math.begin.bracket.round
-        - match: \)
-          name: punctuation.math.end.bracket.round
-        - match: '(([0-9]*[\.][0-9]+)|[0-9]+)'
-          name: constant.numeric.math.tex
-        - match: '[\+\*/_\^-]'
-          name: punctuation.math.operator.latex
+          - {include: 'text.html.markdown.math#math'}
 
 scopeName: text.html.quarto
 uuid: 4EDF8B97-6B11-4D2F-8157-6860113420AD
