@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.22.0 (Release on 23 May 2022)
+
+- Improve math highlighting rules (delegate to builtin rules)
+
 ## 1.21.0 (Release on 20 May 2022)
 
 - Move Quarto Assist panel to activity bar
