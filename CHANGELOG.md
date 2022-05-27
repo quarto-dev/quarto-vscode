@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.22.1 (Unreleased)
+
+- Prevent flake8 diagnostics from appearing in intellisense temp file
+
 ## 1.22.0 (Release on 23 May 2022)
 
 - Improve math highlighting rules (delegate to builtin rules)

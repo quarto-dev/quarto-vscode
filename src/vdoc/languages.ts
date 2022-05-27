@@ -20,7 +20,7 @@ const kEmbededLanguages = [
   // these langauges required creatinga a temp file
   defineLanguage("python", {
     ext: "py",
-    inject: "# type: ignore",
+    inject: "# type: ignore\n# flake8: noqa",
     trigger: ["."],
   }),
   defineLanguage("r", { trigger: ["$", "@", ":", "."], reuseVdoc: true }),
