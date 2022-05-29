@@ -35,6 +35,15 @@ const updateAddressBar = (href) => {
 
 window.addEventListener("message", (e) => {
   switch (e.data.type || e.data.message) {
+    // forward keydown events so shortcuts can work in vscode, see:
+    // https://github.com/microsoft/vscode/issues/65452#issuecomment-586485815
+    case "keydown": {
+      const keydown = e.data.data;
+      const event = new KeyboardEvent("keydown", keydown);
+      window.dispatchEvent(event);
+      break;
+    }
+
     case "navigate": {
       updateAddressBar(e.data.href);
       break;
