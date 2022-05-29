@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.23.0 (Unreleased)
+## 1.23.0 (Release on 29 May 2022)
 
 - Support VS Code command keyboard shortcuts while preview is focused
 - Support clipboard operations within preview iframe
