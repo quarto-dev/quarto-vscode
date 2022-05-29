@@ -104,6 +104,16 @@ onceDocumentLoaded(() => {
     document.body.classList.toggle("iframe-focused", iframeFocused);
   }, 50);
 
+  // forward clipboard commands to inner iframe
+  for (const command of ["selectAll", "copy", "paste", "cut", "undo", "redo"]) {
+    window.document.addEventListener(command, (e) => {
+      iframe.contentWindow.postMessage(
+        { type: "devhost-exec-command", data: command },
+        "*"
+      );
+    });
+  }
+
   iframe.addEventListener("load", () => {
     // Noop
   });

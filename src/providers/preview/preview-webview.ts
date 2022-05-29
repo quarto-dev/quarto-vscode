@@ -125,7 +125,7 @@ export class QuartoPreviewWebview extends QuartoWebview<string> {
     </header>
     <div class="content">
       <div class="iframe-focused-alert">Focus Lock</div>
-      <iframe sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
+      <iframe sandbox="allow-scripts allow-forms allow-same-origin allow-pointer-lock allow-downloads"></iframe>
     </div>
     
     `;
