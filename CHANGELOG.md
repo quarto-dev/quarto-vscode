@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.23.1 (Unreleased)
+
+- Remove 'Focus Lock' indicator from preview
+
 ## 1.23.0 (Release on 29 May 2022)
 
 - Support VS Code command keyboard shortcuts while preview is focused
