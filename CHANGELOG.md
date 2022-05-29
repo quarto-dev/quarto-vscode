@@ -1,8 +1,11 @@
 # Changelog
 
-## 1.22.1 (Unreleased)
+## 1.23.0 (Unreleased)
 
+- Support VS Code command keyboard shortcuts while preview is focused
+- Support clipboard operations within preview iframe
 - Prevent flake8 diagnostics from appearing in intellisense temp file
+- Register Quarto assist panel as an explorer view
 
 ## 1.22.0 (Release on 23 May 2022)
 
