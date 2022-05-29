@@ -115,5 +115,5 @@ iframe {
 }
 
 .iframe-focused.enable-focus-lock-indicator .iframe-focused-alert {
-  display: block;
+  display: none;
 }
