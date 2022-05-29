@@ -64,7 +64,8 @@
     "onCommand:quarto.walkthrough.newDocument",
     "workspaceContains:**/_quarto.{yml,yaml}",
     "onWebviewPanel:quarto.previewView",
-    "onWebviewPanel:quarto.diagramView"
+    "onWebviewPanel:quarto.diagramView",
+    "onView:quarto-assist"
   ],
   "capabilities": {
     "virtualWorkspaces": true
@@ -199,22 +200,13 @@
         "path": "./languages/dot/snippets/principalGraphAttributes.json"
       }
     ],
-    "viewsContainers": {
-      "activityBar": [
-        {
-          "id": "quarto-panel",
-          "title": "Quarto",
-          "icon": "assets/logo/quarto.svg",
-          "visibility": "hidden"
-        }
-      ]
-    },
     "views": {
-      "quarto-panel": [
+      "explorer": [
         {
           "type": "webview",
           "id": "quarto-assist",
           "name": "Quarto",
+          "icon": "assets/logo/quarto.svg",
           "visibility": "hidden"
         }
       ]
