@@ -18,6 +18,7 @@ import { Command, CommandManager } from "./core/command";
 import { newDocumentCommands } from "./providers/newdoc";
 import { insertCommands } from "./providers/insert";
 import { activateDiagram } from "./providers/diagram/diagram";
+import { activateOptionEnterProvider } from "./providers/option";
 
 export function activateCommon(
   context: vscode.ExtensionContext,
@@ -50,6 +51,9 @@ export function activateCommon(
       PathCompletionProvider.register(engine)
     )
   );
+
+  // option enter handler
+  activateOptionEnterProvider(context, engine);
 
   // background highlighter
   activateBackgroundHighlighter(context, engine);
