@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.24.0 (Unreleased)
+## 1.24.0 (Release on 3 June 2022)
 
 - Automatically insert option comment prefix in executable cells
 - Remove 'Focus Lock' indicator from preview
