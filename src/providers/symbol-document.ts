@@ -83,7 +83,7 @@ export default class QuartoDocumentSymbolProvider
   }
 
   private getSymbolName(entry: TocEntry): string {
-    return entry.text;
+    return entry.text || " ";
   }
 
   private tocEntrySymbolKind(entry: TocEntry): vscode.SymbolKind {
