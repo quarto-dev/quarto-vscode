@@ -4,6 +4,7 @@
 
 - Automatically insert option comment prefix in executable cells
 - Remove 'Focus Lock' indicator from preview
+- Fix for document outline display when there are empty headings
 
 ## 1.23.0 (Release on 29 May 2022)
 
