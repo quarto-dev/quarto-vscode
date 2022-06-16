@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.25.0 (Unreleased)
+
+- Automatically disable terminal shell integration for workspace
+
 ## 1.24.0 (Release on 3 June 2022)
 
 - Automatically insert option comment prefix in executable cells
