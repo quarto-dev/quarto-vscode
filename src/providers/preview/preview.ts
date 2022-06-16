@@ -11,6 +11,7 @@ import axios from "axios";
 
 import vscode, {
   commands,
+  ConfigurationTarget,
   env,
   ExtensionContext,
   MessageItem,
@@ -21,6 +22,7 @@ import vscode, {
   Uri,
   ViewColumn,
   window,
+  workspace,
 } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { previewCommands } from "./commands";
@@ -248,6 +250,29 @@ class PreviewManager {
     this.previewUrl_ = undefined;
     this.previewCommandUrl_ = undefined;
     this.previewOutputFile_ = undefined;
+
+    // turn off shell integration for this workspace if enabled (as it prevents
+    // us from setting environmeht variables in the terminal child)
+    // wrap in try/catch in case there is something about this operation
+    // we don't understand which will cause an error -- we don't want that
+    // to prevent a preview)
+    if (workspace.name) {
+      try {
+        const terminalConfig = workspace.getConfiguration("terminal");
+        const shellIntegrationEnabled = terminalConfig.get(
+          "integrated.shellIntegration.enabled"
+        );
+        if (shellIntegrationEnabled) {
+          await terminalConfig.update(
+            "integrated.shellIntegration.enabled",
+            false,
+            ConfigurationTarget.Workspace
+          );
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
 
     // determine preview dir (if any)
     const previewDir = fs.statSync(target.fsPath).isFile()
