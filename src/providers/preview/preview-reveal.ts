@@ -57,8 +57,6 @@ async function revealEditorLocation(
 ): Promise<RevealEditorLocation> {
   const items: RevealEditorLocationItem[] = [];
   let explicitSlideLevel: number | null = null;
-  let autoSlideLevel = Number.MAX_SAFE_INTEGER;
-  let pendingAutoSlideLevel = 0;
   let foundCursor = false;
   const tokens = await engine.parse(doc);
   for (const token of tokens) {
@@ -74,20 +72,9 @@ async function revealEditorLocation(
         items.push(titleItem(0));
       } else if (token.type === "hr") {
         items.push(hrItem(row));
-        pendingAutoSlideLevel = 0;
       } else if (token.type === "heading_open") {
         const level = getHeaderLevel(token.markup);
         items.push(headingItem(row, level));
-        if (level < autoSlideLevel) {
-          pendingAutoSlideLevel = level;
-        } else {
-          pendingAutoSlideLevel = 0;
-        }
-      } else {
-        if (pendingAutoSlideLevel > 0) {
-          autoSlideLevel = pendingAutoSlideLevel;
-          pendingAutoSlideLevel = 0;
-        }
       }
     }
   }
@@ -97,17 +84,7 @@ async function revealEditorLocation(
     items.push(cursorItem(doc.lineCount - 1));
   }
 
-  // last chance to collect pending auto slide level
-  if (pendingAutoSlideLevel > 0) {
-    autoSlideLevel = pendingAutoSlideLevel;
-  }
-
-  // didn't find an auto slide level
-  if (autoSlideLevel === Number.MAX_SAFE_INTEGER) {
-    autoSlideLevel = 0;
-  }
-
-  return { items, slideLevel: explicitSlideLevel || autoSlideLevel };
+  return { items, slideLevel: explicitSlideLevel || 2 };
 }
 
 function slideLevelFromYaml(str: string) {
