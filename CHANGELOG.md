@@ -1,7 +1,8 @@
 # Changelog
 
-## 1.25.0 (Unreleased)
+## 1.25.0 (Release on 2 July 2022)
 
+- Improve detection of current slide for revealjs preview
 - Automatically disable terminal shell integration for workspace
 
 ## 1.24.0 (Release on 3 June 2022)
