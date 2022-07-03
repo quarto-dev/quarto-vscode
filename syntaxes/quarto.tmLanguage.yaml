@@ -515,7 +515,7 @@ repository:
         - {include: '#link-email'}
         - {include: '#image-ref'}
       '3': {name: punctuation.definition.strikethrough.quarto}
-    match: (~+)((?:[^~]|(?!(?<!~)\1(?!~))~)*+)(\1)
+    match: (~{2,})((?:[^~]|(?!(?<!~)\1(?!~))~)*+)(\1)
     name: markup.strikethrough.quarto
   math_inline:
     name: markup.math.inline.quarto

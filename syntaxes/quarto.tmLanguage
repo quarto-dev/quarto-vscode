@@ -4899,7 +4899,7 @@
           </dict>
         </dict>
         <key>match</key>
-        <string>(~+)((?:[^~]|(?!(?&lt;!~)\1(?!~))~)*+)(\1)</string>
+        <string>(~{2,})((?:[^~]|(?!(?&lt;!~)\1(?!~))~)*+)(\1)</string>
         <key>name</key>
         <string>markup.strikethrough.quarto</string>
       </dict>

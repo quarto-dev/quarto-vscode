@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.26.0 (Unreleased)
+
+- Fix syntax highlighting for strikethrough
+
 ## 1.25.0 (Release on 2 July 2022)
 
 - Improve detection of current slide for revealjs preview
