@@ -1,7 +1,8 @@
 # Changelog
 
-## 1.26.0 (Unreleased)
+## 1.26.0 (Release on 9 July 2022)
 
+- Use output channel for quarto preview
 - Fix syntax highlighting for strikethrough
 
 ## 1.25.0 (Release on 2 July 2022)
