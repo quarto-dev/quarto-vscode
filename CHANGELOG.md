@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.27.0 (Releae on 16 July 2022)
+
+- Set LANG environment variable for quarto render/preview
+
 ## 1.26.0 (Release on 9 July 2022)
 
 - Use output channel for quarto preview
