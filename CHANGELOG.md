@@ -1,6 +1,10 @@
 # Changelog
 
-## 1.27.0 (Releae on 16 July 2022)
+## 1.28.0 (Release on 20 July 2022)
+
+- Use terminal for quarto preview
+
+## 1.27.0 (Release on 16 July 2022)
 
 - Set LANG environment variable for quarto render/preview
 
