@@ -7,22 +7,22 @@ import * as path from "path";
 import * as fs from "fs";
 import * as uuid from "uuid";
 import * as os from "os";
-import * as process from "process";
-import stripAnsi from "strip-ansi";
-import { spawn, ChildProcess, SpawnOptions } from "child_process";
 import axios from "axios";
 
 import vscode, {
   commands,
+  ConfigurationTarget,
   env,
   ExtensionContext,
   MessageItem,
-  OutputChannel,
+  Terminal,
+  TerminalOptions,
   TextDocument,
   TextEditor,
   Uri,
   ViewColumn,
   window,
+  workspace,
 } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { previewCommands } from "./commands";
@@ -32,13 +32,14 @@ import {
   isQuartoDoc,
   validatateQuartoExtension,
 } from "../../core/doc";
+import { PreviewOutputSink } from "./preview-output";
 import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
 
 import * as tmp from "tmp";
 import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
 import { isHugoMarkdown } from "../../core/hugo";
 import { MarkdownEngine } from "../../markdown/engine";
-import { lines, shQuote } from "../../core/strings";
+import { shQuote } from "../../core/strings";
 import {
   QuartoPreviewWebview,
   QuartoPreviewWebviewManager,
@@ -62,7 +63,7 @@ export function activatePreview(
   }
 
   // preview commands
-  return previewCommands(quartoContext, previewManager, engine);
+  return previewCommands(quartoContext, engine);
 }
 
 export function canPreviewDoc(doc?: TextDocument) {
@@ -122,7 +123,7 @@ export async function previewProject(target: Uri, format?: string) {
   await previewManager.preview(target, undefined, format);
 }
 
-export class PreviewManager {
+class PreviewManager {
   constructor(
     context: ExtensionContext,
     private readonly quartoContext_: QuartoContext
@@ -134,16 +135,16 @@ export class PreviewManager {
       "Quarto Preview",
       QuartoPreviewWebview
     );
-    this.previewEnvManager_ = new PreviewEnvManager(this.renderToken_);
-    this.outputChannel_ = window.createOutputChannel("Quarto Preview");
+    this.outputSink_ = new PreviewOutputSink(this.onPreviewOutput.bind(this));
+    this.previewEnvManager_ = new PreviewEnvManager(
+      this.outputSink_,
+      this.renderToken_
+    );
   }
 
   dispose() {
-    try {
-      this.webviewManager_.dispose();
-      this.outputChannel_.dispose();
-      this.previewProcess_?.kill();
-    } catch {}
+    this.webviewManager_.dispose();
+    this.outputSink_.dispose();
   }
 
   public async preview(uri: Uri, doc?: TextDocument, format?: string | null) {
@@ -160,11 +161,7 @@ export class PreviewManager {
       try {
         const response = await this.previewRenderRequest(doc, format);
         if (response.status === 200) {
-          this.outputChannel_.clear();
-          this.outputChannel_.show(true);
-          this.outputChannel_.appendLine(
-            `quarto render ${path.basename(doc.fileName)}`
-          );
+          this.terminal_!.show(true);
         } else {
           await this.startPreview(prevewEnv, uri, format, doc);
         }
@@ -173,21 +170,6 @@ export class PreviewManager {
       }
     } else {
       await this.startPreview(prevewEnv, uri, format, doc);
-    }
-  }
-
-  public async terminatePreview(revealOutput = false) {
-    if (this.previewProcess_) {
-      if (this.previewProcess_.exitCode === null) {
-        this.outputChannel_.appendLine("\nTerminating Quarto Preview");
-        await this.previewTerminateRequest();
-        this.previewProcess_.kill();
-        this.setPreviewRunning(false);
-      }
-      this.previewProcess_ = undefined;
-    }
-    if (revealOutput) {
-      this.outputChannel_.show(true);
     }
   }
 
@@ -205,8 +187,8 @@ export class PreviewManager {
       previewEnvsEqual(this.previewEnv_, previewEnv) &&
       this.previewType_ === this.previewTypeConfig() &&
       (this.previewType_ !== "internal" || this.webviewManager_.hasWebview()) &&
-      this.previewProcess_ &&
-      this.previewProcess_.exitCode === null
+      this.terminal_ &&
+      this.terminal_.exitStatus === undefined
     );
   }
 
@@ -248,10 +230,18 @@ export class PreviewManager {
     format: string | null,
     doc?: TextDocument
   ) {
-    await this.terminatePreview();
+    // dispose any existing preview terminals
+    const kPreviewWindowTitle = "Quarto Preview";
+    const terminal = window.terminals.find((terminal) => {
+      return terminal.name === kPreviewWindowTitle;
+    });
+    if (terminal) {
+      await this.previewTerminateRequest();
+      terminal.dispose();
+    }
 
-    // clear existing output
-    this.outputChannel_.clear();
+    // cleanup output
+    this.outputSink_.reset();
 
     // reset preview state
     this.previewEnv_ = previewEnv;
@@ -269,19 +259,17 @@ export class PreviewManager {
       ? path.relative(previewDir, target.fsPath)
       : this.targetFile();
 
-    // create the preview process
-    const quarto = path.join(this.quartoContext_.binPath, "quarto");
-    const options: SpawnOptions = {
+    // create and show the terminal
+    const options: TerminalOptions = {
+      name: kPreviewWindowTitle,
       cwd: previewDir || this.targetDir(),
-      env: {
-        ...process.env,
-        ...this.previewEnv_,
-        LANG: getLangEnvVariable(),
+      env: this.previewEnv_ as unknown as {
+        [key: string]: string | null | undefined;
       },
-      shell: os.platform() === "win32",
     };
-    const cmd: string[] = ["preview", targetFile];
-
+    this.terminal_ = window.createTerminal(options);
+    const quarto = path.join(this.quartoContext_.binPath, "quarto");
+    const cmd: string[] = [shQuote(quarto), "preview", shQuote(targetFile)];
     if (!doc) {
       // project render
       cmd.push("--render", format || "all");
@@ -292,28 +280,13 @@ export class PreviewManager {
 
     cmd.push("--no-browser");
     cmd.push("--no-watch-inputs");
-    this.outputChannel_.show(true);
-    this.outputChannel_.appendLine(`quarto ${cmd.map(shQuote).join(" ")}`);
-    const quote = os.platform() === "win32" ? shQuote : (arg: string) => arg;
-    this.previewProcess_ = spawn(quote(quarto), cmd.map(quote), options);
-    this.previewProcess_.stderr.setEncoding("UTF-8");
-    this.previewProcess_.stderr.on("data", this.onPreviewOutput.bind(this));
-    this.previewProcess_.on("exit", () => {
-      this.setPreviewRunning(false);
-    });
+    const cmdText =
+      os.platform() === "win32" ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
+    this.terminal_.sendText(cmdText, true);
+    this.terminal_.show(true);
   }
 
   private onPreviewOutput(output: string) {
-    this.setPreviewRunning(true);
-    output = stripAnsi(output);
-    const outputLines = lines(output);
-    for (let i = 0; i < outputLines.length; i++) {
-      if (i < outputLines.length - 1) {
-        this.outputChannel_.appendLine(outputLines[i]);
-      } else {
-        this.outputChannel_.append(outputLines[i]);
-      }
-    }
     const kOutputCreatedPattern = /Output created\: (.*?)\n/;
     this.previewOutput_ += output;
     if (!this.previewUrl_) {
@@ -453,16 +426,6 @@ export class PreviewManager {
     }
   }
 
-  private setPreviewRunning(value: boolean) {
-    commands.executeCommand(
-      "setContext",
-      PreviewManager.kPreviewRunningContext,
-      value
-    );
-  }
-
-  private static readonly kPreviewRunningContext = "quarto.preview.isRunning";
-
   private previewOutput_ = "";
   private previewEnv_: PreviewEnv | undefined;
   private previewTarget_: Uri | undefined;
@@ -471,89 +434,11 @@ export class PreviewManager {
   private previewOutputFile_: Uri | undefined;
   private previewType_: "internal" | "external" | "none" | undefined;
 
-  private previewProcess_: ChildProcess | undefined;
-  private readonly outputChannel_: OutputChannel;
+  private terminal_: Terminal | undefined;
 
   private readonly renderToken_: string;
   private readonly previewEnvManager_: PreviewEnvManager;
   private readonly webviewManager_: QuartoPreviewWebviewManager;
+  private readonly outputSink_: PreviewOutputSink;
   private readonly previewFormats_ = new Map<string, string | null>();
-}
-
-// from https://github.com/microsoft/vscode/blob/29eb316bb9f154b7870eb5204ec7f2e7cf649bec/src/vs/workbench/contrib/terminal/common/terminalEnvironment.ts#L106
-// which is used by VSCode when creating a Terminal
-function getLangEnvVariable(): string {
-  const parts = vscode.env.language ? vscode.env.language.split("-") : [];
-  const n = parts.length;
-  if (n === 0) {
-    // Fallback to en_US if the locale is unknown
-    return "en_US.UTF-8";
-  }
-  if (n === 1) {
-    // The local may only contain the language, not the variant, if this is the case guess the
-    // variant such that it can be used as a valid $LANG variable. The language variant chosen
-    // is the original and/or most prominent with help from
-    // https://stackoverflow.com/a/2502675/1156119
-    // The list of locales was generated by running `locale -a` on macOS
-    const languageVariants: { [key: string]: string } = {
-      af: "ZA",
-      am: "ET",
-      be: "BY",
-      bg: "BG",
-      ca: "ES",
-      cs: "CZ",
-      da: "DK",
-      // de: 'AT',
-      // de: 'CH',
-      de: "DE",
-      el: "GR",
-      // en: 'AU',
-      // en: 'CA',
-      // en: 'GB',
-      // en: 'IE',
-      // en: 'NZ',
-      en: "US",
-      es: "ES",
-      et: "EE",
-      eu: "ES",
-      fi: "FI",
-      // fr: 'BE',
-      // fr: 'CA',
-      // fr: 'CH',
-      fr: "FR",
-      he: "IL",
-      hr: "HR",
-      hu: "HU",
-      hy: "AM",
-      is: "IS",
-      // it: 'CH',
-      it: "IT",
-      ja: "JP",
-      kk: "KZ",
-      ko: "KR",
-      lt: "LT",
-      // nl: 'BE',
-      nl: "NL",
-      no: "NO",
-      pl: "PL",
-      pt: "BR",
-      // pt: 'PT',
-      ro: "RO",
-      ru: "RU",
-      sk: "SK",
-      sl: "SI",
-      sr: "YU",
-      sv: "SE",
-      tr: "TR",
-      uk: "UA",
-      zh: "CN",
-    };
-    if (parts[0] in languageVariants) {
-      parts.push(languageVariants[parts[0]]);
-    }
-  } else {
-    // Ensure the variant is uppercase to be a valid $LANG
-    parts[1] = parts[1].toUpperCase();
-  }
-  return parts.join("_") + ".UTF-8";
 }
