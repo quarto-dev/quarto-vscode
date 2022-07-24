@@ -35,6 +35,12 @@ export function mathRange(doc: TextDocument, pos: Position) {
   );
 }
 
+export function isContentPosition(doc: TextDocument, pos: Position) {
+  const tokens = markdownTokens.parse(doc);
+  const codeBlock = tokens.find(isCodeBlockAtPosition(pos));
+  return !codeBlock && !mathRange(doc, pos);
+}
+
 export function isLatexPosition(doc: TextDocument, pos: Position) {
   // math is always latex
   if (mathRange(doc, pos)) {
@@ -56,7 +62,7 @@ function isMathBlockAtPosition(pos: Position) {
   return isBlockTypeAtPosition(["math_block"], pos);
 }
 
-function isCodeBlockAtPosition(pos: Position) {
+export function isCodeBlockAtPosition(pos: Position) {
   return isBlockTypeAtPosition(kCodeBlockTokens, pos);
 }
 

@@ -15,6 +15,7 @@ import { editorContext } from "../../quarto/quarto";
 import { attrCompletions } from "./completion-attrs";
 import { latexCompletions } from "./completion-latex";
 import { yamlCompletions } from "./completion-yaml";
+import { refsCompletions } from "./completion-refs";
 
 export const kCompletionCapabilities: ServerCapabilities = {
   completionProvider: {
@@ -35,6 +36,7 @@ export async function onCompletion(
   const trigger = completionContext?.triggerCharacter;
   const context = editorContext(doc, pos, explicit, trigger);
   return (
+    (await refsCompletions(doc, pos, context, completionContext)) ||
     (await attrCompletions(context)) ||
     (await latexCompletions(doc, pos, completionContext)) ||
     (await yamlCompletions(context)) ||
