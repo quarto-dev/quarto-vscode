@@ -9,7 +9,10 @@ import Token from "markdown-it/lib/token";
 
 import MarkdownIt from "markdown-it";
 import { mathPlugin } from "../../shared/markdownit-math";
+import { frontMatterPlugin } from "../../shared/markdownit-yaml";
+
 import { TextDocument } from "vscode-languageserver-textdocument";
+import { parseFrontMatterStr } from "../metadata.";
 
 export function mathRange(doc: TextDocument, pos: Position) {
   // see if we are in a math block
@@ -39,6 +42,23 @@ export function isContentPosition(doc: TextDocument, pos: Position) {
   const tokens = markdownTokens.parse(doc);
   const codeBlock = tokens.find(isCodeBlockAtPosition(pos));
   return !codeBlock && !mathRange(doc, pos);
+}
+
+export function documentFrontMatter(
+  doc: TextDocument
+): Record<string, unknown> {
+  const tokens = markdownTokens.parse(doc);
+  const yaml = tokens.find((token) => token.type === "front_matter");
+  if (yaml) {
+    const frontMatter = parseFrontMatterStr(yaml.markup);
+    if (typeof frontMatter === "object") {
+      return frontMatter as Record<string, unknown>;
+    } else {
+      return {};
+    }
+  } else {
+    return {};
+  }
 }
 
 export function isLatexPosition(doc: TextDocument, pos: Position) {
@@ -95,6 +115,7 @@ class MarkdownTokens {
       this.md_ = MarkdownIt("zero");
       this.md_.enable(kCodeBlockTokens);
       this.md_.use(mathPlugin, { enableInlines: false });
+      this.md_.use(frontMatterPlugin);
     }
 
     // (re)-primte cache if required

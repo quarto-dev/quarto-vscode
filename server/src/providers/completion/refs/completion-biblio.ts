@@ -6,14 +6,23 @@
 import { CompletionItem, CompletionItemKind } from "vscode-languageserver/node";
 
 export async function biblioCompletions(
-  token: string
+  token: string,
+  frontMatter: Record<string, unknown>,
+  path: string,
+  projectDir?: string
 ): Promise<CompletionItem[] | null> {
   return [
     {
       kind: CompletionItemKind.Function,
       //documentation: "documentation",
       //detail: "detail",
-      label: token + "-biblio",
+      label: token + "-" + path,
+    },
+    {
+      kind: CompletionItemKind.Function,
+      //documentation: "documentation",
+      //detail: "detail",
+      label: token + "-" + projectDir || "",
     },
   ];
 }

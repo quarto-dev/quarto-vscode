@@ -11,7 +11,11 @@ import {
   CompletionItem,
   CompletionItemKind,
 } from "vscode-languageserver/node";
-import { isContentPosition } from "../../../core/markdown/markdown";
+import { projectDirForDocument } from "../../../core/doc";
+import {
+  documentFrontMatter,
+  isContentPosition,
+} from "../../../core/markdown/markdown";
 
 import { EditorContext, quarto } from "../../../quarto/quarto";
 import { biblioCompletions } from "./completion-biblio";
@@ -40,6 +44,11 @@ export async function refsCompletions(
     return null;
   }
 
+  // ensure we have the file scheme
+  if (!doc.uri.startsWith("file:")) {
+    return null;
+  }
+
   // check if we are in markdown
   if (!isContentPosition(doc, pos)) {
     return null;
@@ -60,12 +69,22 @@ export async function refsCompletions(
       // make sure there is no text directly ahead (except bracket, space, semicolon)
       const nextChar = text.slice(pos.character, pos.character + 1);
       if (!nextChar || [";", " ", "]"].includes(nextChar)) {
-        // path
-        // project yaml
-        // document yaml
+        // construct path
+        const path = new URL(doc.uri).pathname;
+        const projectDir = projectDirForDocument(path);
 
-        const biblioItems = await biblioCompletions(tokenText);
-        const crossrefItems = await crossrefCompletions(tokenText);
+        const biblioItems = await biblioCompletions(
+          tokenText,
+          documentFrontMatter(doc),
+          path,
+          projectDir
+        );
+        const crossrefItems = await crossrefCompletions(
+          tokenText,
+          doc.getText(),
+          path,
+          projectDir
+        );
         if (biblioItems || crossrefItems) {
           return (biblioItems || []).concat(crossrefItems || []);
         } else {

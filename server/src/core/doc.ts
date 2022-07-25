@@ -3,6 +3,9 @@
  * Licensed under the MIT License. See LICENSE in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+import path from "path";
+import fs from "fs";
+
 import { TextDocument } from "vscode-languageserver-textdocument";
 
 export const kQuartoLanguageId = "quarto";
@@ -33,6 +36,34 @@ export function isQuartoYaml(doc: TextDocument) {
     doc.languageId === kYamlLanguageId &&
     (doc.uri.match(/_quarto\.ya?ml$/) || doc.uri.match(/_metadata\.ya?ml$/))
   );
+}
+
+export function projectDirForDocument(doc: string) {
+  let dir = path.dirname(doc);
+  while (true) {
+    if (hasQuartoProject(dir)) {
+      return dir;
+    } else {
+      const nextDir = path.dirname(dir);
+      if (nextDir !== dir) {
+        dir = nextDir;
+      } else {
+        break;
+      }
+    }
+  }
+  return undefined;
+}
+
+export function hasQuartoProject(dir?: string) {
+  if (dir) {
+    return (
+      fs.existsSync(path.join(dir, "_quarto.yml")) ||
+      fs.existsSync(path.join(dir, "_quarto.yaml"))
+    );
+  } else {
+    return false;
+  }
 }
 
 const kRegExYAML =

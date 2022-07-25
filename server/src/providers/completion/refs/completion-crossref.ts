@@ -6,7 +6,10 @@
 import { CompletionItem, CompletionItemKind } from "vscode-languageserver/node";
 
 export async function crossrefCompletions(
-  token: string
+  token: string,
+  code: string,
+  path: string,
+  projectDir?: string
 ): Promise<CompletionItem[] | null> {
   return [
     {
