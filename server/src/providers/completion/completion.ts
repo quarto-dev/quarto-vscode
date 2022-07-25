@@ -15,7 +15,7 @@ import { editorContext } from "../../quarto/quarto";
 import { attrCompletions } from "./completion-attrs";
 import { latexCompletions } from "./completion-latex";
 import { yamlCompletions } from "./completion-yaml";
-import { refsCompletions } from "./completion-refs";
+import { refsCompletions } from "./refs/completion-refs";
 
 export const kCompletionCapabilities: ServerCapabilities = {
   completionProvider: {

@@ -3,28 +3,26 @@
  * Licensed under the MIT License. See LICENSE in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { Position, TextDocument } from "vscode-languageserver-textdocument";
-import { Range, TextEdit } from "vscode-languageserver-types";
+import { TextDocument } from "vscode-languageserver-textdocument";
+import { Range, Position } from "vscode-languageserver-types";
 
 import {
-  Command,
   CompletionContext,
   CompletionItem,
   CompletionItemKind,
 } from "vscode-languageserver/node";
-import {
-  isCodeBlockAtPosition,
-  isContentPosition,
-} from "../../core/markdown/markdown";
+import { isContentPosition } from "../../../core/markdown/markdown";
 
-import { EditorContext, quarto } from "../../quarto/quarto";
+import { EditorContext, quarto } from "../../../quarto/quarto";
+import { biblioCompletions } from "./completion-biblio";
+import { crossrefCompletions } from "./completion-crossref";
 
 export async function refsCompletions(
   doc: TextDocument,
   pos: Position,
   context: EditorContext,
-  completionContext?: CompletionContext
-) {
+  _completionContext?: CompletionContext
+): Promise<CompletionItem[] | null> {
   // bail if no quarto connection
   if (!quarto) {
     return null;
@@ -62,21 +60,17 @@ export async function refsCompletions(
       // make sure there is no text directly ahead (except bracket, space, semicolon)
       const nextChar = text.slice(pos.character, pos.character + 1);
       if (!nextChar || [";", " ", "]"].includes(nextChar)) {
-        return [
-          {
-            kind: CompletionItemKind.Function,
+        // path
+        // project yaml
+        // document yaml
 
-            documentation: "documentation",
-            detail: "detail",
-            label: "one",
-          },
-          {
-            kind: CompletionItemKind.Function,
-            documentation: "documentation",
-            detail: "detail",
-            label: "two",
-          },
-        ];
+        const biblioItems = await biblioCompletions(tokenText);
+        const crossrefItems = await crossrefCompletions(tokenText);
+        if (biblioItems || crossrefItems) {
+          return (biblioItems || []).concat(crossrefItems || []);
+        } else {
+          return null;
+        }
       }
     }
   }
