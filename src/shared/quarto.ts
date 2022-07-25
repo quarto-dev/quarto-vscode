@@ -13,6 +13,8 @@ export interface QuartoContext {
   version: string;
   binPath: string;
   resourcePath: string;
+  runQuarto: (...args: string[]) => string;
+  runPandoc: (...args: string[]) => string;
 }
 
 export function initQuartoContext(
@@ -33,28 +35,37 @@ export function initQuartoContext(
     } else {
       quartoPath = "quarto";
     }
-    const quartoCmd = (...args: string[]) => {
-      const cmd = [shQuote(quartoPath!), ...args];
+    const shellCmd = (binary: string, ...args: string[]) => {
+      const cmd = [shQuote(binary), ...args];
       const cmdText =
         os.platform() === "win32" ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
       return cmdText;
     };
+    const runShellCmd = (binary: string, ...args: string[]) => {
+      return child_process.execSync(shellCmd(binary, ...args), {
+        encoding: "utf-8",
+      }) as unknown as string;
+    };
 
-    const version = (
-      child_process.execSync(quartoCmd("--version"), {
-        encoding: "utf-8",
-      }) as unknown as string
-    ).trim();
-    const paths = (
-      child_process.execSync(quartoCmd("--paths"), {
-        encoding: "utf-8",
-      }) as unknown as string
-    ).split(/\r?\n/);
+    const runQuarto = (...args: string[]) => runShellCmd(quartoPath!, ...args);
+    const version = runQuarto("--version").trim();
+    const paths = runQuarto("--paths").split(/\r?\n/);
+
+    // get the pandoc path
+    const toolsDir = path.join(paths[0], "tools");
+    const pandocBin = path.join(
+      toolsDir,
+      os.platform() === "win32" ? "pandoc.exe" : "pandoc"
+    );
+    const runPandoc = (...args: string[]) => runShellCmd(pandocBin, ...args);
+
     return {
       available: true,
       version,
       binPath: paths[0],
       resourcePath: paths[1],
+      runQuarto,
+      runPandoc,
     };
   } catch (e) {
     console.log(
@@ -65,6 +76,8 @@ export function initQuartoContext(
       version: "",
       binPath: "",
       resourcePath: "",
+      runQuarto: (..._args: string[]) => "",
+      runPandoc: (..._args: string[]) => "",
     };
   }
 }
