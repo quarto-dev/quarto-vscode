@@ -11,7 +11,6 @@ import axios from "axios";
 
 import vscode, {
   commands,
-  ConfigurationTarget,
   env,
   ExtensionContext,
   MessageItem,
@@ -22,7 +21,6 @@ import vscode, {
   Uri,
   ViewColumn,
   window,
-  workspace,
 } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { previewCommands } from "./commands";
@@ -39,7 +37,7 @@ import * as tmp from "tmp";
 import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
 import { isHugoMarkdown } from "../../core/hugo";
 import { MarkdownEngine } from "../../markdown/engine";
-import { shQuote } from "../../core/strings";
+import { shQuote, winShEscape } from "../../core/strings";
 import {
   QuartoPreviewWebview,
   QuartoPreviewWebviewManager,
@@ -269,7 +267,7 @@ class PreviewManager {
     };
     this.terminal_ = window.createTerminal(options);
     const quarto = path.join(this.quartoContext_.binPath, "quarto");
-    const cmd: string[] = [shQuote(quarto), "preview", shQuote(targetFile)];
+    const cmd: string[] = [quarto, "preview", targetFile];
     if (!doc) {
       // project render
       cmd.push("--render", format || "all");
@@ -281,7 +279,9 @@ class PreviewManager {
     cmd.push("--no-browser");
     cmd.push("--no-watch-inputs");
     const cmdText =
-      os.platform() === "win32" ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
+      os.platform() === "win32"
+        ? `cmd /C"${cmd.map(winShEscape).join(" ")}"`
+        : cmd.map(shQuote).join(" ");
     this.terminal_.sendText(cmdText, true);
     this.terminal_.show(true);
   }
