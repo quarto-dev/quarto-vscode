@@ -39,7 +39,7 @@ import * as tmp from "tmp";
 import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
 import { isHugoMarkdown } from "../../core/hugo";
 import { MarkdownEngine } from "../../markdown/engine";
-import { shQuote } from "../../core/strings";
+import { shQuote } from "../../shared/strings";
 import {
   QuartoPreviewWebview,
   QuartoPreviewWebviewManager,

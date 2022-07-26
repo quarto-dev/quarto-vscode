@@ -113,6 +113,8 @@ export interface Quarto {
   ): Promise<CompletionItem[]>;
   getYamlDiagnostics(context: EditorContext): Promise<LintItem[]>;
   getHover?: (context: EditorContext) => Promise<HoverResult | null>;
+  runQuarto: (...args: string[]) => string;
+  runPandoc: (...args: string[]) => string;
 }
 
 export let quarto: Quarto | undefined;
@@ -132,6 +134,8 @@ export function initializeQuarto(
         ),
         getYamlDiagnostics: quartoModule.getLint,
         getHover: quartoModule.getHover,
+        runQuarto: quartoContext.runQuarto,
+        runPandoc: quartoContext.runPandoc,
       };
     })
     .catch((error) => {

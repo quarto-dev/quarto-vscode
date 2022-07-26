@@ -21,7 +21,7 @@ import {
   SignatureHelp,
   SignatureInformation,
 } from "vscode";
-import { escapeRegExpCharacters } from "../../core/strings";
+import { escapeRegExpCharacters } from "../../shared/strings";
 
 const kAssistHelp = "Quarto: Help";
 const kAssistEquation = "Quarto: Equation";
