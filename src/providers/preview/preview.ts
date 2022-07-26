@@ -266,8 +266,13 @@ class PreviewManager {
       },
     };
     this.terminal_ = window.createTerminal(options);
+    const windows = os.platform() === "win32";
     const quarto = path.join(this.quartoContext_.binPath, "quarto");
-    const cmd: string[] = [quarto, "preview", targetFile];
+    const cmd: string[] = [
+      windows ? winShEscape(quarto) : shQuote(quarto),
+      "preview",
+      shQuote(targetFile),
+    ];
     if (!doc) {
       // project render
       cmd.push("--render", format || "all");
@@ -278,10 +283,7 @@ class PreviewManager {
 
     cmd.push("--no-browser");
     cmd.push("--no-watch-inputs");
-    const cmdText =
-      os.platform() === "win32"
-        ? `cmd /C"${cmd.map(winShEscape).join(" ")}"`
-        : cmd.map(shQuote).join(" ");
+    const cmdText = windows ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
     this.terminal_.sendText(cmdText, true);
     this.terminal_.show(true);
   }
