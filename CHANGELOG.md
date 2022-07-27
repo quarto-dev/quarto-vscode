@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.29.0 (Release on 26 July 2022)
+
+- Correct shell quoting for quarto preview on windows
+
 ## 1.28.0 (Release on 20 July 2022)
 
 - Use terminal for quarto preview

@@ -14,3 +14,7 @@ export function shQuote(value: string): string {
     return value;
   }
 }
+
+export function winShEscape(value: string): string {
+  return value.replace(" ", "^ ");
+}
