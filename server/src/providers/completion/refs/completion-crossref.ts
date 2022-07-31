@@ -11,12 +11,5 @@ export async function crossrefCompletions(
   path: string,
   projectDir?: string
 ): Promise<CompletionItem[] | null> {
-  return [
-    {
-      kind: CompletionItemKind.Function,
-      //documentation: "documentation",
-      //detail: "detail",
-      label: token + "-crossref",
-    },
-  ];
+  return [];
 }

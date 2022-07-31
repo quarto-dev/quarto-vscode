@@ -6,10 +6,13 @@
 import path from "path";
 import fs from "fs";
 
+import * as yaml from "js-yaml";
+
 import { CompletionItem, CompletionItemKind } from "vscode-languageserver/node";
 
 import { quarto } from "../../../quarto/quarto";
 import { shQuote } from "../../../shared/strings";
+import { metadataFilesForDocument } from "../../../core/doc";
 
 export async function biblioCompletions(
   token: string,
@@ -17,7 +20,7 @@ export async function biblioCompletions(
   docPath: string,
   projectDir?: string
 ): Promise<CompletionItem[] | null> {
-  // see if we can resolve some bibliographies
+  // bibliography in document metadata
   const dir = path.dirname(docPath);
   const bibliographies = bibliographyOption(frontMatter["bibliography"])
     .map((biblio) => {
@@ -25,8 +28,32 @@ export async function biblioCompletions(
     })
     .filter(fs.existsSync);
 
+  // bibliographies from project/dir level metadata
+  if (projectDir) {
+    const metadataFiles = metadataFilesForDocument(docPath);
+    if (metadataFiles) {
+      metadataFiles.forEach((file) => {
+        bibliographies.push(...bibliographiesFromMetadataFile(file));
+      });
+    }
+  }
+
   if (bibliographies.length > 0) {
-    return [];
+    return bibliographies.reduce((refs, file) => {
+      const bibFile = biblioFile(file);
+      if (bibFile) {
+        bibFile.refs.forEach((ref) => {
+          if (!refs.find((x) => x.label === ref.id)) {
+            refs.push({
+              kind: CompletionItemKind.Function,
+              label: ref.id,
+              detail: ref.title,
+            });
+          }
+        });
+      }
+      return refs;
+    }, new Array<CompletionItem>());
   } else {
     return null;
   }
@@ -49,21 +76,22 @@ function biblioFile(path: string) {
   // check cache
   const mtimeMs = fs.statSync(path).mtimeMs;
   if (
-    !biblioFiles.has(path) ||
-    (biblioFiles.get(path)?.cached || 0) < mtimeMs
+    quarto &&
+    (!biblioFiles.has(path) || (biblioFiles.get(path)?.cached || 0) < mtimeMs)
   ) {
     // call pandoc to get refs
+    const refs: BiblioRef[] = [];
     const args = [shQuote(path)];
     args.push(...pandocBiblioArgsForFile(path));
     args.push("--to");
     args.push("csljson");
-    const output = quarto?.runPandoc(args);
-
-    const refs: BiblioRef[] = [];
-
-    // yaml is --from markdown
-    // json is --from csljson
-    // bib is nothing
+    try {
+      const output = quarto.runPandoc(...args);
+      refs.push(...(JSON.parse(output) as BiblioRef[]));
+    } catch (err) {
+      console.log("Error reading bibliography:");
+      console.error(err);
+    }
 
     // update cache
     biblioFiles.set(path, {
@@ -73,6 +101,17 @@ function biblioFile(path: string) {
     });
   }
   return biblioFiles.get(path);
+}
+
+function bibliographiesFromMetadataFile(file: string): string[] {
+  const yamlSrc = fs.readFileSync(file, "utf-8");
+  try {
+    const yamlOpts = yaml.load(yamlSrc) as Record<string, unknown>;
+    return bibliographyOption(yamlOpts["bibliography"]);
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 }
 
 function bibliographyOption(option: unknown): string[] {

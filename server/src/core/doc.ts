@@ -55,6 +55,35 @@ export function projectDirForDocument(doc: string) {
   return undefined;
 }
 
+export function metadataFilesForDocument(doc: string) {
+  const files: string[] = [];
+
+  let dir = path.dirname(doc);
+  while (true) {
+    if (hasQuartoProject(dir)) {
+      files.push(
+        ...["_quarto.yml", "_quarto.yaml"]
+          .map((file) => path.join(dir, file))
+          .filter(fs.existsSync)
+      );
+      return files;
+    } else {
+      files.push(
+        ...["_metadata.yml", "_metadata.yaml"]
+          .map((file) => path.join(dir, file))
+          .filter(fs.existsSync)
+      );
+      const nextDir = path.dirname(dir);
+      if (nextDir !== dir) {
+        dir = nextDir;
+      } else {
+        break;
+      }
+    }
+  }
+  return undefined;
+}
+
 export function hasQuartoProject(dir?: string) {
   if (dir) {
     return (
