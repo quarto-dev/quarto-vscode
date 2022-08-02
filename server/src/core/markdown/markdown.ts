@@ -12,7 +12,7 @@ import { mathPlugin } from "../../shared/markdownit-math";
 import { frontMatterPlugin } from "../../shared/markdownit-yaml";
 
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { parseFrontMatterStr } from "../metadata.";
+import { parseFrontMatterStr } from "../metadata";
 
 export function mathRange(doc: TextDocument, pos: Position) {
   // see if we are in a math block
