@@ -6,16 +6,9 @@
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { Range, Position } from "vscode-languageserver-types";
 
-import {
-  CompletionContext,
-  CompletionItem,
-  CompletionItemKind,
-} from "vscode-languageserver/node";
+import { CompletionContext, CompletionItem } from "vscode-languageserver/node";
 import { projectDirForDocument } from "../../../core/doc";
-import {
-  documentFrontMatter,
-  isContentPosition,
-} from "../../../core/markdown/markdown";
+import { bypassRefIntelligence } from "../../../core/refs";
 
 import { EditorContext, quarto } from "../../../quarto/quarto";
 import { biblioCompletions } from "./completion-biblio";
@@ -37,20 +30,7 @@ export async function refsCompletions(
     return null;
   }
 
-  // bypass if the current line doesn't contain a @
-  // (performance optimization so we don't execute the regexs
-  // below if we don't need to)
-  if (context.line.indexOf("@") === -1) {
-    return null;
-  }
-
-  // ensure we have the file scheme
-  if (!doc.uri.startsWith("file:")) {
-    return null;
-  }
-
-  // check if we are in markdown
-  if (!isContentPosition(doc, pos)) {
+  if (bypassRefIntelligence(doc, pos, context.line)) {
     return null;
   }
 
@@ -73,12 +53,7 @@ export async function refsCompletions(
         const path = new URL(doc.uri).pathname;
         const projectDir = projectDirForDocument(path);
 
-        const biblioItems = await biblioCompletions(
-          tokenText,
-          documentFrontMatter(doc),
-          path,
-          projectDir
-        );
+        const biblioItems = biblioCompletions(tokenText, doc);
         const crossrefItems = await crossrefCompletions(
           tokenText,
           doc.getText(),

@@ -12,18 +12,20 @@ import * as yaml from "js-yaml";
 
 import { quarto } from "../quarto/quarto";
 import { shQuote } from "../shared/strings";
-import { metadataFilesForDocument } from "../core/doc";
+import { metadataFilesForDocument, projectDirForDocument } from "../core/doc";
+import { TextDocument } from "vscode-languageserver-textdocument";
+import { documentFrontMatter } from "./markdown/markdown";
 
 export type CslRef = {
   id: string;
   cite?: string;
 };
 
-export function biblioRefs(
-  frontMatter: Record<string, unknown>,
-  docPath: string,
-  projectDir?: string
-): CslRef[] | null {
+export function biblioRefs(doc: TextDocument): CslRef[] | null {
+  const docPath = new URL(doc.uri).pathname;
+  const projectDir = projectDirForDocument(docPath);
+  const frontMatter = documentFrontMatter(doc);
+
   // bibliography in document metadata
   const biblioOptions = bibliographyOptions(path.dirname(docPath), frontMatter);
 

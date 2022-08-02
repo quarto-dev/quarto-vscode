@@ -3,6 +3,7 @@
  * Licensed under the MIT License. See LICENSE in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+import { TextDocument } from "vscode-languageserver-textdocument";
 import {
   CompletionItem,
   CompletionItemKind,
@@ -12,11 +13,9 @@ import { biblioRefs } from "../../../core/biblio";
 
 export function biblioCompletions(
   _token: string,
-  frontMatter: Record<string, unknown>,
-  docPath: string,
-  projectDir?: string
+  doc: TextDocument
 ): CompletionItem[] | null {
-  const refs = biblioRefs(frontMatter, docPath, projectDir);
+  const refs = biblioRefs(doc);
   if (refs) {
     return refs.map((ref) => ({
       kind: CompletionItemKind.Function,
