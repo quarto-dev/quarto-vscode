@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.30.0
+
+- Support validation and completion of `_extension.yml` files
+
 ## 1.29.0 (Release on 26 July 2022)
 
 - Correct shell quoting for quarto preview on windows

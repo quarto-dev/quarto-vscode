@@ -11,7 +11,7 @@
     "pandoc",
     "quarto"
   ],
-  "version": "1.29.0",
+  "version": "1.30.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/quarto-dev/quarto-vscode.git"
@@ -63,6 +63,7 @@
     "onCommand:quarto.walkthrough.verifyInstallation",
     "onCommand:quarto.walkthrough.newDocument",
     "workspaceContains:**/_quarto.{yml,yaml}",
+    "workspaceContains:**/_extension.{yml,yaml}",
     "onWebviewPanel:quarto.previewView",
     "onWebviewPanel:quarto.diagramView",
     "onView:quarto-assist"
