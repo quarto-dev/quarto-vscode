@@ -115,7 +115,7 @@ ${langBlock.code}
 Use LaTeX to write equations:
 
 $$
-chi' = sum_{i=1}^n k_i s_i^2
+\\chi' = \\sum_{i=1}^n k_i s_i^2
 $$
 `;
   }
