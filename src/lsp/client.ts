@@ -89,7 +89,7 @@ export async function activateLsp(
       {
         scheme: "*",
         language: "yaml",
-        pattern: "**/_{quarto,metadata}.{yml,yaml}",
+        pattern: "**/_{quarto,metadata,extension}.{yml,yaml}",
       },
     ],
     middleware,

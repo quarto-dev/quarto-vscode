@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.31.0 (Unreleased)
+
+- Support for completions in \_extension.yml
+
 ## 1.30.0 (Release on 2 August 2022)
 
 - Completions and hover/assist for citations
