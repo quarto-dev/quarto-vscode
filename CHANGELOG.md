@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.30.0 (Release on 2 August 2022)
+
+- Completions and hover/assist for citations
+- Code snippet for inserting spans
+
 ## 1.29.0 (Release on 26 July 2022)
 
 - Correct shell quoting for quarto preview on windows
