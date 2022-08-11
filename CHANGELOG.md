@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.31.0 (Unreleased)
+## 1.31.0 (Release on 11 August 2022)
 
 - Support for completions in \_extension.yml
 - Fix for CMD shell quoting issues in quarto preview
