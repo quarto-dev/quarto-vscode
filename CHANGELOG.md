@@ -3,6 +3,7 @@
 ## 1.31.0 (Unreleased)
 
 - Support for completions in \_extension.yml
+- Fix for CMD shell quoting issues in quarto preview
 
 ## 1.30.0 (Release on 2 August 2022)
 
