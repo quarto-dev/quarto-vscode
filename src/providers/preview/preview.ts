@@ -268,7 +268,7 @@ class PreviewManager {
     };
     this.terminal_ = window.createTerminal(options);
     const windows = os.platform() === "win32";
-    const quarto = path.join(this.quartoContext_.binPath, "quarto");
+    const quarto = "quarto"; // binPath prepended to PATH so we don't need the full form
     const cmd: string[] = [
       windows ? winShEscape(quarto) : shQuote(quarto),
       "preview",
