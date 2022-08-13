@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.32.0 (Unreleased)
+## 1.32.0 (Release on 13 August 2022)
 
 - Wait for Python environment to activate before quarto preview
 
