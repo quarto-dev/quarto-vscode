@@ -8,7 +8,6 @@ import * as fs from "fs";
 import * as uuid from "uuid";
 import * as os from "os";
 import axios from "axios";
-import { sleep } from "../../core/wait";
 
 import vscode, {
   commands,

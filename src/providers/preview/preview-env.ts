@@ -48,7 +48,7 @@ export function requiresTerminalDelay(env?: PreviewEnv) {
       return false;
     }
   } catch (err) {
-    console.log(err.message);
+    console.error(err);
     return false;
   }
 }
