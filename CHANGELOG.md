@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.32.0 (Unreleased)
+
+- Wait for Python environment to activate before quarto preview
+
 ## 1.31.0 (Release on 11 August 2022)
 
 - Support for completions in \_extension.yml

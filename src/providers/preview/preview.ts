@@ -8,6 +8,7 @@ import * as fs from "fs";
 import * as uuid from "uuid";
 import * as os from "os";
 import axios from "axios";
+import { sleep } from "../../core/wait";
 
 import vscode, {
   commands,
@@ -34,7 +35,12 @@ import { PreviewOutputSink } from "./preview-output";
 import { isHtmlContent, isTextContent, isPdfContent } from "../../core/mime";
 
 import * as tmp from "tmp";
-import { PreviewEnv, PreviewEnvManager, previewEnvsEqual } from "./preview-env";
+import {
+  PreviewEnv,
+  PreviewEnvManager,
+  previewEnvsEqual,
+  requiresTerminalDelay,
+} from "./preview-env";
 import { isHugoMarkdown } from "../../core/hugo";
 import { MarkdownEngine } from "../../markdown/engine";
 import { shQuote, winShEscape } from "../../shared/strings";
@@ -44,6 +50,7 @@ import {
   QuartoPreviewWebviewManager,
 } from "./preview-webview";
 import { previewDirForDocument } from "./preview-util";
+import { sleep } from "../../core/wait";
 tmp.setGracefulCleanup();
 
 const kLocalPreviewRegex = /(http:\/\/localhost\:\d+\/[^\s]*)/;
@@ -57,7 +64,7 @@ export function activatePreview(
 ): Command[] {
   // create preview manager
   if (quartoContext.available) {
-    previewManager = new PreviewManager(context, quartoContext);
+    previewManager = new PreviewManager(context);
     context.subscriptions.push(previewManager);
   }
 
@@ -123,10 +130,7 @@ export async function previewProject(target: Uri, format?: string) {
 }
 
 class PreviewManager {
-  constructor(
-    context: ExtensionContext,
-    private readonly quartoContext_: QuartoContext
-  ) {
+  constructor(context: ExtensionContext) {
     this.renderToken_ = uuid.v4();
     this.webviewManager_ = new QuartoPreviewWebviewManager(
       context,
@@ -285,8 +289,22 @@ class PreviewManager {
     cmd.push("--no-browser");
     cmd.push("--no-watch-inputs");
     const cmdText = windows ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
-    this.terminal_.sendText(cmdText, true);
     this.terminal_.show(true);
+    // delay if required (e.g. to allow conda to initialized)
+    // wait for up to 5 seconds (note that we can do this without
+    // risk of undue delay b/c the state.isInteractedWith bit will
+    // flip as soon as the environment has been activated)
+    if (requiresTerminalDelay(this.previewEnv_)) {
+      const kMaxSleep = 5000;
+      const kInterval = 100;
+      let totalSleep = 0;
+      while (!this.terminal_.state.isInteractedWith && totalSleep < kMaxSleep) {
+        await sleep(kInterval);
+        totalSleep += kInterval;
+      }
+    }
+
+    this.terminal_.sendText(cmdText, true);
   }
 
   private onPreviewOutput(output: string) {

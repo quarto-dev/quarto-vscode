@@ -4,15 +4,53 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as os from "os";
+import * as path from "path";
+import * as fs from "fs";
+import * as child_process from "child_process";
+
 import { extensions, Uri, workspace } from "vscode";
 
 import { PreviewOutputSink } from "./preview-output";
+import { shQuote } from "../../shared/strings";
+import { dirname } from "../../core/path";
 
 export interface PreviewEnv {
   QUARTO_LOG: string;
   QUARTO_RENDER_TOKEN: string;
   QUARTO_PYTHON?: string;
   QUARTO_R?: string;
+}
+
+export function requiresTerminalDelay(env?: PreviewEnv) {
+  try {
+    if (env?.QUARTO_PYTHON) {
+      // look for virtualenv
+      const binDir = dirname(env.QUARTO_PYTHON);
+      const venvFiles = ["activate", "pyvenv.cfg", "../pyvenv.cfg"];
+      if (
+        venvFiles.map((file) => path.join(binDir, file)).some(fs.existsSync)
+      ) {
+        return true;
+      }
+
+      // look for conda env
+      const args = [
+        "-c",
+        "import sys, os; print(os.path.exists(os.path.join(sys.prefix, 'conda-meta')))",
+      ];
+      const output = (
+        child_process.execFileSync(shQuote(env.QUARTO_PYTHON), args, {
+          encoding: "utf-8",
+        }) as unknown as string
+      ).trim();
+      return output === "True";
+    } else {
+      return false;
+    }
+  } catch (err) {
+    console.log(err.message);
+    return false;
+  }
 }
 
 export function previewEnvsEqual(a?: PreviewEnv, b?: PreviewEnv) {
