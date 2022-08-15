@@ -12,8 +12,9 @@ jobs:
       - uses: actions/checkout@v3
       - name: Set version from commit message
         id: tag_id
+        env:
+          VAR: ${{ github.event.head_commit.message }}
         run: |
-          VAR="${{ github.event.head_commit.message }}"
           TAG="${VAR#* }"
           echo ::set-output name=tag::"${TAG}"
           echo "${TAG}"
