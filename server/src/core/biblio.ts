@@ -91,6 +91,7 @@ function biblioFile(path: string, csl?: string) {
     fs.writeFileSync(tmpDocPath, tempDoc.join("\n"), { encoding: "utf-8" });
     try {
       const output = quarto.runPandoc(
+        {},
         shQuote(tmpDocPath),
         "--from",
         "markdown",

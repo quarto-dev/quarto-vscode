@@ -7,14 +7,15 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import * as child_process from "child_process";
+import { ExecFileSyncOptions } from "child_process";
 
 export interface QuartoContext {
   available: boolean;
   version: string;
   binPath: string;
   resourcePath: string;
-  runQuarto: (...args: string[]) => string;
-  runPandoc: (...args: string[]) => string;
+  runQuarto: (options: ExecFileSyncOptions, ...args: string[]) => string;
+  runPandoc: (options: ExecFileSyncOptions, ...args: string[]) => string;
 }
 
 export function initQuartoContext(
@@ -41,15 +42,21 @@ export function initQuartoContext(
         os.platform() === "win32" ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
       return cmdText;
     };
-    const runShellCmd = (binary: string, ...args: string[]) => {
+    const runShellCmd = (
+      binary: string,
+      options: ExecFileSyncOptions,
+      ...args: string[]
+    ) => {
       return child_process.execSync(shellCmd(binary, ...args), {
         encoding: "utf-8",
+        ...options,
       }) as unknown as string;
     };
 
-    const runQuarto = (...args: string[]) => runShellCmd(quartoPath!, ...args);
-    const version = runQuarto("--version").trim();
-    const paths = runQuarto("--paths").split(/\r?\n/);
+    const runQuarto = (options: ExecFileSyncOptions, ...args: string[]) =>
+      runShellCmd(quartoPath!, options, ...args);
+    const version = runQuarto({}, "--version").trim();
+    const paths = runQuarto({}, "--paths").split(/\r?\n/);
 
     // get the pandoc path
     const toolsDir = path.join(paths[0], "tools");
@@ -57,7 +64,8 @@ export function initQuartoContext(
       toolsDir,
       os.platform() === "win32" ? "pandoc.exe" : "pandoc"
     );
-    const runPandoc = (...args: string[]) => runShellCmd(pandocBin, ...args);
+    const runPandoc = (options: ExecFileSyncOptions, ...args: string[]) =>
+      runShellCmd(pandocBin, options, ...args);
 
     return {
       available: true,
@@ -76,8 +84,8 @@ export function initQuartoContext(
       version: "",
       binPath: "",
       resourcePath: "",
-      runQuarto: (..._args: string[]) => "",
-      runPandoc: (..._args: string[]) => "",
+      runQuarto: (_options: ExecFileSyncOptions, ..._args: string[]) => "",
+      runPandoc: (_options: ExecFileSyncOptions, ..._args: string[]) => "",
     };
   }
 }

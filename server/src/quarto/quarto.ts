@@ -11,6 +11,7 @@ import { isQuartoDoc, isQuartoRevealDoc, isQuartoYaml } from "../core/doc";
 import { initializeAttrCompletionProvider, AttrToken } from "./quarto-attr";
 import { initializeQuartoYamlModule, QuartoYamlModule } from "./quarto-yaml";
 import { initQuartoContext } from "../shared/quarto";
+import { ExecFileSyncOptions } from "child_process";
 
 export interface EditorContext {
   path: string;
@@ -113,8 +114,9 @@ export interface Quarto {
   ): Promise<CompletionItem[]>;
   getYamlDiagnostics(context: EditorContext): Promise<LintItem[]>;
   getHover?: (context: EditorContext) => Promise<HoverResult | null>;
-  runQuarto: (...args: string[]) => string;
-  runPandoc: (...args: string[]) => string;
+  runQuarto: (options: ExecFileSyncOptions, ...args: string[]) => string;
+  runPandoc: (options: ExecFileSyncOptions, ...args: string[]) => string;
+  resourcePath: string;
 }
 
 export let quarto: Quarto | undefined;
@@ -136,6 +138,7 @@ export function initializeQuarto(
         getHover: quartoModule.getHover,
         runQuarto: quartoContext.runQuarto,
         runPandoc: quartoContext.runPandoc,
+        resourcePath: quartoContext.resourcePath,
       };
     })
     .catch((error) => {
