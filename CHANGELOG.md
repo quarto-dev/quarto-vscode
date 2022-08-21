@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.33.0 (Unreleased)
+
+- Add Shift+Enter keybinding for running the current selection
+
 ## 1.32.0 (Release on 13 August 2022)
 
 - Wait for Python environment to activate before quarto preview

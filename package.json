@@ -400,6 +400,11 @@
         "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
       },
       {
+        "command": "quarto.runSelection",
+        "key": "shift+enter",
+        "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+      },
+      {
         "command": "quarto.runCurrentCell",
         "key": "ctrl+shift+enter",
         "mac": "cmd+shift+enter",
