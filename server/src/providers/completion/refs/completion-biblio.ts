@@ -18,7 +18,7 @@ export function biblioCompletions(
   const refs = biblioRefs(doc);
   if (refs) {
     return refs.map((ref) => ({
-      kind: CompletionItemKind.Function,
+      kind: CompletionItemKind.Constant,
       label: ref.id,
       documentation: ref.cite
         ? {
