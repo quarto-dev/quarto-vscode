@@ -19,6 +19,7 @@ import {
 } from "../core/doc";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { documentFrontMatter } from "./markdown/markdown";
+import { pathWithForwardSlashes } from "./path";
 
 export type CslRef = {
   id: string;
@@ -87,9 +88,13 @@ function biblioFile(path: string, csl?: string) {
 
     // create a temp file used as a target document for rendering citations
     const tmpDocPath = tmp.tmpNameSync();
-    const tempDoc = ["---", `bibliography: "${path}"`, `nocite: "@*"`];
+    const tempDoc = [
+      "---",
+      `bibliography: "${pathWithForwardSlashes(path)}"`,
+      `nocite: "@*"`,
+    ];
     if (csl) {
-      tempDoc.push(`csl: "${csl}"`);
+      tempDoc.push(`csl: "${pathWithForwardSlashes(csl)}"`);
     }
     tempDoc.push("---\n");
     fs.writeFileSync(tmpDocPath, tempDoc.join("\n"), { encoding: "utf-8" });

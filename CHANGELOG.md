@@ -4,6 +4,7 @@
 
 - Completions for cross references
 - Add Shift+Enter keybinding for running the current selection
+- Fix for citation completions on windows
 
 ## 1.32.0 (Release on 13 August 2022)
 
