@@ -7,7 +7,12 @@ import { URL } from "url";
 
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { Position, Range, CompletionItem } from "vscode-languageserver-types";
-import { isQuartoDoc, isQuartoRevealDoc, isQuartoYaml } from "../core/doc";
+import {
+  filePathForDoc,
+  isQuartoDoc,
+  isQuartoRevealDoc,
+  isQuartoYaml,
+} from "../core/doc";
 import { initializeAttrCompletionProvider, AttrToken } from "./quarto-attr";
 import { initializeQuartoYamlModule, QuartoYamlModule } from "./quarto-yaml";
 import { initQuartoContext } from "../shared/quarto";
@@ -37,7 +42,7 @@ export function editorContext(
   explicit: boolean,
   trigger?: string
 ) {
-  const path = new URL(doc.uri).pathname;
+  const path = filePathForDoc(doc);
   const filetype = isQuartoDoc(doc)
     ? "markdown"
     : isQuartoYaml(doc)

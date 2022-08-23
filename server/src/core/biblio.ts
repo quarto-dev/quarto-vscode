@@ -12,7 +12,11 @@ import * as yaml from "js-yaml";
 
 import { quarto } from "../quarto/quarto";
 import { shQuote } from "../shared/strings";
-import { metadataFilesForDocument, projectDirForDocument } from "../core/doc";
+import {
+  filePathForDoc,
+  metadataFilesForDocument,
+  projectDirForDocument,
+} from "../core/doc";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { documentFrontMatter } from "./markdown/markdown";
 
@@ -22,7 +26,7 @@ export type CslRef = {
 };
 
 export function biblioRefs(doc: TextDocument): CslRef[] | null {
-  const docPath = new URL(doc.uri).pathname;
+  const docPath = filePathForDoc(doc);
   const projectDir = projectDirForDocument(docPath);
   const frontMatter = documentFrontMatter(doc);
 

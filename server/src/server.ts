@@ -28,7 +28,6 @@ import { provideDiagnostics } from "./providers/diagnostics";
 
 import { initializeQuarto } from "./quarto/quarto";
 import { mathjaxLoadExtensions } from "./core/mathjax";
-import { uriToFilePath } from "vscode-languageserver/lib/node/files";
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only

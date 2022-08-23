@@ -7,7 +7,7 @@ import { TextDocument } from "vscode-languageserver-textdocument";
 import { Range, Position } from "vscode-languageserver-types";
 
 import { CompletionContext, CompletionItem } from "vscode-languageserver/node";
-import { projectDirForDocument } from "../../../core/doc";
+import { filePathForDoc, projectDirForDocument } from "../../../core/doc";
 import { bypassRefIntelligence } from "../../../core/refs";
 
 import { EditorContext, quarto } from "../../../quarto/quarto";
@@ -50,9 +50,8 @@ export async function refsCompletions(
       const nextChar = text.slice(pos.character, pos.character + 1);
       if (!nextChar || [";", " ", "]"].includes(nextChar)) {
         // construct path
-        const path = new URL(doc.uri).pathname;
+        const path = filePathForDoc(doc);
         const projectDir = projectDirForDocument(path);
-
         const biblioItems = biblioCompletions(tokenText, doc);
         const crossrefItems = await crossrefCompletions(
           tokenText,

@@ -8,6 +8,8 @@ import fs from "fs";
 
 import * as yaml from "js-yaml";
 
+import { URI } from "vscode-uri";
+
 import { TextDocument } from "vscode-languageserver-textdocument";
 
 export const kQuartoLanguageId = "quarto";
@@ -40,6 +42,10 @@ export function isQuartoYaml(doc: TextDocument) {
       doc.uri.match(/_metadata\.ya?ml$/) ||
       doc.uri.match(/_extension\.ya?ml$/))
   );
+}
+
+export function filePathForDoc(doc: TextDocument) {
+  return URI.parse(doc.uri).fsPath;
 }
 
 export function projectDirForDocument(doc: string) {
