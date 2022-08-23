@@ -30,7 +30,9 @@ export function initQuartoContext(
 
     if (quartoPath) {
       if (!fs.existsSync(quartoPath)) {
-        console.log("Unabled to find specified quarto binary '" + path + "'");
+        console.log(
+          "Unabled to find specified quarto binary '" + quartoPath + "'"
+        );
         quartoPath = "quarto";
       }
     } else {
