@@ -6,6 +6,8 @@
 import path from "path";
 import fs from "fs";
 
+import * as yaml from "js-yaml";
+
 import { TextDocument } from "vscode-languageserver-textdocument";
 
 export const kQuartoLanguageId = "quarto";
@@ -95,6 +97,20 @@ export function hasQuartoProject(dir?: string) {
   } else {
     return false;
   }
+}
+
+export function quartoProjectConfig(dir: string): { [key: string]: any } {
+  for (const config of ["_quarto.yml", "_quarto.yaml"]) {
+    const configFile = path.join(dir, config);
+    if (fs.existsSync(configFile)) {
+      const yamlSrc = fs.readFileSync(configFile, "utf-8");
+      if (yamlSrc.trim().length > 0) {
+        const yamlOpts = yaml.load(yamlSrc) as { [key: string]: any };
+        return yamlOpts;
+      }
+    }
+  }
+  return {};
 }
 
 const kRegExYAML =

@@ -141,14 +141,16 @@ function parseCslRefs(output: string): CslRef[] {
 function biblioOptionsFromMetadataFile(file: string): BiblioOptions {
   const yamlSrc = fs.readFileSync(file, "utf-8");
   try {
-    const yamlOpts = yaml.load(yamlSrc) as Record<string, unknown>;
-    return bibliographyOptions(path.dirname(file), yamlOpts);
+    if (yamlSrc.trim().length > 0) {
+      const yamlOpts = yaml.load(yamlSrc) as Record<string, unknown>;
+      return bibliographyOptions(path.dirname(file), yamlOpts);
+    }
   } catch (err) {
     console.error(err);
-    return {
-      bibliographies: [],
-    };
   }
+  return {
+    bibliographies: [],
+  };
 }
 
 function bibliographyOptions(

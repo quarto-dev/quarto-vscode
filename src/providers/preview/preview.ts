@@ -50,6 +50,7 @@ import {
 } from "./preview-webview";
 import { previewDirForDocument } from "./preview-util";
 import { sleep } from "../../core/wait";
+import { fileCrossrefIndexStorage } from "../../shared/storage";
 tmp.setGracefulCleanup();
 
 const kLocalPreviewRegex = /(http:\/\/localhost\:\d+\/[^\s]*)/;
@@ -254,9 +255,8 @@ class PreviewManager {
     this.previewOutputFile_ = undefined;
 
     // determine preview dir (if any)
-    const previewDir = fs.statSync(target.fsPath).isFile()
-      ? previewDirForDocument(target)
-      : undefined;
+    const isFile = fs.statSync(target.fsPath).isFile();
+    const previewDir = isFile ? previewDirForDocument(target) : undefined;
     const targetFile = previewDir
       ? path.relative(previewDir, target.fsPath)
       : this.targetFile();
@@ -269,6 +269,13 @@ class PreviewManager {
         [key: string]: string | null | undefined;
       },
     };
+    // add crossref index path to env (will be ignored if we are in a project)
+    if (isFile) {
+      options.env!["QUARTO_CROSSREF_INDEX_PATH"] = fileCrossrefIndexStorage(
+        target.fsPath
+      );
+    }
+
     this.terminal_ = window.createTerminal(options);
     const windows = os.platform() === "win32";
     const quarto = "quarto"; // binPath prepended to PATH so we don't need the full form
