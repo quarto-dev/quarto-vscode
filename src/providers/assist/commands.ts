@@ -5,7 +5,7 @@
 
 import { Position, Selection, window, commands } from "vscode";
 import { Command } from "../../core/command";
-import { isQuartoDoc, preserveActiveEditorFocus } from "../../core/doc";
+import { isQuartoDoc, preserveEditorFocus } from "../../core/doc";
 import { MarkdownEngine } from "../../markdown/engine";
 import { languageBlockAtPosition } from "../../markdown/language";
 import { QuartoAssistViewProvider } from "./webview";
@@ -57,7 +57,7 @@ export class ShowAssistCommand implements Command {
 function activateAssistPanel(provider: QuartoAssistViewProvider) {
   // attempt to activate (if we fail to the view has been closed so
   // recreate it by calling focus)
-  preserveActiveEditorFocus();
+  preserveEditorFocus();
   if (!provider.activate()) {
     commands.executeCommand("quarto-assist.focus");
   }

@@ -2,9 +2,10 @@
 
 ## 1.33.0 (Unreleased)
 
-- Completions for cross references
+- Code completion for cross references
+- Automatic navigation to render errors for Jupyter, Knitr, and YAML
 - Add Shift+Enter keybinding for running the current selection
-- Fix for citation completions on windows
+- Fix: citation completions on Windows
 
 ## 1.32.0 (Release on 13 August 2022)
 

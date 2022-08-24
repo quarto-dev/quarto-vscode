@@ -18,16 +18,22 @@ import vscode, {
   TerminalOptions,
   TextDocument,
   TextEditor,
+  Selection,
+  Range,
   Uri,
   ViewColumn,
   window,
+  Position,
+  TextEditorRevealType,
 } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { previewCommands } from "./commands";
 import { Command } from "../../core/command";
 import {
+  findEditor,
   isNotebook,
   isQuartoDoc,
+  preserveEditorFocus,
   validatateQuartoExtension,
 } from "../../core/doc";
 import { PreviewOutputSink } from "./preview-output";
@@ -51,6 +57,12 @@ import {
 import { previewDirForDocument } from "./preview-util";
 import { sleep } from "../../core/wait";
 import { fileCrossrefIndexStorage } from "../../shared/storage";
+import { normalizeNewlines } from "../../core/text";
+import {
+  jupyterErrorLocation,
+  knitrErrorLocation,
+  yamlErrorLocation,
+} from "./preview-errors";
 tmp.setGracefulCleanup();
 
 const kLocalPreviewRegex = /(http:\/\/localhost\:\d+\/[^\s]*)/;
@@ -159,6 +171,7 @@ class PreviewManager {
     }
 
     this.previewOutput_ = "";
+    this.previewDoc_ = doc;
     const prevewEnv = await this.previewEnvManager_.previewEnv(uri);
     if (doc && this.canReuseRunningPreview(prevewEnv)) {
       try {
@@ -251,20 +264,21 @@ class PreviewManager {
     this.previewTarget_ = target;
     this.previewType_ = this.previewTypeConfig();
     this.previewUrl_ = undefined;
+    this.previewDir_ = undefined;
     this.previewCommandUrl_ = undefined;
     this.previewOutputFile_ = undefined;
 
     // determine preview dir (if any)
     const isFile = fs.statSync(target.fsPath).isFile();
-    const previewDir = isFile ? previewDirForDocument(target) : undefined;
-    const targetFile = previewDir
-      ? path.relative(previewDir, target.fsPath)
+    this.previewDir_ = isFile ? previewDirForDocument(target) : undefined;
+    const targetFile = this.previewDir_
+      ? path.relative(this.previewDir_, target.fsPath)
       : this.targetFile();
 
     // create and show the terminal
     const options: TerminalOptions = {
       name: kPreviewWindowTitle,
-      cwd: previewDir || this.targetDir(),
+      cwd: this.previewDir_ || this.targetDir(),
       env: this.previewEnv_ as unknown as {
         [key: string]: string | null | undefined;
       },
@@ -314,6 +328,7 @@ class PreviewManager {
   }
 
   private onPreviewOutput(output: string) {
+    this.detectErrorNavigation(output);
     const kOutputCreatedPattern = /Output created\: (.*?)\n/;
     this.previewOutput_ += output;
     if (!this.previewUrl_) {
@@ -354,6 +369,46 @@ class PreviewManager {
         if (this.previewType_ === "internal" && this.previewRevealConfig()) {
           this.updatePreview();
         }
+      }
+    }
+  }
+
+  private async detectErrorNavigation(output: string) {
+    // bail if this is a notebook or we don't have a previewDoc
+    if (!this.previewDoc_ || isNotebook(this.previewDoc_)) {
+      return;
+    }
+
+    // normalize
+    output = normalizeNewlines(output);
+
+    // run all of our tests
+    const previewFile = this.previewDoc_.uri.fsPath;
+    const previewDir = this.previewDir_ || this.targetDir();
+    const errorLoc =
+      yamlErrorLocation(output, previewFile, previewDir) ||
+      jupyterErrorLocation(output, previewFile, previewDir) ||
+      knitrErrorLocation(output, previewFile, previewDir);
+    if (errorLoc && fs.existsSync(errorLoc.file)) {
+      // find existing visible instance
+      const fileUri = Uri.file(errorLoc.file);
+      const editor = findEditor((doc) => doc.uri.fsPath === fileUri.fsPath);
+      if (editor) {
+        // if the current selection is outside of the error region then
+        // navigate to the top of the error region
+        const errPos = new Position(errorLoc.lineBegin - 1, 0);
+        const errEndPos = new Position(errorLoc.lineEnd - 1, 0);
+        if (
+          editor.selection.active.isBefore(errPos) ||
+          editor.selection.active.isAfter(errEndPos)
+        ) {
+          editor.selection = new Selection(errPos, errPos);
+          editor.revealRange(
+            new Range(errPos, errPos),
+            TextEditorRevealType.InCenterIfOutsideViewport
+          );
+        }
+        preserveEditorFocus(editor);
       }
     }
   }
@@ -454,9 +509,11 @@ class PreviewManager {
   }
 
   private previewOutput_ = "";
+  private previewDoc_: TextDocument | undefined;
   private previewEnv_: PreviewEnv | undefined;
   private previewTarget_: Uri | undefined;
   private previewUrl_: string | undefined;
+  private previewDir_: string | undefined;
   private previewCommandUrl_: string | undefined;
   private previewOutputFile_: Uri | undefined;
   private previewType_: "internal" | "external" | "none" | undefined;

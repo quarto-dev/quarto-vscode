@@ -13,7 +13,7 @@ import { QuartoContext } from "../../shared/quarto";
 import { canPreviewDoc, previewDoc, previewProject } from "./preview";
 import { MarkdownEngine } from "../../markdown/engine";
 import { revealSlideIndex } from "./preview-reveal";
-import { isNotebook } from "../../core/doc";
+import { findEditor, isNotebook } from "../../core/doc";
 import { promptForQuartoInstallation } from "../../core/quarto";
 import { hasQuartoProject, projectDirForDocument } from "./preview-util";
 
@@ -64,7 +64,7 @@ abstract class RenderDocumentCommandBase extends RenderCommand {
     super(quartoContext);
   }
   protected async renderFormat(format?: string | null, onShow?: () => void) {
-    const targetEditor = findRenderTarget(canPreviewDoc);
+    const targetEditor = findEditor(canPreviewDoc);
     if (targetEditor) {
       // set the slide index from the source editor so we can
       // navigate to it in the preview frame
@@ -165,7 +165,7 @@ class RenderProjectCommand extends RenderCommand implements Command {
   async doExecute() {
     await workspace.saveAll(false);
     // start by using the currently active or visible source files
-    const targetEditor = findRenderTarget(canPreviewDoc);
+    const targetEditor = findEditor(canPreviewDoc);
     if (targetEditor) {
       const projectDir = projectDirForDocument(targetEditor.document.uri);
       if (projectDir) {
@@ -195,7 +195,7 @@ class ClearCacheCommand implements Command {
 
   async execute(): Promise<void> {
     // see if there is a cache to clear
-    const doc = findRenderTarget(canPreviewDoc)?.document;
+    const doc = findEditor(canPreviewDoc)?.document;
     if (doc) {
       const cacheDir = cacheDirForDocument(doc);
       if (cacheDir) {
@@ -255,25 +255,4 @@ function cacheDirForDocument(doc: TextDocument) {
   }
 
   return undefined;
-}
-
-function findRenderTarget(
-  filter: (doc: TextDocument) => boolean,
-  includeVisible = true
-) {
-  const activeDoc = window.activeTextEditor?.document;
-  if (activeDoc && filter(activeDoc)) {
-    return window.activeTextEditor;
-  } else if (includeVisible) {
-    const visibleEditor = window.visibleTextEditors.find((editor) =>
-      canPreviewDoc(editor.document)
-    );
-    if (visibleEditor) {
-      return visibleEditor;
-    } else {
-      return undefined;
-    }
-  } else {
-    return undefined;
-  }
 }

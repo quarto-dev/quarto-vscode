@@ -5,6 +5,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
+import { Uri } from "vscode";
 import { extname } from "./path";
 export const kQuartoLanguageId = "quarto";
 const kMermaidLanguageId = "mermaid";
@@ -33,7 +34,11 @@ function isLanguageDoc(languageId: string, doc?: vscode.TextDocument) {
 }
 
 export function isNotebook(doc?: vscode.TextDocument) {
-  return !!doc && extname(doc.uri.fsPath).toLowerCase() === ".ipynb";
+  return !!doc && isNotebookUri(doc.uri);
+}
+
+export function isNotebookUri(uri: Uri) {
+  return extname(uri.fsPath).toLowerCase() === ".ipynb";
 }
 
 export function isQuartoYaml(doc?: vscode.TextDocument) {
@@ -83,19 +88,42 @@ export function getWholeRange(doc: vscode.TextDocument) {
   return new vscode.Range(begin, end);
 }
 
-export function preserveActiveEditorFocus() {
+export function preserveEditorFocus(editor?: vscode.TextEditor) {
   // focus the editor (sometimes the terminal steals focus)
-  const activeEditor = vscode.window.activeTextEditor;
-  if (activeEditor) {
-    if (!isNotebook(activeEditor?.document)) {
+  editor = editor || vscode.window.activeTextEditor;
+  if (editor) {
+    if (!isNotebook(editor?.document)) {
       setTimeout(() => {
-        vscode.window.showTextDocument(
-          activeEditor?.document,
-          activeEditor.viewColumn,
-          false
-        );
+        if (editor) {
+          vscode.window.showTextDocument(
+            editor.document,
+            editor.viewColumn,
+            false
+          );
+        }
       }, 200);
     }
+  }
+}
+
+export function findEditor(
+  filter: (doc: vscode.TextDocument) => boolean,
+  includeVisible = true
+) {
+  const activeDoc = vscode.window.activeTextEditor?.document;
+  if (activeDoc && filter(activeDoc)) {
+    return vscode.window.activeTextEditor;
+  } else if (includeVisible) {
+    const visibleEditor = vscode.window.visibleTextEditors.find((editor) =>
+      filter(editor.document)
+    );
+    if (visibleEditor) {
+      return visibleEditor;
+    } else {
+      return undefined;
+    }
+  } else {
+    return undefined;
   }
 }
 

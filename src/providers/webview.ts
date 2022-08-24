@@ -15,7 +15,7 @@ import {
 } from "vscode";
 
 import { Disposable } from "../core/dispose";
-import { preserveActiveEditorFocus } from "../core/doc";
+import { preserveEditorFocus } from "../core/doc";
 
 export interface ShowOptions {
   readonly preserveFocus?: boolean;
@@ -58,7 +58,7 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
     }
     this.resolveOnShow();
     if (options?.preserveFocus) {
-      preserveActiveEditorFocus();
+      preserveEditorFocus();
     }
   }
 
@@ -66,7 +66,7 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
     if (this.activeView_) {
       this.activeView_.reveal();
       this.resolveOnShow();
-      preserveActiveEditorFocus();
+      preserveEditorFocus();
     }
   }
 
