@@ -1,0 +1,40 @@
+on:
+  push:
+    branches: main
+
+name: Release
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message, 'release')
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set version from commit message
+        id: tag_id
+        env:
+          VAR: ${{ github.event.head_commit.message }}
+        run: |
+          TAG="${VAR#* }"
+          echo ::set-output name=tag::"${TAG}"
+          echo "${TAG}"
+      - name: Set release name
+        id: release_id
+        run: |
+          echo ::set-output name=releasename::"${{ steps.tag_id.outputs.tag }}"
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: false
+          custom_tag: ${{ steps.tag_id.outputs.tag }}
+          tag_prefix: ""
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: ${{ steps.release_id.outputs.releasename }}
+          generateReleaseNotes: true
+          allowUpdates: false
+          token: ${{ secrets.GITHUB_TOKEN }}
