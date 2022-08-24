@@ -186,7 +186,7 @@
 - Completion for Quarto markdown classes and attributes
 - Commands and keyboard shortcuts for cell execution and navigation
 - Improved markdown parsing performance
-- VS code for the web compatibility (synatx highlighting and snippets)
+- VS code for the web compatibility (syntax highlighting and snippets)
 
 ## 1.5.2 (Release on 28 February 2022)
 
@@ -230,5 +230,5 @@
 
 ## 1.0.0 (Release on 10 February 2022)
 
-- Synatx highlighting for `.qmd` files
+- Syntax highlighting for `.qmd` files
 - Snippets for `.qmd` files
