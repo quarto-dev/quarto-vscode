@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.33.0 (Unreleased)
+## 1.33.0 (Release on 24 August 2022)
 
 - Code completion for cross references
 - Automatic navigation to render errors for Jupyter, Knitr, and YAML
