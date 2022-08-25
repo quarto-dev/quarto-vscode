@@ -22,6 +22,7 @@ import {
 } from "../../markdown/language";
 import {
   blockHasExecutor,
+  codeFromBlock,
   ensureRequiredExtension,
   executeInteractive,
 } from "./executors";
@@ -108,7 +109,8 @@ class RunCurrentCellCommand extends RunCommand implements Command {
   ) {
     if (block) {
       const language = languageNameFromBlock(block);
-      await executeInteractive(language, block.content);
+      const code = codeFromBlock(block);
+      await executeInteractive(language, code);
     }
   }
 }
@@ -225,7 +227,7 @@ class RunCellsAboveCommand extends RunCommand implements Command {
       for (const block of blocks.filter(
         isExecutableLanguageBlockOf(language)
       )) {
-        code.push(block.content);
+        code.push(codeFromBlock(block));
       }
 
       // execute
@@ -267,7 +269,7 @@ class RunCellsBelowCommand extends RunCommand implements Command {
         }
         // include blocks of this language
         if (blockLanguage === language) {
-          blocks.push(blk.content);
+          blocks.push(codeFromBlock(blk));
         }
       }
     }
@@ -299,7 +301,7 @@ class RunAllCellsCommand extends RunCommand implements Command {
         language = blockLanguage;
       }
       if (blockLanguage === language) {
-        blocks.push(block.content);
+        blocks.push(codeFromBlock(block));
       }
     }
     if (language && blocks.length > 0) {
@@ -354,7 +356,7 @@ async function runAdjacentBlock(editor: TextEditor, block: Token) {
   if (block.map) {
     navigateToBlock(editor, block);
     const language = languageNameFromBlock(block);
-    await executeInteractive(language, block.content);
+    await executeInteractive(language, codeFromBlock(block));
   }
 }
 

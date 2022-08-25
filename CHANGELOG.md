@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.34.0 (Unreleased)
+
+- Do not execute YAML option lines (enables execution of cell magics)
+
 ## 1.33.0 (Release on 24 August 2022)
 
 - Code completion for cross references

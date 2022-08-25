@@ -17,6 +17,7 @@ import {
   languageNameFromBlock,
 } from "../../markdown/language";
 import { virtualDoc, virtualDocUri } from "../../vdoc/vdoc";
+import { lines } from "../../core/text";
 
 export function hasExecutor(language: string) {
   return !!kCellExecutors.find((x) => x.language === language);
@@ -28,6 +29,25 @@ export function blockHasExecutor(token?: Token) {
     return isExecutableLanguageBlock(token) && hasExecutor(language);
   } else {
     return false;
+  }
+}
+
+// skip yaml options for execution
+export function codeFromBlock(token: Token) {
+  const language = languageNameFromBlock(token);
+  const executor = kCellExecutors.find((x) => x.language === language);
+  if (executor) {
+    const blockLines = lines(token.content);
+    const startCodePos = blockLines.findIndex(
+      (line) => !executor.isYamlOption(line)
+    );
+    if (startCodePos !== -1) {
+      return blockLines.slice(startCodePos).join("\n");
+    } else {
+      return "";
+    }
+  } else {
+    return token.content;
   }
 }
 
@@ -145,6 +165,7 @@ interface CellExecutor {
   requiredExtensionName: string;
   requiredExtension?: string[];
   requiredVersion?: string;
+  isYamlOption: (line: string) => boolean;
   execute: (code: string) => Promise<void>;
 }
 
@@ -153,6 +174,7 @@ const pythonCellExecutor: CellExecutor = {
   requiredExtension: ["ms-python.python"],
   requiredExtensionName: "Python",
   requiredVersion: "2021.8.0",
+  isYamlOption: isYamlHashOption,
   execute: async (code: string) => {
     await commands.executeCommand("jupyter.execSelectionInteractive", code);
   },
@@ -163,6 +185,7 @@ const rCellExecutor: CellExecutor = {
   requiredExtension: ["reditorsupport.r", "Ikuyadeu.r"],
   requiredExtensionName: "R",
   requiredVersion: "2.4.0",
+  isYamlOption: isYamlHashOption,
   execute: async (code: string) => {
     await commands.executeCommand("r.runSelection", code.trim());
   },
@@ -173,6 +196,7 @@ const juliaCellExecutor: CellExecutor = {
   requiredExtension: ["julialang.language-julia"],
   requiredExtensionName: "Julia",
   requiredVersion: "1.4.0",
+  isYamlOption: isYamlHashOption,
   execute: async (code: string) => {
     const extension = extensions.getExtension("julialang.language-julia");
     if (extension) {
@@ -185,5 +209,9 @@ const juliaCellExecutor: CellExecutor = {
     }
   },
 };
+
+function isYamlHashOption(line: string) {
+  return !!line.match(/^#\s*\| ?/);
+}
 
 const kCellExecutors = [pythonCellExecutor, rCellExecutor, juliaCellExecutor];
