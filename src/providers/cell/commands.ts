@@ -110,7 +110,7 @@ class RunCurrentCellCommand extends RunCommand implements Command {
     if (block) {
       const language = languageNameFromBlock(block);
       const code = codeFromBlock(block);
-      await executeInteractive(language, code);
+      await executeInteractive(language, [code]);
     }
   }
 }
@@ -183,7 +183,7 @@ class RunSelectionCommand extends RunCommand implements Command {
 
     // run code
     const language = languageNameFromBlock(block);
-    await executeInteractive(language, selection);
+    await executeInteractive(language, [selection]);
   }
 }
 
@@ -231,7 +231,7 @@ class RunCellsAboveCommand extends RunCommand implements Command {
       }
 
       // execute
-      await executeInteractive(language, code.join("\n"));
+      await executeInteractive(language, code);
     }
   }
 }
@@ -275,7 +275,7 @@ class RunCellsBelowCommand extends RunCommand implements Command {
     }
     // execute
     if (language && blocks.length > 0) {
-      await executeInteractive(language, blocks.join("\n"));
+      await executeInteractive(language, blocks);
     }
   }
 }
@@ -309,7 +309,7 @@ class RunAllCellsCommand extends RunCommand implements Command {
       }
     }
     if (language && blocks.length > 0) {
-      await executeInteractive(language, blocks.join("\n"));
+      await executeInteractive(language, blocks);
     }
   }
 }
@@ -360,7 +360,7 @@ async function runAdjacentBlock(editor: TextEditor, block: Token) {
   if (block.map) {
     navigateToBlock(editor, block);
     const language = languageNameFromBlock(block);
-    await executeInteractive(language, codeFromBlock(block));
+    await executeInteractive(language, [codeFromBlock(block)]);
   }
 }
 

@@ -53,11 +53,11 @@ export function codeFromBlock(token: Token) {
 
 export async function executeInteractive(
   language: string,
-  code: string
+  blocks: string[]
 ): Promise<void> {
   const executor = kCellExecutors.find((x) => x.language === language);
   if (executor) {
-    return await executor.execute(code);
+    return await executor.execute(blocks);
   }
 }
 
@@ -166,7 +166,7 @@ interface CellExecutor {
   requiredExtension?: string[];
   requiredVersion?: string;
   isYamlOption: (line: string) => boolean;
-  execute: (code: string) => Promise<void>;
+  execute: (blocks: string[]) => Promise<void>;
 }
 
 const pythonCellExecutor: CellExecutor = {
@@ -175,8 +175,10 @@ const pythonCellExecutor: CellExecutor = {
   requiredExtensionName: "Python",
   requiredVersion: "2021.8.0",
   isYamlOption: isYamlHashOption,
-  execute: async (code: string) => {
-    await commands.executeCommand("jupyter.execSelectionInteractive", code);
+  execute: async (blocks: string[]) => {
+    for (const block of blocks) {
+      await commands.executeCommand("jupyter.execSelectionInteractive", block);
+    }
   },
 };
 
@@ -186,8 +188,8 @@ const rCellExecutor: CellExecutor = {
   requiredExtensionName: "R",
   requiredVersion: "2.4.0",
   isYamlOption: isYamlHashOption,
-  execute: async (code: string) => {
-    await commands.executeCommand("r.runSelection", code.trim());
+  execute: async (blocks: string[]) => {
+    await commands.executeCommand("r.runSelection", blocks.join("\n").trim());
   },
 };
 
@@ -197,13 +199,13 @@ const juliaCellExecutor: CellExecutor = {
   requiredExtensionName: "Julia",
   requiredVersion: "1.4.0",
   isYamlOption: isYamlHashOption,
-  execute: async (code: string) => {
+  execute: async (blocks: string[]) => {
     const extension = extensions.getExtension("julialang.language-julia");
     if (extension) {
       if (!extension.isActive) {
         await extension.activate();
       }
-      extension.exports.executeInREPL(code, {});
+      extension.exports.executeInREPL(blocks.join("\n"), {});
     } else {
       window.showErrorMessage("Unable to execute code in Julia REPL");
     }
