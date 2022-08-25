@@ -287,6 +287,10 @@ class RunAllCellsCommand extends RunCommand implements Command {
   private static readonly id = "quarto.runAllCells";
   public readonly id = RunAllCellsCommand.id;
 
+  override blockRequired(): boolean {
+    return false;
+  }
+
   override async doExecute(
     _editor: TextEditor,
     tokens: Token[],

@@ -3,6 +3,7 @@
 ## 1.34.0 (Unreleased)
 
 - Do not execute YAML option lines (enables execution of cell magics)
+- Don't require a cell selection for 'Run All Cells'
 
 ## 1.33.0 (Release on 24 August 2022)
 
