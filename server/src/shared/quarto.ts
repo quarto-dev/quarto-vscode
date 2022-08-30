@@ -5,7 +5,6 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import * as os from "os";
 import * as child_process from "child_process";
 import { ExecFileSyncOptions } from "child_process";
 
@@ -20,8 +19,12 @@ export interface QuartoContext {
 
 export function initQuartoContext(
   quartoPath?: string,
-  workspaceFolder?: string
+  workspaceFolder?: string,
+  showWarning?: (msg: string) => void
 ) {
+  // default warning to log
+  showWarning = showWarning || console.log;
+
   try {
     // resolve workspace relative paths
     if (quartoPath && !path.isAbsolute(quartoPath) && workspaceFolder) {
@@ -30,52 +33,51 @@ export function initQuartoContext(
 
     if (quartoPath) {
       if (!fs.existsSync(quartoPath)) {
-        console.log(
-          "Unabled to find specified quarto binary '" + quartoPath + "'"
+        showWarning(
+          "Unabled to find specified quarto executable: '" +
+            quartoPath +
+            ". Attemping to use quarto on the PATH."
+        );
+        quartoPath = "quarto";
+      } else if (!fs.statSync(quartoPath).isFile()) {
+        showWarning(
+          "Specified quarto executable is a directory not a file: '" +
+            quartoPath +
+            "'. Attemping to use quarto on the PATH."
         );
         quartoPath = "quarto";
       }
     } else {
       quartoPath = "quarto";
     }
-    const shellCmd = (binary: string, ...args: string[]) => {
-      const cmd = [shQuote(binary), ...args];
-      const cmdText =
-        os.platform() === "win32" ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
-      return cmdText;
-    };
-    const runShellCmd = (
-      binary: string,
-      options: ExecFileSyncOptions,
-      ...args: string[]
+
+    // helper to run a program and capture its output
+    const exec = (
+      program: string,
+      args: string[],
+      options?: ExecFileSyncOptions
     ) => {
-      return child_process.execSync(shellCmd(binary, ...args), {
-        encoding: "utf-8",
-        ...options,
-      }) as unknown as string;
+      return (
+        child_process.execFileSync(program, args, {
+          encoding: "utf-8",
+          ...options,
+        }) as unknown as string
+      ).trim();
     };
 
-    const runQuarto = (options: ExecFileSyncOptions, ...args: string[]) =>
-      runShellCmd(quartoPath!, options, ...args);
-    const version = runQuarto({}, "--version").trim();
-    const paths = runQuarto({}, "--paths").split(/\r?\n/);
-
-    // get the pandoc path
-    const toolsDir = path.join(paths[0], "tools");
-    const pandocBin = path.join(
-      toolsDir,
-      os.platform() === "win32" ? "pandoc.exe" : "pandoc"
-    );
-    const runPandoc = (options: ExecFileSyncOptions, ...args: string[]) =>
-      runShellCmd(pandocBin, options, ...args);
+    // discover quarto version and paths
+    const version = exec(quartoPath, ["--version"]);
+    const paths = exec(quartoPath, ["--paths"]).split(/\r?\n/);
 
     return {
       available: true,
       version,
       binPath: paths[0],
       resourcePath: paths[1],
-      runQuarto,
-      runPandoc,
+      runQuarto: (options: ExecFileSyncOptions, ...args: string[]) =>
+        exec(path.join(paths[0], "quarto"), args, options),
+      runPandoc: (options: ExecFileSyncOptions, ...args: string[]) =>
+        exec(path.join(paths[0], "tools", "pandoc"), args, options),
     };
   } catch (e) {
     console.log(
@@ -89,15 +91,5 @@ export function initQuartoContext(
       runQuarto: (_options: ExecFileSyncOptions, ..._args: string[]) => "",
       runPandoc: (_options: ExecFileSyncOptions, ..._args: string[]) => "",
     };
-  }
-}
-
-function shQuote(value: string): string {
-  if (os.platform() === "win32") {
-    return value.replace(" ", "^ ");
-  } else if (/\s/g.test(value)) {
-    return `"${value}"`;
-  } else {
-    return value;
   }
 }
