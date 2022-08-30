@@ -161,9 +161,12 @@ function scanForQuarto(): QuartoInstallation | undefined {
       scanPaths.push(path.join(home, "Applications", "quarto", "bin"));
     }
     scanPaths.push("/Applications/RStudio.app/Contents/MacOS/quarto/bin");
+  } else if (os.platform() === "linux") {
+    scanPaths.push("/opt/quarto/bin");
+    scanPaths.push("/usr/lib/rstudio/bin/quarto/bin");
   }
 
-  for (const scanPath of scanPaths) {
+  for (const scanPath of scanPaths.filter(fs.existsSync)) {
     const install = detectQuarto(path.join(scanPath, "quarto"));
     if (install) {
       return install;
