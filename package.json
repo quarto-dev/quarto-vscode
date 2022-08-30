@@ -781,7 +781,7 @@
           "scope": "window",
           "type": "string",
           "default": "",
-          "markdownDescription": "A path to the `quarto` CLI executable. By default, the extension looks for `quarto` in the `PATH`, but if set, will use the path specified instead."
+          "markdownDescription": "If there is a version of Quarto on your `PATH`, that version will always be used. If Quarto is not on your `PATH`, you may specify a Quarto executable location here."
         },
         "quarto.render.previewType": {
           "scope": "window",

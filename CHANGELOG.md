@@ -5,6 +5,8 @@
 - Do not execute YAML option lines (enables execution of cell magics)
 - Don't require a cell selection for 'Run All Cells'
 - Run Python cells as distinct commands in Interactive Console
+- Use Quarto executable rather than .cmd script when supported
+- When not discovered on the PATH, scan for versions of Quarto in known locations
 
 ## 1.33.0 (Release on 24 August 2022)
 

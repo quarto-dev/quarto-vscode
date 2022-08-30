@@ -6,7 +6,6 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as uuid from "uuid";
-import * as os from "os";
 import axios from "axios";
 
 import vscode, {
@@ -76,7 +75,7 @@ export function activatePreview(
 ): Command[] {
   // create preview manager
   if (quartoContext.available) {
-    previewManager = new PreviewManager(context);
+    previewManager = new PreviewManager(context, quartoContext);
     context.subscriptions.push(previewManager);
   }
 
@@ -142,7 +141,10 @@ export async function previewProject(target: Uri, format?: string) {
 }
 
 class PreviewManager {
-  constructor(context: ExtensionContext) {
+  constructor(
+    context: ExtensionContext,
+    private readonly quartoContext_: QuartoContext
+  ) {
     this.renderToken_ = uuid.v4();
     this.webviewManager_ = new QuartoPreviewWebviewManager(
       context,
@@ -291,10 +293,9 @@ class PreviewManager {
     }
 
     this.terminal_ = window.createTerminal(options);
-    const windows = os.platform() === "win32";
     const quarto = "quarto"; // binPath prepended to PATH so we don't need the full form
     const cmd: string[] = [
-      windows ? winShEscape(quarto) : shQuote(quarto),
+      this.quartoContext_.useCmd ? winShEscape(quarto) : shQuote(quarto),
       "preview",
       shQuote(targetFile),
     ];
@@ -308,7 +309,9 @@ class PreviewManager {
 
     cmd.push("--no-browser");
     cmd.push("--no-watch-inputs");
-    const cmdText = windows ? `cmd /C"${cmd.join(" ")}"` : cmd.join(" ");
+    const cmdText = this.quartoContext_.useCmd
+      ? `cmd /C"${cmd.join(" ")}"`
+      : cmd.join(" ");
     this.terminal_.show(true);
     // delay if required (e.g. to allow conda to initialized)
     // wait for up to 5 seconds (note that we can do this without
