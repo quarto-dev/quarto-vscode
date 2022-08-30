@@ -43,14 +43,15 @@ export function initQuartoContext(
   }
 
   // if still not found, scan for versions of quarto in known locations
-  quartoInstall = scanForQuarto();
+  if (!quartoInstall) {
+    quartoInstall = scanForQuarto();
+  }
 
   // return if we got them
   if (quartoInstall) {
     // use cmd suffix for older versions of quarto on windows
     const windows = os.platform() == "win32";
-    const useCmd =
-      windows && semver.lte(quartoInstall.version, "1.1.162") ? ".cmd" : "";
+    const useCmd = windows && semver.lte(quartoInstall.version, "1.1.162");
 
     return {
       available: true,
@@ -103,9 +104,7 @@ function detectQuarto(quartoPath: string): QuartoInstallation | undefined {
     if (windows) {
       try {
         readQuartoInfo(quartoPath + ".cmd");
-      } catch (e) {
-        //
-      }
+      } catch (e) {}
     }
   }
   // return version if we have it
@@ -155,6 +154,13 @@ function scanForQuarto(): QuartoInstallation | undefined {
       scanPaths.push(path.join(localAppData, "Programs", "Quarto", "bin"));
     }
     scanPaths.push("C:\\Program Files\\RStudio\\bin\\quarto\\bin");
+  } else if (os.platform() === "darwin") {
+    scanPaths.push("/Applications/quarto/bin/");
+    const home = process.env.HOME;
+    if (home) {
+      scanPaths.push(path.join(home, "Applications", "quarto", "bin"));
+    }
+    scanPaths.push("/Applications/RStudio.app/Contents/MacOS/quarto/bin");
   }
 
   for (const scanPath of scanPaths) {
