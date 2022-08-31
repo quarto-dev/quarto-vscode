@@ -3,6 +3,7 @@
 ## 1.35.0 (Unreleased)
 
 - Support for render and preview of shiny interactive docs
+- Highlighting, completion, and execution for language block variations
 
 ## 1.34.0 (Release on 20 August 2022)
 
