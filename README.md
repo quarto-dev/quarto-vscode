@@ -45,7 +45,7 @@ Here is a complete list of the supported render commands:
 - Quarto: Render
 - Quarto: Render HTML
 - Quarto: Render PDF
-- Quarto: Render Word
+- Quarto: Render DOCX
 
 The **Quarto: Render** command renders the default format of the
 currently active document. The other commands render specific formats
