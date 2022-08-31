@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.35.0 (Unreleased)
+
+- Support for render and preview of shiny interactive docs
+
 ## 1.34.0 (Release on 20 August 2022)
 
 - Do not execute YAML option lines (enables execution of cell magics)
@@ -105,7 +109,7 @@
 ## 1.18.0 (Release on 30 April 2022)
 
 - Revert to using terminal for quarto preview
-- Improved editor handling of shortcodes (autoclose, snippet)
+- Improved editor handling of shortcodes (auto-close, snippet)
 
 ## 1.17.0 (Release on 25 April 2022)
 
@@ -121,7 +125,7 @@
 
 - Icon for qmd file type
 - Terminate preview command
-- Don't auto-pair backticks
+- Don't auto-pair back-ticks
 
 ## 1.14.0 (Release on 19 April 2022)
 

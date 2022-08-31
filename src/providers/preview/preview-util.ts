@@ -6,7 +6,9 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { Uri, workspace } from "vscode";
+import { TextDocument, Uri, workspace } from "vscode";
+import { parseFrontMatterStr } from "../../core/yaml";
+import { MarkdownEngine } from "../../markdown/engine";
 
 export function previewDirForDocument(uri: Uri) {
   // first check for a quarto project
@@ -48,5 +50,44 @@ export function hasQuartoProject(dir?: string) {
     );
   } else {
     return false;
+  }
+}
+
+export async function isQuartoShinyDoc(
+  engine: MarkdownEngine,
+  doc?: TextDocument
+) {
+  if (doc) {
+    const frontMatter = await documentFrontMatter(engine, doc);
+    if (frontMatter["server"] === "shiny") {
+      return true;
+    } else {
+      if (typeof frontMatter["server"] === "object") {
+        return (
+          (frontMatter["server"] as Record<string, unknown>)["type"] === "shiny"
+        );
+      }
+    }
+    return false;
+  } else {
+    return false;
+  }
+}
+
+export async function documentFrontMatter(
+  engine: MarkdownEngine,
+  doc: TextDocument
+): Promise<Record<string, unknown>> {
+  const tokens = await engine.parse(doc);
+  const yaml = tokens.find((token) => token.type === "front_matter");
+  if (yaml) {
+    const frontMatter = parseFrontMatterStr(yaml.markup);
+    if (typeof frontMatter === "object") {
+      return frontMatter as Record<string, unknown>;
+    } else {
+      return {};
+    }
+  } else {
+    return {};
   }
 }

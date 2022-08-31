@@ -53,10 +53,12 @@ import {
   QuartoPreviewWebview,
   QuartoPreviewWebviewManager,
 } from "./preview-webview";
-import { previewDirForDocument } from "./preview-util";
+import { isQuartoShinyDoc, previewDirForDocument } from "./preview-util";
 import { sleep } from "../../core/wait";
 import { fileCrossrefIndexStorage } from "../../shared/storage";
 import { normalizeNewlines } from "../../core/text";
+import { vsCodeServerUrl } from "../../core/platform";
+
 import {
   jupyterErrorLocation,
   knitrErrorLocation,
@@ -64,7 +66,8 @@ import {
 } from "./preview-errors";
 tmp.setGracefulCleanup();
 
-const kLocalPreviewRegex = /(http:\/\/localhost\:\d+\/[^\s]*)/;
+const kLocalPreviewRegex =
+  /(http:\/\/(?:localhost|127\.0\.0\.1)\:\d+\/?[^\s]*)/;
 
 let previewManager: PreviewManager;
 
@@ -75,7 +78,7 @@ export function activatePreview(
 ): Command[] {
   // create preview manager
   if (quartoContext.available) {
-    previewManager = new PreviewManager(context, quartoContext);
+    previewManager = new PreviewManager(context, quartoContext, engine);
     context.subscriptions.push(previewManager);
   }
 
@@ -143,7 +146,8 @@ export async function previewProject(target: Uri, format?: string) {
 class PreviewManager {
   constructor(
     context: ExtensionContext,
-    private readonly quartoContext_: QuartoContext
+    private readonly quartoContext_: QuartoContext,
+    private readonly engine_: MarkdownEngine
   ) {
     this.renderToken_ = uuid.v4();
     this.webviewManager_ = new QuartoPreviewWebviewManager(
@@ -174,20 +178,20 @@ class PreviewManager {
 
     this.previewOutput_ = "";
     this.previewDoc_ = doc;
-    const prevewEnv = await this.previewEnvManager_.previewEnv(uri);
-    if (doc && this.canReuseRunningPreview(prevewEnv)) {
+    const previewEnv = await this.previewEnvManager_.previewEnv(uri);
+    if (doc && (await this.canReuseRunningPreview(doc, previewEnv))) {
       try {
         const response = await this.previewRenderRequest(doc, format);
         if (response.status === 200) {
           this.terminal_!.show(true);
         } else {
-          await this.startPreview(prevewEnv, uri, format, doc);
+          await this.startPreview(previewEnv, uri, format, doc);
         }
       } catch (e) {
-        await this.startPreview(prevewEnv, uri, format, doc);
+        await this.startPreview(previewEnv, uri, format, doc);
       }
     } else {
-      await this.startPreview(prevewEnv, uri, format, doc);
+      await this.startPreview(previewEnv, uri, format, doc);
     }
   }
 
@@ -199,14 +203,18 @@ class PreviewManager {
     this.webviewManager_.setOnShow(f);
   }
 
-  private canReuseRunningPreview(previewEnv: PreviewEnv) {
+  private async canReuseRunningPreview(
+    doc: TextDocument,
+    previewEnv: PreviewEnv
+  ) {
     return (
       this.previewUrl_ &&
       previewEnvsEqual(this.previewEnv_, previewEnv) &&
       this.previewType_ === this.previewTypeConfig() &&
       (this.previewType_ !== "internal" || this.webviewManager_.hasWebview()) &&
       this.terminal_ &&
-      this.terminal_.exitStatus === undefined
+      this.terminal_.exitStatus === undefined &&
+      !(await isQuartoShinyDoc(this.engine_, doc))
     );
   }
 
@@ -292,23 +300,36 @@ class PreviewManager {
       );
     }
 
+    // is this is a shiny doc?
+    const isShiny = await isQuartoShinyDoc(this.engine_, doc);
+
+    // clear if a shiny doc
+    if (isShiny && this.webviewManager_) {
+      this.webviewManager_.clear();
+    }
+
     this.terminal_ = window.createTerminal(options);
     const quarto = "quarto"; // binPath prepended to PATH so we don't need the full form
     const cmd: string[] = [
       this.quartoContext_.useCmd ? winShEscape(quarto) : shQuote(quarto),
-      "preview",
+      isShiny ? "serve" : "preview",
       shQuote(targetFile),
     ];
-    if (!doc) {
-      // project render
-      cmd.push("--render", format || "all");
-    } else if (format) {
-      // doc render
-      cmd.push("--to", format);
+
+    // extra args for normal docs
+    if (!isShiny) {
+      if (!doc) {
+        // project render
+        cmd.push("--render", format || "all");
+      } else if (format) {
+        // doc render
+        cmd.push("--to", format);
+      }
+
+      cmd.push("--no-browser");
+      cmd.push("--no-watch-inputs");
     }
 
-    cmd.push("--no-browser");
-    cmd.push("--no-watch-inputs");
     const cmdText = this.quartoContext_.useCmd
       ? `cmd /C"${cmd.join(" ")}"`
       : cmd.join(" ");
@@ -330,7 +351,7 @@ class PreviewManager {
     this.terminal_.sendText(cmdText, true);
   }
 
-  private onPreviewOutput(output: string) {
+  private async onPreviewOutput(output: string) {
     this.detectErrorNavigation(output);
     const kOutputCreatedPattern = /Output created\: (.*?)\n/;
     this.previewOutput_ += output;
@@ -347,10 +368,15 @@ class PreviewManager {
         // capture preview command url and preview url
         this.previewCommandUrl_ = match[1];
         const browseMatch = this.previewOutput_.match(
-          /Browse at (https?:\/\/[^\s]*)/
+          /(Browse at|Listening on) (https?:\/\/[^\s]*)/
         );
         if (browseMatch) {
-          this.previewUrl_ = browseMatch[1];
+          // shiny document
+          if (await isQuartoShinyDoc(this.engine_, this.previewDoc_)) {
+            this.previewUrl_ = vsCodeServerUrl(browseMatch[2]);
+          } else {
+            this.previewUrl_ = browseMatch[2];
+          }
         } else {
           this.previewUrl_ = this.previewCommandUrl_;
         }

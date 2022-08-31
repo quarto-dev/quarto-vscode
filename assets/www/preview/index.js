@@ -48,6 +48,12 @@ window.addEventListener("message", (e) => {
       updateAddressBar(e.data.href);
       break;
     }
+
+    case "clear": {
+      updateAddressBar("about:blank");
+      navigateTo("about:blank");
+    }
+
     case "focus": {
       iframe.focus();
       break;

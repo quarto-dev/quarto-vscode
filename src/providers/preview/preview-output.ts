@@ -8,20 +8,20 @@ import * as path from "path";
 import * as fs from "fs";
 
 export class PreviewOutputSink {
-  constructor(readonly handler_: (output: string) => void) {
+  constructor(readonly handler_: (output: string) => Promise<void>) {
     // allocate a directory for preview output
     tmp.setGracefulCleanup();
     const previewDir = tmp.dirSync({ prefix: "quarto-preview" });
     this.outputFile_ = path.join(previewDir.name, "preview.log");
 
     // watch for changes
-    setInterval(() => {
+    setInterval(async () => {
       const lastModified = fs.existsSync(this.outputFile_)
         ? fs.statSync(this.outputFile_).mtimeMs
         : 0;
       if (lastModified > this.lastModified_) {
         this.lastModified_ = lastModified;
-        this.readOutput();
+        await this.readOutput();
       }
     }, 200);
   }
@@ -49,7 +49,7 @@ export class PreviewOutputSink {
     }
   }
 
-  private readOutput() {
+  private async readOutput() {
     // open file on demand
     if (this.outputFd_ === -1) {
       try {
@@ -67,7 +67,7 @@ export class PreviewOutputSink {
     };
     let bytesRead = readBuffer();
     while (bytesRead > 0) {
-      this.handler_(buffer.toString("utf8", 0, bytesRead));
+      await this.handler_(buffer.toString("utf8", 0, bytesRead));
       bytesRead = readBuffer();
     }
   }
