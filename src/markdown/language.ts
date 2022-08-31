@@ -17,7 +17,7 @@ export function isLanguageBlock(token: Token) {
 export function isExecutableLanguageBlock(token: Token) {
   return (
     (isFencedCode(token) &&
-      token.info.match(/^\{=?([a-zA-Z0-9_\-]+)(?: *[ ,].*?)?\}$/)) ||
+      token.info.match(/^\{=?([a-zA-Z0-9_]+)(?: *[ ,].*?)?\}$/)) ||
     isDisplayMath(token)
   );
 }
@@ -61,7 +61,7 @@ export function languageNameFromBlock(token: Token) {
   if (isDisplayMath(token)) {
     return "tex";
   } else {
-    const match = token.info.match(/^\{?=?([a-zA-Z0-9_\-]+)/);
+    const match = token.info.match(/^\{?=?([a-zA-Z0-9_]+)/);
     if (match) {
       return match[1];
     } else {
