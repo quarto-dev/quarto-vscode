@@ -19,7 +19,7 @@ export function vsCodeServerProxyUri() {
   return process.env.VSCODE_PROXY_URI;
 }
 
-export function vsCodeServerUrl(serverUrl: string) {
+export function vsCodeWebUrl(serverUrl: string) {
   const port = new URL(serverUrl).port;
   if (isRStudioWorkbench()) {
     return rswURL(port);

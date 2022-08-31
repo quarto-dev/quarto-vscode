@@ -57,7 +57,7 @@ import { isQuartoShinyDoc, previewDirForDocument } from "./preview-util";
 import { sleep } from "../../core/wait";
 import { fileCrossrefIndexStorage } from "../../shared/storage";
 import { normalizeNewlines } from "../../core/text";
-import { vsCodeServerUrl } from "../../core/platform";
+import { vsCodeWebUrl } from "../../core/platform";
 
 import {
   jupyterErrorLocation,
@@ -373,7 +373,7 @@ class PreviewManager {
         if (browseMatch) {
           // shiny document
           if (await isQuartoShinyDoc(this.engine_, this.previewDoc_)) {
-            this.previewUrl_ = vsCodeServerUrl(browseMatch[2]);
+            this.previewUrl_ = vsCodeWebUrl(browseMatch[2]);
           } else {
             this.previewUrl_ = browseMatch[2];
           }
