@@ -46,13 +46,22 @@ const languages = [
   {
     name: "r",
     language: "r",
-    identifiers: ["R", "r", "s", "S", "Rprofile", "\\{\\.r.+?\\}"],
+    identifiers: [
+      "R",
+      "r",
+      "s",
+      "S",
+      "Rprofile",
+      "\\{\\.r.+?\\}",
+      ".+\\-r",
+      "r\\-.+",
+    ],
     source: "source.r",
   },
   {
     name: "julia",
     language: "julia",
-    identifiers: ["julia", "jl"],
+    identifiers: ["julia", "jl", ".+\\-julia", "julia\\-.+"],
     source: "source.julia",
   },
   {
@@ -313,6 +322,8 @@ const languages = [
       "gyp",
       "gypi",
       "\\{\\.python.+?\\}",
+      ".+\\-python",
+      "python\\-.+",
     ],
     source: "source.python",
   },
