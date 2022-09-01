@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.36.0 (Unreleased)
+
+- Keyboard shortcuts for toggling bold, italic, and code formatting
+
 ## 1.35.0 (Release on 31 August 2022)
 
 - Support for render and preview of Shiny interactive docs

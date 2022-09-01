@@ -19,6 +19,7 @@ import { newDocumentCommands } from "./providers/newdoc";
 import { insertCommands } from "./providers/insert";
 import { activateDiagram } from "./providers/diagram/diagram";
 import { activateOptionEnterProvider } from "./providers/option";
+import { formattingCommands } from "./providers/format";
 
 export function activateCommon(
   context: vscode.ExtensionContext,
@@ -64,6 +65,9 @@ export function activateCommon(
   // commands (common + passed)
   const commandManager = new CommandManager();
   commandManager.register(new OpenLinkCommand(engine));
+  for (const cmd of formattingCommands()) {
+    commandManager.register(cmd);
+  }
   for (const cmd of newDocumentCommands()) {
     commandManager.register(cmd);
   }

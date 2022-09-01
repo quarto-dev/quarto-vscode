@@ -374,9 +374,45 @@
         "command": "quarto.walkthrough.render",
         "title": "Render",
         "category": "Quarto"
+      },
+      {
+        "command": "quarto.toggleBold",
+        "title": "Toggle Bold",
+        "category": "Quarto",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == quarto"
+      },
+      {
+        "command": "quarto.toggleItalic",
+        "title": "Toggle Italic",
+        "category": "Quarto",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == quarto"
+      },
+      {
+        "command": "quarto.toggleCode",
+        "title": "Toggle Code",
+        "category": "Quarto",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == quarto"
       }
     ],
     "keybindings": [
+      {
+        "command": "quarto.toggleBold",
+        "key": "ctrl+b",
+        "mac": "cmd+b",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == quarto"
+      },
+      {
+        "command": "quarto.toggleItalic",
+        "key": "ctrl+i",
+        "mac": "cmd+i",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == quarto"
+      },
+      {
+        "command": "quarto.toggleCode",
+        "key": "ctrl+d",
+        "mac": "cmd+d",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == quarto"
+      },
       {
         "command": "quarto.renderShortcut",
         "key": "ctrl+shift+k",
