@@ -8,6 +8,7 @@ VS Code extension for the [Quarto](https://quarto.org) scientific and technical 
 - Completion and diagnostics for project files and document/cell options
 - Completion for citations and cross references
 - Commands and key-bindings for running cells and selected line(s)
+- Keyboard shortcuts for bold, italic, and code formatting
 - Automatic navigation to render errors for Jupyter, Knitr, and YAML
 - Live preview for embedded mermaid and graphviz diagrams
 - Assist panel for contextual help, image preview, and math preview
