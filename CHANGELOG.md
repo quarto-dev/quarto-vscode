@@ -4,6 +4,7 @@
 
 - Support for render and preview of shiny interactive docs
 - Highlighting, completion, and execution for language block variations
+- Rename Render Word to Render DOCX
 
 ## 1.34.0 (Release on 20 August 2022)
 
