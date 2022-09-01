@@ -26,7 +26,7 @@ export function previewCommands(
     new RenderShortcutCommand(quartoContext, engine),
     new RenderDocumentHTMLCommand(quartoContext, engine),
     new RenderDocumentPDFCommand(quartoContext, engine),
-    new RenderDocumentWordCommand(quartoContext, engine),
+    new RenderDocumentDOCXCommand(quartoContext, engine),
     new RenderProjectCommand(quartoContext),
     new WalkthroughRenderCommand(quartoContext, engine),
     new ClearCacheCommand(),
@@ -143,15 +143,15 @@ class RenderDocumentPDFCommand
   }
 }
 
-class RenderDocumentWordCommand
+class RenderDocumentDOCXCommand
   extends RenderDocumentCommandBase
   implements Command
 {
   constructor(quartoContext: QuartoContext, engine: MarkdownEngine) {
     super(quartoContext, engine);
   }
-  private static readonly id = "quarto.renderWord";
-  public readonly id = RenderDocumentWordCommand.id;
+  private static readonly id = "quarto.renderDOCX";
+  public readonly id = RenderDocumentDOCXCommand.id;
 
   protected async doExecute() {
     return super.renderFormat("docx");

@@ -52,7 +52,7 @@
     "onCommand:quarto.render",
     "onCommand:quarto.renderHTML",
     "onCommand:quarto.renderPDF",
-    "onCommand:quarto.renderWord",
+    "onCommand:quarto.renderDOCX",
     "onCommand:quarto.renderShortcut",
     "onCommand:quarto.newDocument",
     "onCommand:quarto.fileNewDocument",
@@ -269,8 +269,8 @@
         "category": "Quarto"
       },
       {
-        "command": "quarto.renderWord",
-        "title": "Render Word",
+        "command": "quarto.renderDOCX",
+        "title": "Render DOCX",
         "category": "Quarto"
       },
       {
@@ -466,7 +466,7 @@
           "when": "editorLangId == quarto"
         },
         {
-          "command": "quarto.renderWord",
+          "command": "quarto.renderDOCX",
           "when": "editorLangId == quarto"
         },
         {
@@ -485,7 +485,7 @@
           "command": "quarto.renderPDF"
         },
         {
-          "command": "quarto.renderWord"
+          "command": "quarto.renderDOCX"
         }
       ],
       "file/newFile": [
@@ -552,7 +552,7 @@
           "when": "editorLangId == quarto"
         },
         {
-          "command": "quarto.renderWord",
+          "command": "quarto.renderDOCX",
           "when": "editorLangId == quarto"
         },
         {
