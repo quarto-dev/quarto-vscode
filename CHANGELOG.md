@@ -1,12 +1,12 @@
 # Changelog
 
-## 1.35.0 (Unreleased)
+## 1.35.0 (Release on 31 August 2022)
 
-- Support for render and preview of shiny interactive docs
+- Support for render and preview of Shiny interactive docs
 - Highlighting, completion, and execution for language block variations
 - Rename Render Word to Render DOCX
 
-## 1.34.0 (Release on 20 August 2022)
+## 1.34.0 (Release on 30 August 2022)
 
 - Do not execute YAML option lines (enables execution of cell magics)
 - Don't require a cell selection for 'Run All Cells'
