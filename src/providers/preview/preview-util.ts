@@ -100,7 +100,10 @@ export async function documentFrontMatter(
 export async function renderOnSave(engine: MarkdownEngine, editor: TextEditor) {
   // if its a notebook and we don't have a save hook for notebooks then don't
   // allow renderOnSave (b/c we can't detect the saves)
-  if (isNotebook(editor.document) && !workspace.onDidSaveNotebookDocument) {
+  if (
+    isNotebook(editor.document) &&
+    !(workspace as any).onDidSaveNotebookDocument
+  ) {
     return false;
   }
 

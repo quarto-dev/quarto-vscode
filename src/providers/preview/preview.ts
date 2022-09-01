@@ -24,6 +24,7 @@ import vscode, {
   window,
   Position,
   TextEditorRevealType,
+  NotebookDocument,
 } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { previewCommands } from "./commands";
@@ -107,11 +108,15 @@ export function activatePreview(
       await onSave(doc.uri);
     })
   );
-  if (vscode.workspace.onDidSaveNotebookDocument) {
+  // we use 1.60 as our minimum version (and type import) but
+  // onDidSaveNotebookDocument was introduced in 1.67
+  if ((vscode.workspace as any).onDidSaveNotebookDocument) {
     context.subscriptions.push(
-      vscode.workspace.onDidSaveNotebookDocument(async (notebook) => {
-        await onSave(notebook.uri);
-      })
+      (vscode.workspace as any).onDidSaveNotebookDocument(
+        async (notebook: NotebookDocument) => {
+          await onSave(notebook.uri);
+        }
+      )
     );
   }
 

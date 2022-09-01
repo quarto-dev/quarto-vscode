@@ -11,7 +11,7 @@
     "pandoc",
     "quarto"
   ],
-  "version": "1.35.0",
+  "version": "1.36.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/quarto-dev/quarto-vscode.git"
@@ -961,7 +961,7 @@
     "@types/semver": "^7.3.9",
     "@types/tmp": "^0.2.3",
     "@types/uuid": "^8.3.4",
-    "@types/vscode": "^1.70.0",
+    "@types/vscode": "^1.60.0",
     "@types/webpack-env": "^1.16.3",
     "@vscode/test-web": "^0.0.22",
     "concurrently": "^7.0.0",
