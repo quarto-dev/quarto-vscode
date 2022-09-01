@@ -1,9 +1,10 @@
 # Changelog
 
-## 1.36.0 (Unreleased)
+## 1.36.0 (Release on 1 September 2022)
 
 - Render on Save option (automatically render when documents are saved)
 - Keyboard shortcuts for toggling bold, italic, and code formatting
+- Minimum required VS Code version is now 1.66
 
 ## 1.35.0 (Release on 31 August 2022)
 
