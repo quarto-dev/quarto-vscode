@@ -14,7 +14,7 @@ import {
   CompletionItemKind,
   MarkupKind,
 } from "vscode-languageserver/node";
-import { quartoProjectConfig } from "../../../core/doc";
+import { quartoProjectConfig } from "../../../shared/metadata";
 import { pathWithForwardSlashes } from "../../../core/path";
 
 import { quarto } from "../../../quarto/quarto";

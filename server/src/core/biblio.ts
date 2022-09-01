@@ -13,10 +13,10 @@ import * as yaml from "js-yaml";
 import { quarto } from "../quarto/quarto";
 import { shQuote } from "../shared/strings";
 import {
-  filePathForDoc,
   metadataFilesForDocument,
   projectDirForDocument,
-} from "../core/doc";
+} from "../shared/metadata";
+import { filePathForDoc } from "./doc";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { documentFrontMatter } from "./markdown/markdown";
 import { pathWithForwardSlashes } from "./path";

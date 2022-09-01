@@ -6,9 +6,14 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { TextDocument, Uri, workspace } from "vscode";
+import { TextDocument, TextEditor, Uri, workspace } from "vscode";
 import { parseFrontMatterStr } from "../../core/yaml";
 import { MarkdownEngine } from "../../markdown/engine";
+import {
+  metadataFilesForDocument,
+  yamlFromMetadataFile,
+} from "../../shared/metadata";
+import { isNotebook } from "../../core/doc";
 
 export function previewDirForDocument(uri: Uri) {
   // first check for a quarto project
@@ -90,4 +95,51 @@ export async function documentFrontMatter(
   } else {
     return {};
   }
+}
+
+export async function renderOnSave(engine: MarkdownEngine, editor: TextEditor) {
+  // if its a notebook and we don't have a save hook for notebooks then don't
+  // allow renderOnSave (b/c we can't detect the saves)
+  if (isNotebook(editor.document) && !workspace.onDidSaveNotebookDocument) {
+    return false;
+  }
+
+  // first look for document level editor setting
+  const docYaml = await documentFrontMatter(engine, editor.document);
+  const docSetting = readRenderOnSave(docYaml);
+  if (docSetting !== undefined) {
+    return docSetting;
+  }
+
+  // now project level (take the first metadata file with a setting)
+  const projectDir = projectDirForDocument(editor.document.uri);
+  if (projectDir) {
+    const metadataFiles = metadataFilesForDocument(editor.document.uri.fsPath);
+    if (metadataFiles) {
+      for (const metadataFile of metadataFiles) {
+        const yaml = yamlFromMetadataFile(metadataFile);
+        const projSetting = readRenderOnSave(yaml);
+        if (projSetting !== undefined) {
+          return projSetting;
+        }
+      }
+    }
+  }
+
+  // finally, consult vs code settings
+  const render =
+    workspace
+      .getConfiguration("quarto", editor.document)
+      .get<boolean>("render.renderOnSave") || false;
+  return render;
+}
+
+function readRenderOnSave(yaml: Record<string, unknown>) {
+  if (typeof yaml["editor"] === "object") {
+    const yamlObj = yaml["editor"] as Record<string, unknown>;
+    if (typeof yamlObj["render-on-save"] === "boolean") {
+      return yamlObj["render-on-save"] as boolean;
+    }
+  }
+  return undefined;
 }

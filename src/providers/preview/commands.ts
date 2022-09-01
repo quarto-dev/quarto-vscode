@@ -12,10 +12,13 @@ import { Command } from "../../core/command";
 import { QuartoContext } from "../../shared/quarto";
 import { canPreviewDoc, previewDoc, previewProject } from "./preview";
 import { MarkdownEngine } from "../../markdown/engine";
-import { revealSlideIndex } from "./preview-reveal";
 import { findEditor, isNotebook } from "../../core/doc";
 import { promptForQuartoInstallation } from "../../core/quarto";
-import { hasQuartoProject, projectDirForDocument } from "./preview-util";
+import {
+  hasQuartoProject,
+  projectDirForDocument,
+  renderOnSave,
+} from "./preview-util";
 
 export function previewCommands(
   quartoContext: QuartoContext,
@@ -66,17 +69,22 @@ abstract class RenderDocumentCommandBase extends RenderCommand {
   protected async renderFormat(format?: string | null, onShow?: () => void) {
     const targetEditor = findEditor(canPreviewDoc);
     if (targetEditor) {
-      // set the slide index from the source editor so we can
-      // navigate to it in the preview frame
-      const slideIndex = !isNotebook(targetEditor.document)
-        ? await revealSlideIndex(
-            targetEditor.selection.active,
+      const render = !(await renderOnSave(this.engine_, targetEditor));
+      if (render) {
+        await previewDoc(targetEditor, format, true, this.engine_, onShow);
+      } else {
+        // show the editor
+        if (!isNotebook(targetEditor.document)) {
+          await window.showTextDocument(
             targetEditor.document,
-            this.engine_
-          )
-        : undefined;
+            targetEditor.viewColumn,
+            false
+          );
+        }
 
-      await previewDoc(targetEditor, format, slideIndex, onShow);
+        // save (will trigger render b/c renderOnSave is enabled)
+        await commands.executeCommand("workbench.action.files.save");
+      }
     } else {
       window.showInformationMessage("No Quarto document available to render");
     }

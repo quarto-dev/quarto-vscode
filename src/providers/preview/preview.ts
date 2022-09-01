@@ -53,7 +53,11 @@ import {
   QuartoPreviewWebview,
   QuartoPreviewWebviewManager,
 } from "./preview-webview";
-import { isQuartoShinyDoc, previewDirForDocument } from "./preview-util";
+import {
+  isQuartoShinyDoc,
+  previewDirForDocument,
+  renderOnSave,
+} from "./preview-util";
 import { sleep } from "../../core/wait";
 import { fileCrossrefIndexStorage } from "../../shared/storage";
 import { normalizeNewlines } from "../../core/text";
@@ -64,6 +68,8 @@ import {
   knitrErrorLocation,
   yamlErrorLocation,
 } from "./preview-errors";
+import { revealSlideIndex } from "./preview-reveal";
+
 tmp.setGracefulCleanup();
 
 const kLocalPreviewRegex =
@@ -82,6 +88,33 @@ export function activatePreview(
     context.subscriptions.push(previewManager);
   }
 
+  // render on save
+  const onSave = async (docUri: Uri) => {
+    const editor = findEditor(
+      (editorDoc) => editorDoc.uri.fsPath === docUri.fsPath
+    );
+    if (editor) {
+      if (
+        canPreviewDoc(editor.document) &&
+        (await renderOnSave(engine, editor))
+      ) {
+        await previewDoc(editor, undefined, false, engine);
+      }
+    }
+  };
+  context.subscriptions.push(
+    vscode.workspace.onDidSaveTextDocument(async (doc: TextDocument) => {
+      await onSave(doc.uri);
+    })
+  );
+  if (vscode.workspace.onDidSaveNotebookDocument) {
+    context.subscriptions.push(
+      vscode.workspace.onDidSaveNotebookDocument(async (notebook) => {
+        await onSave(notebook.uri);
+      })
+    );
+  }
+
   // preview commands
   return previewCommands(quartoContext, engine);
 }
@@ -93,13 +126,21 @@ export function canPreviewDoc(doc?: TextDocument) {
 export async function previewDoc(
   editor: TextEditor,
   format?: string | null,
-  slideIndex?: number,
+  save?: boolean,
+  engine?: MarkdownEngine,
   onShow?: () => void
 ) {
-  // set the slide index and onShow if its provided
-  if (slideIndex !== undefined) {
-    previewManager.setSlideIndex(slideIndex);
+  // get the slide index if we can
+  if (engine !== undefined) {
+    // set the slide index from the source editor so we can
+    // navigate to it in the preview frame
+    if (!isNotebook(editor.document)) {
+      previewManager.setSlideIndex(
+        await revealSlideIndex(editor.selection.active, editor.document, engine)
+      );
+    }
   }
+  //  set onShow if provided
   if (onShow !== undefined) {
     previewManager.setOnShow(onShow);
   }
@@ -110,9 +151,11 @@ export async function previewDoc(
   }
 
   // save (exit if we cancelled)
-  await commands.executeCommand("workbench.action.files.save");
-  if (editor.document.isDirty) {
-    return;
+  if (save) {
+    await commands.executeCommand("workbench.action.files.save");
+    if (editor.document.isDirty) {
+      return;
+    }
   }
 
   // execute the preview

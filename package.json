@@ -819,6 +819,11 @@
           "default": "",
           "markdownDescription": "If there is a version of Quarto on your `PATH`, that version will always be used. If Quarto is not on your `PATH`, you may specify a Quarto executable location here."
         },
+        "quarto.render.renderOnSave": {
+          "scope": "window",
+          "type": "boolean",
+          "markdownDescription": "Automatically render documents when they are saved. Note that you can also use the `render-on-save` YAML option at the project or document level to specify this behavior. For example:\n\n```yaml\neditor:\n  render-on-save: true\n```\n"
+        },
         "quarto.render.previewType": {
           "scope": "window",
           "type": "string",
@@ -956,7 +961,7 @@
     "@types/semver": "^7.3.9",
     "@types/tmp": "^0.2.3",
     "@types/uuid": "^8.3.4",
-    "@types/vscode": "^1.55.0",
+    "@types/vscode": "^1.70.0",
     "@types/webpack-env": "^1.16.3",
     "@vscode/test-web": "^0.0.22",
     "concurrently": "^7.0.0",
