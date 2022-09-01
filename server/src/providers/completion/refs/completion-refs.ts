@@ -7,10 +7,11 @@ import { TextDocument } from "vscode-languageserver-textdocument";
 import { Range, Position } from "vscode-languageserver-types";
 
 import { CompletionContext, CompletionItem } from "vscode-languageserver/node";
-import { filePathForDoc, projectDirForDocument } from "../../../core/doc";
+import { filePathForDoc } from "../../../core/doc";
 import { bypassRefIntelligence } from "../../../core/refs";
 
 import { EditorContext, quarto } from "../../../quarto/quarto";
+import { projectDirForDocument } from "../../../shared/metadata";
 import { biblioCompletions } from "./completion-biblio";
 import { crossrefCompletions } from "./completion-crossref";
 
