@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.37.0 (Unreleased)
+
+- Open external preview links in new window (requires Quarto v1.2)
+
 ## 1.36.0 (Release on 1 September 2022)
 
 - Render on Save option (automatically render when documents are saved)

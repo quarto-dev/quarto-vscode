@@ -49,9 +49,18 @@ window.addEventListener("message", (e) => {
       break;
     }
 
+    case "openExternal": {
+      vscode.postMessage({
+        type: "openExternal",
+        url: e.data.url,
+      });
+      break;
+    }
+
     case "clear": {
       updateAddressBar("about:blank");
       navigateTo("about:blank");
+      break;
     }
 
     case "focus": {
