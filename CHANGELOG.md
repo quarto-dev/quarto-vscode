@@ -3,6 +3,7 @@
 ## 1.37.0 (Unreleased)
 
 - Open external preview links in new window (requires Quarto v1.2)
+- Set `QUARTO_WORKING_DIR` environment variable (ensures correct working dir is used for preview)
 
 ## 1.36.0 (Release on 1 September 2022)
 

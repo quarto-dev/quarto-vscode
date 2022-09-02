@@ -333,14 +333,21 @@ class PreviewManager {
       ? path.relative(this.previewDir_, target.fsPath)
       : this.targetFile();
 
+    // calculate cwd
+    const cwd = this.previewDir_ || this.targetDir();
+
     // create and show the terminal
     const options: TerminalOptions = {
       name: kPreviewWindowTitle,
-      cwd: this.previewDir_ || this.targetDir(),
+      cwd,
       env: this.previewEnv_ as unknown as {
         [key: string]: string | null | undefined;
       },
     };
+
+    // add workding dir to env (so we can recover from rc script changing the directory)
+    options.env!["QUARTO_WORKING_DIR"] = cwd;
+
     // add crossref index path to env (will be ignored if we are in a project)
     if (isFile) {
       options.env!["QUARTO_CROSSREF_INDEX_PATH"] = fileCrossrefIndexStorage(
