@@ -164,6 +164,7 @@ function scanForQuarto(): QuartoInstallation | undefined {
   } else if (os.platform() === "linux") {
     scanPaths.push("/opt/quarto/bin");
     scanPaths.push("/usr/lib/rstudio/bin/quarto/bin");
+    scanPaths.push("/usr/lib/rstudio-server/bin/quarto/bin");
   }
 
   for (const scanPath of scanPaths.filter(fs.existsSync)) {
