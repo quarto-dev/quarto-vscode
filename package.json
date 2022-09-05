@@ -396,24 +396,6 @@
     ],
     "keybindings": [
       {
-        "command": "quarto.toggleBold",
-        "key": "ctrl+b",
-        "mac": "cmd+b",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == quarto"
-      },
-      {
-        "command": "quarto.toggleItalic",
-        "key": "ctrl+i",
-        "mac": "cmd+i",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == quarto"
-      },
-      {
-        "command": "quarto.toggleCode",
-        "key": "ctrl+d",
-        "mac": "cmd+d",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == quarto"
-      },
-      {
         "command": "quarto.renderShortcut",
         "key": "ctrl+shift+k",
         "mac": "cmd+shift+k"

@@ -1,9 +1,10 @@
 # Changelog
 
-## 1.37.0 (Unreleased)
+## 1.37.0 (Release on 5 September 2022)
 
 - Open external preview links in new window (requires Quarto v1.2)
 - Set `QUARTO_WORKING_DIR` environment variable (ensures correct working dir is used for preview)
+- Remove default keybindings for bold, italic, and code (all had conflicts)
 
 ## 1.36.0 (Release on 1 September 2022)
 
