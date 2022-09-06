@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.38.0 (Unreleased)
+
+- Use `quarto inspect` for reading project configuration.
+
 ## 1.37.0 (Release on 5 September 2022)
 
 - Open external preview links in new window (requires Quarto v1.2)

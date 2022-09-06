@@ -7,6 +7,7 @@ import path from "path";
 import fs from "fs";
 
 import * as yaml from "js-yaml";
+import { quarto } from "../quarto/quarto";
 
 export function parseFrontMatterStr(str: string) {
   str = str.replace(/---\s*$/, "");
@@ -87,16 +88,65 @@ export function yamlFromMetadataFile(file: string): Record<string, unknown> {
   return {};
 }
 
-export function quartoProjectConfig(dir: string): { [key: string]: any } {
+export type QuartoProjectConfig = {
+  config: {
+    project: {
+      type: string;
+    };
+  };
+  files: {
+    config: string[];
+  };
+};
+
+export async function quartoProjectConfig(
+  dir: string
+): Promise<QuartoProjectConfig | undefined> {
   for (const config of ["_quarto.yml", "_quarto.yaml"]) {
     const configFile = path.join(dir, config);
     if (fs.existsSync(configFile)) {
-      const yamlSrc = fs.readFileSync(configFile, "utf-8");
-      if (yamlSrc.trim().length > 0) {
-        const yamlOpts = yaml.load(yamlSrc) as { [key: string]: any };
-        return yamlOpts;
-      }
+      return readConfig(dir);
     }
   }
-  return {};
+  return undefined;
+}
+
+// cache previously read configs
+const configCache = new Map<
+  string,
+  { hash: string; config: QuartoProjectConfig }
+>();
+
+function readConfig(dir: string) {
+  // lookup in cache
+  const cache = configCache.get(dir);
+  if (cache && cache.hash === configHash(cache.config)) {
+    return cache.config;
+  }
+
+  // otherwise read and write to cache
+  const config = inspectConfig(dir);
+  if (config) {
+    configCache.set(dir, { hash: configHash(config), config });
+    return config;
+  }
+
+  return undefined;
+}
+
+function inspectConfig(dir: string) {
+  if (quarto) {
+    const config = JSON.parse(
+      quarto.runQuarto({ cwd: dir }, "inspect")
+    ) as QuartoProjectConfig;
+    return config;
+  } else {
+    return undefined;
+  }
+}
+
+function configHash(config: QuartoProjectConfig) {
+  return config.files.config.reduce((hash, file) => {
+    return hash + fs.statSync(file).mtimeMs.toLocaleString();
+  }, "");
 }

@@ -73,9 +73,8 @@ export async function crossrefCompletions(
   // if this is a book then ammend with the full index (save for this file
   // which we've already indexed
   if (projectDir) {
-    const config = quartoProjectConfig(projectDir);
-    const projType = config["project"]?.["type"];
-    if (projType === "book") {
+    const config = await quartoProjectConfig(projectDir);
+    if (config?.config.project.type === "book") {
       const input = projectRelativeInput(projectDir, filePath);
       for (const projInput of projectXRefIndex.keys()) {
         if (projInput !== input) {
