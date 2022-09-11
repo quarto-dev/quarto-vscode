@@ -3,6 +3,7 @@
 ## 1.38.0 (Unreleased)
 
 - Use `quarto inspect` for reading project configuration.
+- Pass absolute path to `quarto preview` (prevent problems with shells that change dir on init)
 
 ## 1.37.0 (Release on 5 September 2022)
 

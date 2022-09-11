@@ -329,9 +329,6 @@ class PreviewManager {
     // determine preview dir (if any)
     const isFile = fs.statSync(target.fsPath).isFile();
     this.previewDir_ = isFile ? previewDirForDocument(target) : undefined;
-    const targetFile = this.previewDir_
-      ? path.relative(this.previewDir_, target.fsPath)
-      : this.targetFile();
 
     // calculate cwd
     const cwd = this.previewDir_ || this.targetDir();
@@ -344,9 +341,6 @@ class PreviewManager {
         [key: string]: string | null | undefined;
       },
     };
-
-    // add workding dir to env (so we can recover from rc script changing the directory)
-    options.env!["QUARTO_WORKING_DIR"] = cwd;
 
     // add crossref index path to env (will be ignored if we are in a project)
     if (isFile) {
@@ -368,7 +362,7 @@ class PreviewManager {
     const cmd: string[] = [
       this.quartoContext_.useCmd ? winShEscape(quarto) : shQuote(quarto),
       isShiny ? "serve" : "preview",
-      shQuote(targetFile),
+      shQuote(target.fsPath),
     ];
 
     // extra args for normal docs
@@ -526,15 +520,6 @@ class PreviewManager {
       return targetPath;
     } else {
       return path.dirname(targetPath);
-    }
-  }
-
-  private targetFile() {
-    const targetPath = this.previewTarget_!.fsPath;
-    if (fs.statSync(targetPath).isDirectory()) {
-      return ".";
-    } else {
-      return path.basename(targetPath);
     }
   }
 
