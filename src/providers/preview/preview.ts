@@ -97,7 +97,8 @@ export function activatePreview(
     if (editor) {
       if (
         canPreviewDoc(editor.document) &&
-        (await renderOnSave(engine, editor))
+        (await renderOnSave(engine, editor)) &&
+        (await previewManager.isPreviewRunning())
       ) {
         await previewDoc(editor, undefined, false, engine);
       }
@@ -126,6 +127,10 @@ export function activatePreview(
 
 export function canPreviewDoc(doc?: TextDocument) {
   return !!doc && !!(isQuartoDoc(doc) || isNotebook(doc));
+}
+
+export function isPreviewRunning() {
+  return previewManager.isPreviewRunning();
 }
 
 export async function previewDoc(
@@ -249,6 +254,30 @@ class PreviewManager {
 
   public setOnShow(f: () => void) {
     this.webviewManager_.setOnShow(f);
+  }
+
+  public async isPreviewRunning() {
+    // no terminal means no preview server
+    if (!this.terminal_ || this.terminal_.exitStatus !== undefined) {
+      return false;
+    }
+
+    // no recorded preview server uri
+    if (!this.previewCommandUrl_) {
+      return false;
+    }
+
+    // look for any response from the server (it will give a 404 w/o logging for favicon)
+    const pingRequestUri = this.previewServerRequestUri("/favicon.ico");
+    try {
+      const response = await axios.get(pingRequestUri, {
+        timeout: 1000,
+        validateStatus: () => true,
+      });
+      return response.status === 200 || response.status === 404;
+    } catch (e) {
+      return false;
+    }
   }
 
   private async canReuseRunningPreview(

@@ -10,7 +10,12 @@ import * as fs from "fs";
 import { TextDocument, window, Uri, workspace, commands } from "vscode";
 import { Command } from "../../core/command";
 import { QuartoContext } from "../../shared/quarto";
-import { canPreviewDoc, previewDoc, previewProject } from "./preview";
+import {
+  canPreviewDoc,
+  isPreviewRunning,
+  previewDoc,
+  previewProject,
+} from "./preview";
 import { MarkdownEngine } from "../../markdown/engine";
 import { findEditor, isNotebook } from "../../core/doc";
 import { promptForQuartoInstallation } from "../../core/quarto";
@@ -69,7 +74,9 @@ abstract class RenderDocumentCommandBase extends RenderCommand {
   protected async renderFormat(format?: string | null, onShow?: () => void) {
     const targetEditor = findEditor(canPreviewDoc);
     if (targetEditor) {
-      const render = !(await renderOnSave(this.engine_, targetEditor));
+      const render =
+        !(await renderOnSave(this.engine_, targetEditor)) ||
+        !(await isPreviewRunning());
       if (render) {
         await previewDoc(targetEditor, format, true, this.engine_, onShow);
       } else {

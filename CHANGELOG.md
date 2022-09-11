@@ -4,6 +4,7 @@
 
 - Use `quarto inspect` for reading project configuration.
 - Pass absolute path to `quarto preview` (prevent problems with shells that change dir on init)
+- Only render on save when the preview server is already running
 
 ## 1.37.0 (Release on 5 September 2022)
 
