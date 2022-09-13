@@ -33,7 +33,7 @@ export function isQuartoDoc(doc: TextDocument) {
 export function isQuartoYaml(doc: TextDocument) {
   return (
     doc.languageId === kYamlLanguageId &&
-    (doc.uri.match(/_quarto\.ya?ml$/) ||
+    (doc.uri.match(/_quarto(-.*?)?\.ya?ml$/) ||
       doc.uri.match(/_metadata\.ya?ml$/) ||
       doc.uri.match(/_extension\.ya?ml$/))
   );

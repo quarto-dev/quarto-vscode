@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.39.0 (Unreleased)
+
+- Provide completions and diagnostics for profile specific \_quarto.yml
+
 ## 1.38.0 (Release on 10 September 2022)
 
 - Use `quarto inspect` for reading project configuration.
