@@ -158,7 +158,7 @@ class VSCodeWorkspaceQuartoDocumentProvider
     }
 
     this._watcher = this._register(
-      vscode.workspace.createFileSystemWatcher("**/*.md")
+      vscode.workspace.createFileSystemWatcher("**/*.{qmd,md}")
     );
 
     this._watcher.onDidChange(
