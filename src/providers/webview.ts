@@ -38,7 +38,8 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
     context.subscriptions.push(
       window.registerWebviewPanelSerializer(this.viewType_, {
         deserializeWebviewPanel: async (panel, state) => {
-          this.restoreWebvew(panel, state);
+          // cleanup zombie preview
+          panel.dispose();
         },
       })
     );
