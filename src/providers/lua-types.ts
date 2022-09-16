@@ -6,7 +6,14 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { ExtensionContext, workspace, extensions } from "vscode";
+import {
+  ExtensionContext,
+  workspace,
+  extensions,
+  commands,
+  window,
+  MessageItem,
+} from "vscode";
 import { QuartoContext } from "../shared/quarto";
 import { ensureGitignore } from "../core/git";
 
@@ -28,13 +35,11 @@ export async function activateLuaTypes(
     return;
   }
 
-  // first check for the lua extension
-  const luaExtension = extensions.getExtension("sumneko.lua");
-  if (luaExtension === undefined) {
+  // if we aren't prompting to install the lua extension then
+  // check for it and bail if its not there
+  if (!isLuaLspInstalled() && !canPromptForLuaLspInstall(context)) {
     return;
   }
-
-  // TODO: prompt for install?
 
   // check for glob in workspace
   const workspaceHasFile = async (glob: string) => {
@@ -49,13 +54,13 @@ export async function activateLuaTypes(
     (await workspaceHasFile("**/_extension.{yml,yaml}"))
   ) {
     if (await workspaceHasFile("**/*.lua")) {
-      syncLuaTypes(quartoContext, luarc);
+      await syncLuaTypes(context, quartoContext, luarc);
     } else {
       const handler = workspace.onDidOpenTextDocument(
-        (e) => {
+        async (e) => {
           if (path.extname(e.fileName) === ".lua") {
             if (workspace.asRelativePath(e.fileName) !== e.fileName) {
-              syncLuaTypes(quartoContext, luarc);
+              await syncLuaTypes(context, quartoContext, luarc);
               handler.dispose();
             }
           }
@@ -67,7 +72,33 @@ export async function activateLuaTypes(
   }
 }
 
-function syncLuaTypes(quartoContext: QuartoContext, luarc: string) {
+async function syncLuaTypes(
+  context: ExtensionContext,
+  quartoContext: QuartoContext,
+  luarc: string
+) {
+  // if we don't have the extension that see if we should prompt to install it
+  if (!isLuaLspInstalled() && canPromptForLuaLspInstall(context)) {
+    const install: MessageItem = { title: "Install Lua LSP" };
+    const neverInstall: MessageItem = { title: "Don't Prompt Again" };
+    const result = await window.showInformationMessage<MessageItem>(
+      "Quarto can provide completion and diagnostics for Lua scripts if the Lua LSP extension is installed. Do you want to install it now?",
+      install,
+      neverInstall
+    );
+    if (result === install) {
+      await commands.executeCommand(
+        "workbench.extensions.installExtension",
+        "sumneko.lua"
+      );
+    } else {
+      if (result === neverInstall) {
+        preventPromptForLspInstall(context);
+      }
+      return;
+    }
+  }
+
   // constants
   const kGenerator = "Generator";
   const kWorkspaceLibrary = "Lua.workspace.library";
@@ -121,4 +152,18 @@ function syncLuaTypes(quartoContext: QuartoContext, luarc: string) {
 
   // ensure gitignore
   ensureGitignore(path.dirname(luarc), ["/" + path.basename(luarc)]);
+}
+
+const kPromptForLuaLspInstall = "quarto.lua.promptLspInstall";
+
+function isLuaLspInstalled() {
+  return extensions.getExtension("sumneko.lua") !== undefined;
+}
+
+function canPromptForLuaLspInstall(context: ExtensionContext) {
+  return context.workspaceState.get<boolean>(kPromptForLuaLspInstall) !== false;
+}
+
+function preventPromptForLspInstall(context: ExtensionContext) {
+  context.workspaceState.update(kPromptForLuaLspInstall, false);
 }
