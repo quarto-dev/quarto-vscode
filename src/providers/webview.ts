@@ -37,7 +37,7 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
 
     context.subscriptions.push(
       window.registerWebviewPanelSerializer(this.viewType_, {
-        deserializeWebviewPanel: async (panel, state) => {
+        deserializeWebviewPanel: async (panel, _state) => {
           // cleanup zombie preview
           panel.dispose();
         },
@@ -88,12 +88,14 @@ export class QuartoWebviewManager<T extends QuartoWebview<S>, S> {
     }
   }
 
+  /*
   private restoreWebvew(panel: WebviewPanel, state: any): void {
     const url = state?.url ?? "";
     const view = new this.webviewType_(this.extensionUri_, url, panel);
     this.registerWebviewListeners(view);
     this.activeView_ = view;
   }
+  */
 
   private createWebview(
     extensionUri: Uri,
