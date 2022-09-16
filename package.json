@@ -795,6 +795,12 @@
           "default": "dark",
           "markdownDescription": "Theme for MathJax preview (`light` or `dark`)."
         },
+        "quarto.lua.provideTypes": {
+          "scope": "window",
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Automatically provide Pandoc and Quarto Lua types (.luarc.json) in workspaces with Quarto Lua scripts."
+        },
         "quarto.path": {
           "scope": "window",
           "type": "string",

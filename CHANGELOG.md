@@ -2,6 +2,7 @@
 
 ## 1.39.0 (Unreleased)
 
+- Provide workspace type definitions for Lua filters and shortcodes
 - Provide completions and diagnostics for profile specific \_quarto.yml
 - Cleanup residual Quarto Preview panel on startup/reload
 

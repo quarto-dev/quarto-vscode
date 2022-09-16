@@ -7,8 +7,8 @@ import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
 import * as semver from "semver";
-import * as child_process from "child_process";
 import { ExecFileSyncOptions } from "child_process";
+import { execProgram } from "./exec";
 
 export interface QuartoContext {
   available: boolean;
@@ -175,18 +175,4 @@ function scanForQuarto(): QuartoInstallation | undefined {
   }
 
   return undefined;
-}
-
-// helper to run a program and capture its output
-function execProgram(
-  program: string,
-  args: string[],
-  options?: ExecFileSyncOptions
-) {
-  return (
-    child_process.execFileSync(program, args, {
-      encoding: "utf-8",
-      ...options,
-    }) as unknown as string
-  ).trim();
 }

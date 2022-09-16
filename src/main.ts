@@ -17,8 +17,9 @@ import { activatePreview } from "./providers/preview/preview";
 import { initQuartoContext } from "./shared/quarto";
 import { activateStatusBar } from "./providers/statusbar";
 import { walkthroughCommands } from "./providers/walkthrough";
+import { activateLuaTypes } from "./providers/lua-types";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   // create markdown engine
   const engine = new MarkdownEngine();
 
@@ -45,6 +46,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     // status bar
     activateStatusBar(quartoContext);
+
+    // lua types
+    await activateLuaTypes(context, quartoContext);
 
     // lsp
     activateLsp(context, engine);
