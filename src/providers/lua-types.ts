@@ -120,7 +120,6 @@ async function syncLuaTypes(
   }
 
   // read base luarc (provide default if there is none)
-  const defaultGlobals = ["quarto", "pandoc", "lpeg", "re"];
   const kDefaultLuaRc = {
     [kGenerator]: [
       "Quarto",
@@ -132,7 +131,6 @@ async function syncLuaTypes(
     "Lua.runtime.version": "Lua 5.3",
     "Lua.workspace.checkThirdParty": false,
     [kWorkspaceLibrary]: [],
-    [kDiagnosticsGlobals]: defaultGlobals,
     "Lua.diagnostics.disable": ["lowercase-global"],
   };
   const luarcJson = (
@@ -148,18 +146,6 @@ async function syncLuaTypes(
 
   // see if we need to make any updates
   let rewriteLuarc = false;
-
-  // append any globals that aren't in there
-  if (!Array.isArray(luarcJson[kDiagnosticsGlobals])) {
-    luarcJson[kDiagnosticsGlobals] = [];
-  }
-  let luarcJsonGlobals = luarcJson[kDiagnosticsGlobals] as string[];
-  defaultGlobals.forEach((name) => {
-    if (!luarcJsonGlobals.includes(name)) {
-      luarcJsonGlobals.push(name);
-      rewriteLuarc = true;
-    }
-  });
 
   // if the current workspace library is out of sync then change it and re-write
   if (
