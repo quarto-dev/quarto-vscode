@@ -104,7 +104,6 @@ async function syncLuaTypes(
   // constants
   const kGenerator = "Generator";
   const kWorkspaceLibrary = "Lua.workspace.library";
-  const kDiagnosticsGlobals = "Lua.diagnostics.globals";
 
   // determine the path to the quarto lua types (bail if we don't have it)
   const luaTypesDir = path.join(quartoContext.resourcePath, "lua-types");
