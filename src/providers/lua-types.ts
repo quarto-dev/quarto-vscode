@@ -102,6 +102,7 @@ async function syncLuaTypes(
   // constants
   const kGenerator = "Generator";
   const kWorkspaceLibrary = "Lua.workspace.library";
+  const kDiagnosticsGlobals = "Lua.diagnostics.globals";
 
   // determine the path to the quarto lua types (bail if we don't have it)
   const luaTypesDir = path.join(quartoContext.resourcePath, "lua-types");
@@ -117,17 +118,20 @@ async function syncLuaTypes(
   }
 
   // read base luarc (provide default if there is none)
+  const defaultGlobals = ["quarto", "pandoc", "lpeg", "re"];
   const kDefaultLuaRc = {
     [kGenerator]: [
       "Quarto",
+      "This file provides type information for Lua completion and diagnostics.",
       "Quarto will automatically update Lua.workspace.library to reflect the current path",
-      "of your Quarto installation. This file will also be automatically added to .gitignore",
-      "(remove the 'Generator' option to manage this manually).",
+      "of your Quarto installation, and this config file will be added to .gitignore",
+      "Remove the 'Generator' key to manage this file's contents manually.",
     ],
-    "Lua.diagnostics.disable": ["lowercase-global"],
     "Lua.runtime.version": "Lua 5.3",
     "Lua.workspace.checkThirdParty": false,
     [kWorkspaceLibrary]: [],
+    [kDiagnosticsGlobals]: defaultGlobals,
+    "Lua.diagnostics.disable": ["lowercase-global"],
   };
   const luarcJson = (
     fs.existsSync(luarc)
@@ -140,6 +144,21 @@ async function syncLuaTypes(
     return;
   }
 
+  // see if we need to make any updates
+  let rewriteLuarc = false;
+
+  // append any globals that aren't in there
+  if (!Array.isArray(luarcJson[kDiagnosticsGlobals])) {
+    luarcJson[kDiagnosticsGlobals] = [];
+  }
+  let luarcJsonGlobals = luarcJson[kDiagnosticsGlobals] as string[];
+  defaultGlobals.forEach((name) => {
+    if (!luarcJsonGlobals.includes(name)) {
+      luarcJsonGlobals.push(name);
+      rewriteLuarc = true;
+    }
+  });
+
   // if the current workspace library is out of sync then change it and re-write
   if (
     JSON.stringify(luarcJson[kWorkspaceLibrary]) !==
@@ -147,6 +166,11 @@ async function syncLuaTypes(
   ) {
     // write the file
     luarcJson[kWorkspaceLibrary] = [luaTypesDir];
+    rewriteLuarc = true;
+  }
+
+  // rewrite if we need to
+  if (rewriteLuarc) {
     fs.writeFileSync(luarc, JSON.stringify(luarcJson, undefined, 2));
   }
 
