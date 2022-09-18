@@ -13,6 +13,7 @@ import {
   commands,
   window,
   MessageItem,
+  ConfigurationTarget,
 } from "vscode";
 import { QuartoContext } from "../shared/quarto";
 import { ensureGitignore } from "../core/git";
@@ -161,8 +162,33 @@ async function syncLuaTypes(
     fs.writeFileSync(luarc, JSON.stringify(luarcJson, undefined, 2));
   }
 
+  // fix issue w/ git protocol
+  await ensureNoGitScheme();
+
   // ensure gitignore
   ensureGitignore(path.dirname(luarc), ["/" + path.basename(luarc)]);
+}
+
+// git scheme doesn't have our folder level settings so all of the
+// implicit pandoc globals show up as 'undefined global'. it looks
+// like the Lua plugin already attempts to disable diagnostics by
+// default for "git" protocol but it doesn't seem to work in current
+// versions of VS Code. Here we set a more sensible default (but
+// only if the user hasn't explicitly interacted with this setting)
+async function ensureNoGitScheme() {
+  const luaConfig = workspace.getConfiguration("Lua");
+  const inspectSupportScheme = luaConfig.inspect("workspace.supportScheme");
+  if (
+    !inspectSupportScheme?.globalValue &&
+    !inspectSupportScheme?.workspaceValue &&
+    !inspectSupportScheme?.workspaceFolderValue
+  ) {
+    await luaConfig.update(
+      "workspace.supportScheme",
+      ["file", "default"],
+      ConfigurationTarget.Global
+    );
+  }
 }
 
 const kPromptForLuaLspInstall = "quarto.lua.promptLspInstall";
