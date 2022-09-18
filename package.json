@@ -62,6 +62,7 @@
     "onCommand:quarto.fileNewPresentation",
     "onCommand:quarto.walkthrough.verifyInstallation",
     "onCommand:quarto.walkthrough.newDocument",
+    "workspaceContains:**/*.qmd",
     "workspaceContains:**/_quarto.{yml,yaml}",
     "workspaceContains:**/_extension.{yml,yaml}",
     "onWebviewPanel:quarto.previewView",

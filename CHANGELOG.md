@@ -5,6 +5,7 @@
 - Provide workspace type definitions for Lua filters and shortcodes
 - Provide completions and diagnostics for profile specific \_quarto.yml
 - Cleanup residual Quarto Preview panel on startup/reload
+- Activate Quarto extension when .qmd files are in the workspace
 
 ## 1.38.0 (Release on 10 September 2022)
 
