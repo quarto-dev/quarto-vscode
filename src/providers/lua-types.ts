@@ -131,7 +131,7 @@ async function syncLuaTypes(
     "Lua.runtime.version": "Lua 5.3",
     "Lua.workspace.checkThirdParty": false,
     [kWorkspaceLibrary]: [],
-    "Lua.diagnostics.disable": ["lowercase-global"],
+    "Lua.diagnostics.disable": ["lowercase-global", "trailing-space"],
   };
   const luarcJson = (
     fs.existsSync(luarc)
