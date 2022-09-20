@@ -675,6 +675,9 @@
       "[mermaid]": {
         "editor.wordBasedSuggestions": false
       },
+      "[lua]": {
+        "editor.wordBasedSuggestions": false
+      },
       "[yaml]": {
         "editor.quickSuggestions": true,
         "editor.quickSuggestionsDelay": 250,
