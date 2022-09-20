@@ -1,6 +1,11 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) RStudio, PBC. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ 
+Error running filter /Users/jjallaire/quarto/quarto-ext/code-filename/_extensions/code-filename/code-filename.lua:
+...ode-filename/_extensions/code-filename/code-filename.lua:59: ')' expected (to close '(' at line 54) near 'end'
+
+ 
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from "path";
@@ -29,10 +34,13 @@ export async function activateLuaTypes(
     return;
   }
 
-  // compute path to .luarc.json
-  const luarc = workspace.workspaceFolders
-    ? path.join(workspace.workspaceFolders[0].uri.fsPath, ".luarc.json")
-    : undefined;
+  //
+
+  // compute path to .luarc.json (make sure we have at least one worksapce folder)
+  const luarc =
+    workspace.workspaceFolders && workspace.workspaceFolders.length > 0
+      ? path.join(workspace.workspaceFolders[0].uri.fsPath, ".luarc.json")
+      : undefined;
   if (!luarc) {
     return;
   }
