@@ -84,7 +84,9 @@ async function syncLuaTypes(
     const notNow: MessageItem = { title: "Maybe Later" };
     const neverInstall: MessageItem = { title: "Don't Ask Again" };
     const result = await window.showInformationMessage<MessageItem>(
-      "Quarto can provide completion and diagnostics for Lua scripts if the [Lua extension](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) is installed. Do you want to install it now?",
+      "Quarto can provide completion and diagnostics for Lua scripts in this workspace if the " +
+        "[Lua extension](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) " +
+        "is installed. Do you want to install it now?",
       install,
       notNow,
       neverInstall
@@ -198,9 +200,9 @@ function isLuaLspInstalled() {
 }
 
 function canPromptForLuaLspInstall(context: ExtensionContext) {
-  return context.globalState.get<boolean>(kPromptForLuaLspInstall) !== false;
+  return context.workspaceState.get<boolean>(kPromptForLuaLspInstall) !== false;
 }
 
 function preventPromptForLspInstall(context: ExtensionContext) {
-  context.globalState.update(kPromptForLuaLspInstall, false);
+  context.workspaceState.update(kPromptForLuaLspInstall, false);
 }
