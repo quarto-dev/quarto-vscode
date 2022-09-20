@@ -3,6 +3,7 @@
 ## 1.39.0 (Unreleased)
 
 - Provide workspace type definitions for Lua filters and shortcodes
+- Error navigation for Lua runtime errors in currently edited file
 - Provide completions and diagnostics for profile specific \_quarto.yml
 - Cleanup residual Quarto Preview panel on startup/reload
 - Activate Quarto extension when .qmd files are in the workspace

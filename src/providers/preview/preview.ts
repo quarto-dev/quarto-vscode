@@ -67,6 +67,7 @@ import { vsCodeWebUrl } from "../../core/platform";
 import {
   jupyterErrorLocation,
   knitrErrorLocation,
+  luaErrorLocation,
   yamlErrorLocation,
 } from "./preview-errors";
 import { revealSlideIndex } from "./preview-reveal";
@@ -495,7 +496,8 @@ class PreviewManager {
     const errorLoc =
       yamlErrorLocation(output, previewFile, previewDir) ||
       jupyterErrorLocation(output, previewFile, previewDir) ||
-      knitrErrorLocation(output, previewFile, previewDir);
+      knitrErrorLocation(output, previewFile, previewDir) ||
+      luaErrorLocation(output, previewFile, previewDir);
     if (errorLoc && fs.existsSync(errorLoc.file)) {
       // find existing visible instance
       const fileUri = Uri.file(errorLoc.file);

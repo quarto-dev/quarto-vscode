@@ -13,6 +13,29 @@ export type ErrorLocation = {
   file: string;
 };
 
+export function luaErrorLocation(
+  output: string,
+  previewTarget: string,
+  _previewDir: string
+) {
+  const luaPattern = /Error running filter ([^:]+):\r?\n[^:]+:(\d+):/;
+  const luaMatch = output.match(luaPattern);
+  if (luaMatch) {
+    console.log(luaMatch);
+    // if the path is relative then resolve it visa vi the previewTarget
+    const file = path.isAbsolute(luaMatch[1])
+      ? luaMatch[1]
+      : path.normalize(path.join(path.dirname(previewTarget), luaMatch[1]));
+    return {
+      lineBegin: parseInt(luaMatch[2]),
+      lineEnd: parseInt(luaMatch[2]),
+      file,
+    };
+  }
+
+  return null;
+}
+
 export function knitrErrorLocation(
   output: string,
   previewTarget: string,
