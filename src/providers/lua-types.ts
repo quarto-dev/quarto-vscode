@@ -81,6 +81,7 @@ async function syncLuaTypes(
   luarc: string
 ) {
   // if we don't have the extension that see if we should prompt to install it
+  let installedLuaLsp = false;
   if (!isLuaLspInstalled() && canPromptForLuaLspInstall(context)) {
     const install: MessageItem = { title: "Install Now" };
     const notNow: MessageItem = { title: "Maybe Later" };
@@ -94,6 +95,7 @@ async function syncLuaTypes(
       neverInstall
     );
     if (result === install) {
+      installedLuaLsp = true;
       await commands.executeCommand(
         "workbench.extensions.installExtension",
         "sumneko.lua"
@@ -177,8 +179,11 @@ async function syncLuaTypes(
     fs.writeFileSync(luarc, JSON.stringify(luarcJson, undefined, 2));
   }
 
-  // fix issue w/ git protocol
-  await ensureNoGitScheme();
+  // fix issue w/ git protocol (but not if we just installed the LSP as the config
+  // entries won't be there yet)
+  if (!installedLuaLsp) {
+    await ensureNoGitScheme();
+  }
 
   // ensure gitignore
   ensureGitignore(path.dirname(luarc), ["/" + path.basename(luarc)]);
