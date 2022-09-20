@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.39.0 (Unreleased)
+## 1.39.0 (Release on 20 September 2022)
 
 - Provide workspace type definitions for Lua filters and shortcodes
 - Error navigation for Lua runtime errors in currently edited file
