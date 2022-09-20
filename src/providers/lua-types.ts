@@ -29,8 +29,6 @@ export async function activateLuaTypes(
     return;
   }
 
-  //
-
   // compute path to .luarc.json (make sure we have at least one worksapce folder)
   const luarc =
     workspace.workspaceFolders && workspace.workspaceFolders.length > 0
