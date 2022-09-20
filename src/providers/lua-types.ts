@@ -17,6 +17,7 @@ import {
 } from "vscode";
 import { QuartoContext } from "../shared/quarto";
 import { ensureGitignore } from "../core/git";
+import { join } from "path";
 
 export async function activateLuaTypes(
   context: ExtensionContext,
@@ -107,6 +108,7 @@ async function syncLuaTypes(
   // constants
   const kGenerator = "Generator";
   const kWorkspaceLibrary = "Lua.workspace.library";
+  const kRuntimePlugin = "Lua.runtime.plugin";
 
   // determine the path to the quarto lua types (bail if we don't have it)
   const luaTypesDir = path.join(quartoContext.resourcePath, "lua-types");
@@ -126,13 +128,15 @@ async function syncLuaTypes(
     [kGenerator]: [
       "Quarto",
       "This file provides type information for Lua completion and diagnostics.",
-      "Quarto will automatically update Lua.workspace.library to reflect the current path",
-      "of your Quarto installation, and this config file will be added to .gitignore",
+      "Quarto will automatically update this file to reflect the current path",
+      "of your Quarto installation, and the file will also be added to .gitignore",
+      "since it points to the absolute path of Quarto on the local system.",
       "Remove the 'Generator' key to manage this file's contents manually.",
     ],
     "Lua.runtime.version": "Lua 5.3",
     "Lua.workspace.checkThirdParty": false,
     [kWorkspaceLibrary]: [],
+    [kRuntimePlugin]: "",
     "Lua.diagnostics.disable": ["lowercase-global", "trailing-space"],
   };
   const luarcJson = (
@@ -154,9 +158,17 @@ async function syncLuaTypes(
     JSON.stringify(luarcJson[kWorkspaceLibrary]) !==
     JSON.stringify([luaTypesDir])
   ) {
-    // write the file
     luarcJson[kWorkspaceLibrary] = [luaTypesDir];
     rewriteLuarc = true;
+  }
+
+  // if the current Lua.runtime.plugin is out of sync then change it and re-write
+  const pluginPath = join(luaTypesDir, "plugin.lua");
+  if (fs.existsSync(pluginPath)) {
+    if (pluginPath !== luarcJson[kRuntimePlugin]) {
+      luarcJson[kRuntimePlugin] = pluginPath;
+      rewriteLuarc = true;
+    }
   }
 
   // rewrite if we need to
