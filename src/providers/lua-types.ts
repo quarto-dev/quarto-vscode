@@ -168,11 +168,17 @@ async function syncLuaTypes(
   }
 
   // if the current Lua.runtime.plugin is out of sync then change it and re-write
-  const pluginPath = join(luaTypesDir, "plugin.lua");
-  if (fs.existsSync(pluginPath)) {
-    if (pluginPath !== luarcJson[kRuntimePlugin]) {
-      luarcJson[kRuntimePlugin] = pluginPath;
-      rewriteLuarc = true;
+  const pluginPaths = [
+    join(luaTypesDir, "plugin.lua"),
+    join(quartoContext.resourcePath, "lua-plugin", "plugin.lua"),
+  ];
+  for (const pluginPath of pluginPaths) {
+    if (fs.existsSync(pluginPath)) {
+      if (pluginPath !== luarcJson[kRuntimePlugin]) {
+        luarcJson[kRuntimePlugin] = pluginPath;
+        rewriteLuarc = true;
+      }
+      break;
     }
   }
 
