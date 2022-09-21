@@ -81,7 +81,6 @@ async function syncLuaTypes(
   luarc: string
 ) {
   // if we don't have the extension that see if we should prompt to install it
-  let installedLuaLsp = false;
   if (!isLuaLspInstalled() && canPromptForLuaLspInstall(context)) {
     const install: MessageItem = { title: "Install Now" };
     const notNow: MessageItem = { title: "Maybe Later" };
@@ -95,7 +94,6 @@ async function syncLuaTypes(
       neverInstall
     );
     if (result === install) {
-      installedLuaLsp = true;
       await commands.executeCommand(
         "workbench.extensions.installExtension",
         "sumneko.lua"
@@ -189,9 +187,7 @@ async function syncLuaTypes(
 
   // fix issue w/ git protocol (but not if we just installed the LSP as the config
   // entries won't be there yet)
-  if (!installedLuaLsp) {
-    await ensureNoGitScheme();
-  }
+  await ensureNoGitScheme();
 
   // ensure gitignore
   ensureGitignore(path.dirname(luarc), ["/" + path.basename(luarc)]);
@@ -205,17 +201,19 @@ async function syncLuaTypes(
 // only if the user hasn't explicitly interacted with this setting)
 async function ensureNoGitScheme() {
   const luaConfig = workspace.getConfiguration("Lua");
-  const inspectSupportScheme = luaConfig.inspect("workspace.supportScheme");
-  if (
-    !inspectSupportScheme?.globalValue &&
-    !inspectSupportScheme?.workspaceValue &&
-    !inspectSupportScheme?.workspaceFolderValue
-  ) {
-    await luaConfig.update(
-      "workspace.supportScheme",
-      ["file", "default"],
-      ConfigurationTarget.Global
-    );
+  if (luaConfig.has("workspace.supportScheme")) {
+    const inspectSupportScheme = luaConfig.inspect("workspace.supportScheme");
+    if (
+      !inspectSupportScheme?.globalValue &&
+      !inspectSupportScheme?.workspaceValue &&
+      !inspectSupportScheme?.workspaceFolderValue
+    ) {
+      await luaConfig.update(
+        "workspace.supportScheme",
+        ["file", "default"],
+        ConfigurationTarget.Global
+      );
+    }
   }
 }
 
