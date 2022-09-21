@@ -140,6 +140,8 @@ async function syncLuaTypes(
     "Lua.workspace.checkThirdParty": false,
     [kWorkspaceLibrary]: [],
     [kRuntimePlugin]: "",
+    "Lua.completion.showWord": "Disable",
+    "Lua.completion.keywordSnippet": "Both",
     "Lua.diagnostics.disable": ["lowercase-global", "trailing-space"],
   };
   const luarcJson = (
