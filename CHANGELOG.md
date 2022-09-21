@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.40.0 (Release on 21 September 2022)
+
+- Improved default completion settings for Lua extension
+
 ## 1.39.0 (Release on 20 September 2022)
 
 - Provide workspace type definitions for Lua filters and shortcodes
