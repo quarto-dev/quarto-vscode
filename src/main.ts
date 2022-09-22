@@ -18,6 +18,7 @@ import { initQuartoContext } from "./shared/quarto";
 import { activateStatusBar } from "./providers/statusbar";
 import { walkthroughCommands } from "./providers/walkthrough";
 import { activateLuaTypes } from "./providers/lua-types";
+import { activateSpelling } from "./providers/spelling";
 
 export async function activate(context: vscode.ExtensionContext) {
   // create markdown engine
@@ -70,6 +71,9 @@ export async function activate(context: vscode.ExtensionContext) {
     kQuartoDocSelector,
     quartoCellExecuteCodeLensProvider(engine)
   );
+
+  // provide spell checking
+  await activateSpelling();
 
   // activate providers common to browser/node
   activateCommon(context, engine, commands);

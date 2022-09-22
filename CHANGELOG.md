@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.41.1 (Unreleased)
+
+- Automatically configure spell-checking for Quarto documents when the Spell Right extension is installed.
+
 ## 1.40.0 (Release on 21 September 2022)
 
 - Improved default completion settings for Lua extension
