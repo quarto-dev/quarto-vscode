@@ -7,6 +7,7 @@ import path from "path";
 import fs from "fs";
 
 import * as yaml from "js-yaml";
+import { QuartoContext } from "./quarto";
 
 export function parseFrontMatterStr(str: string) {
   str = str.replace(/---\s*$/, "");
@@ -87,16 +88,98 @@ export function yamlFromMetadataFile(file: string): Record<string, unknown> {
   return {};
 }
 
-export function quartoProjectConfig(dir: string): { [key: string]: any } {
-  for (const config of ["_quarto.yml", "_quarto.yaml"]) {
-    const configFile = path.join(dir, config);
-    if (fs.existsSync(configFile)) {
-      const yamlSrc = fs.readFileSync(configFile, "utf-8");
-      if (yamlSrc.trim().length > 0) {
-        const yamlOpts = yaml.load(yamlSrc) as { [key: string]: any };
-        return yamlOpts;
-      }
+export type QuartoProjectConfig = {
+  dir: string;
+  config: {
+    project: {
+      type: string;
+      preview: {
+        serve: {};
+      };
+    };
+  };
+  files: {
+    config: string[];
+  };
+};
+
+export async function quartoProjectConfig(
+  quarto: QuartoContext,
+  file: string
+): Promise<QuartoProjectConfig | undefined> {
+  // disqualifying conditions
+  if (!quarto || !fs.existsSync(file)) {
+    return undefined;
+  }
+  // lookup in cache
+  if (configCache.has(file)) {
+    // get the value
+    const cache = configCache.get(file);
+
+    // if its undefined that means there is no project config
+    if (cache === undefined) {
+      return undefined;
+      // otherwise check the hash (i.e. has the project file or the config
+      // files it includes changed)
+    } else if (cache.hash === configHash(cache.config)) {
+      return cache.config;
     }
   }
-  return {};
+
+  // try to find the config
+  let config: QuartoProjectConfig | undefined;
+
+  try {
+    if (fs.statSync(file).isDirectory()) {
+      config = JSON.parse(
+        quarto.runQuarto({ cwd: file }, "inspect")
+      ) as QuartoProjectConfig;
+      // older versions of quarto don't provide the dir so fill it in if we need to
+      if (!config.dir) {
+        config.dir = file;
+      }
+    } else {
+      config = JSON.parse(
+        quarto.runQuarto(
+          { cwd: path.dirname(file) },
+          "inspect",
+          path.basename(file)
+        )
+      ).project as QuartoProjectConfig | undefined;
+      // older versions of quarto don't provide the dir so fill it in if we need to
+      if (config && !config.dir) {
+        const projectDir = projectDirForDocument(file);
+        if (projectDir) {
+          config.dir = projectDir;
+        } else {
+          // can't determine the project dir so we are going to say no project
+          config = undefined;
+        }
+      }
+    }
+  } catch (e) {
+    config = undefined;
+  }
+
+  // now store the config in the cache
+  configCache.set(
+    file,
+    config ? { hash: configHash(config), config } : undefined
+  );
+
+  // return it
+  return config;
+}
+
+// cache previously read configs (undefined means no project)
+const configCache = new Map<
+  string,
+  { hash: string; config: QuartoProjectConfig } | undefined
+>();
+
+// include modification times of referenced config files in cache key
+function configHash(config: QuartoProjectConfig) {
+  return config.files.config.reduce((hash, file) => {
+    return hash + fs.statSync(file).mtimeMs.toLocaleString();
+  }, "");
 }
