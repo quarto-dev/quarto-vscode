@@ -286,11 +286,11 @@ class PreviewManager {
     previewEnv: PreviewEnv
   ) {
     return (
-      this.previewUrl_ &&
+      !!this.previewUrl_ &&
       previewEnvsEqual(this.previewEnv_, previewEnv) &&
       this.previewType_ === this.previewTypeConfig() &&
       (this.previewType_ !== "internal" || this.webviewManager_.hasWebview()) &&
-      this.terminal_ &&
+      !!this.terminal_ &&
       this.terminal_.exitStatus === undefined &&
       !(await isQuartoShinyDoc(this.engine_, doc))
     );
@@ -458,6 +458,15 @@ class PreviewManager {
           }
         } else {
           this.previewUrl_ = this.previewCommandUrl_;
+        }
+
+        // if there was a 'preview service running' message then that
+        // also establishes an alternate control channel
+        const previewServiceMatch = this.previewOutput_.match(
+          /Preview service running \((\d+)\)/
+        );
+        if (previewServiceMatch) {
+          this.previewCommandUrl_ = `http://127.0.0.1:${previewServiceMatch[1]}`;
         }
 
         if (this.previewType_ === "internal") {
