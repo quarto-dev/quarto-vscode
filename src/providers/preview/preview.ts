@@ -46,7 +46,6 @@ import {
   previewEnvsEqual,
   requiresTerminalDelay,
 } from "./preview-env";
-import { isHugoMarkdown } from "../../core/hugo";
 import { MarkdownEngine } from "../../markdown/engine";
 import { shQuote, winShEscape } from "../../shared/strings";
 
@@ -533,9 +532,8 @@ class PreviewManager {
 
   private showPreview() {
     if (
-      (!this.previewOutputFile_ || // no output file means project render/preview
-        this.isBrowserPreviewable(this.previewOutputFile_)) &&
-      !isHugoMarkdown(this.previewOutputFile_) // hugo preview done via 'hugo serve'
+      !this.previewOutputFile_ || // no output file means project render/preview
+      this.isBrowserPreviewable(this.previewOutputFile_)
     ) {
       this.webviewManager_.showWebview(this.previewUrl_!, {
         preserveFocus: true,
