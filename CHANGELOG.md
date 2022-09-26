@@ -1,8 +1,10 @@
 # Changelog
 
-## 1.41.1 (Unreleased)
+## 1.41.0 (Release on 25 September 2022)
 
 - Automatically configure spell-checking for Quarto documents when the Spell Right extension is installed.
+- Recognize control channel for external preview servers (Quarto v1.2)
+- Allow preview for Hugo documents (Quarto v1.2 Hugo project type)
 
 ## 1.40.0 (Release on 21 September 2022)
 

@@ -52,7 +52,8 @@ export async function activateSpelling() {
       await spellrightConfig.update(
         "parserByClass",
         {
-          ...(inspectParserByClass?.globalValue || {}),
+          ...((inspectParserByClass?.globalValue as Record<string, unknown>) ||
+            {}),
           quarto: { parser: "markdown" },
         },
         ConfigurationTarget.Global
@@ -69,7 +70,8 @@ export async function activateSpelling() {
       await spellrightConfig.update(
         "ignoreRegExpsByClass",
         {
-          ...(inspectIgnoreRegExps?.globalValue || {}),
+          ...((inspectIgnoreRegExps?.globalValue as Record<string, unknown>) ||
+            {}),
           quarto: ["/\\{.+\\}/", "/@[^ ]+/", "/\\n\\s*[^\\s\\:]+\\:/"],
         },
 
