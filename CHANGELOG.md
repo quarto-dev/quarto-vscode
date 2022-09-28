@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.42.0 (Unreleased)
+## 1.42.0 (Release on 28 September 2022)
 
 - Make Quarto Render commands available for `markdown` document type
 - Improve default spelling ignore (ignore characters after `.` and `-` in words)
