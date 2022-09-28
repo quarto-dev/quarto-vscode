@@ -220,6 +220,7 @@ const languages = [
     identifiers: [
       "js",
       "jsx",
+      "mdx",
       "javascript",
       "es6",
       "mjs",

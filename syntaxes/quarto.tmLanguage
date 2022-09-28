@@ -1724,7 +1724,7 @@
       <key>fenced_code_block_js</key>
       <dict>
         <key>begin</key>
-        <string>(^|\G)(\s*)(`{3,}|~{3,})\s*(?:\{[\{\.=]?)?(?i:(js|jsx|javascript|es6|mjs|cjs|ojs|\{\.js.+?\})(?:\}{1,2})?((\s+|:|,|\{|\?)[^`~]*)?$)</string>
+        <string>(^|\G)(\s*)(`{3,}|~{3,})\s*(?:\{[\{\.=]?)?(?i:(js|jsx|mdx|javascript|es6|mjs|cjs|ojs|\{\.js.+?\})(?:\}{1,2})?((\s+|:|,|\{|\?)[^`~]*)?$)</string>
         <key>name</key>
         <string>markup.fenced_code.block.markdown</string>
         <key>end</key>
