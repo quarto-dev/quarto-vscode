@@ -72,7 +72,12 @@ export async function activateSpelling() {
         {
           ...((inspectIgnoreRegExps?.globalValue as Record<string, unknown>) ||
             {}),
-          quarto: ["/\\{.+\\}/", "/@[^ ]+/", "/\\n\\s*[^\\s\\:]+\\:/"],
+          quarto: [
+            "/\\{.+\\}/",
+            "/@[^ ]+/",
+            "/[-\\.][^ ]+/",
+            "/\\n\\s*[^\\s\\:]+\\:/",
+          ],
         },
 
         ConfigurationTarget.Global
