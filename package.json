@@ -474,19 +474,19 @@
       "editor/title/run": [
         {
           "command": "quarto.render",
-          "when": "editorLangId == quarto"
+          "when": "editorLangId == quarto || editorLangId == markdown"
         },
         {
           "command": "quarto.renderHTML",
-          "when": "editorLangId == quarto"
+          "when": "editorLangId == quarto || editorLangId == markdown"
         },
         {
           "command": "quarto.renderPDF",
-          "when": "editorLangId == quarto"
+          "when": "editorLangId == quarto || editorLangId == markdown"
         },
         {
           "command": "quarto.renderDOCX",
-          "when": "editorLangId == quarto"
+          "when": "editorLangId == quarto || editorLangId == markdown"
         },
         {
           "command": "quarto.previewShortcut",
@@ -545,7 +545,7 @@
         },
         {
           "command": "quarto.render",
-          "when": "editorLangId == quarto"
+          "when": "editorLangId == quarto || editorLangId == markdown"
         },
         {
           "command": "quarto.previewDiagram",
@@ -564,15 +564,15 @@
         },
         {
           "command": "quarto.renderHTML",
-          "when": "editorLangId == quarto"
+          "when": "editorLangId == quarto || editorLangId == markdown"
         },
         {
           "command": "quarto.renderPDF",
-          "when": "editorLangId == quarto"
+          "when": "editorLangId == quarto || editorLangId == markdown"
         },
         {
           "command": "quarto.renderDOCX",
-          "when": "editorLangId == quarto"
+          "when": "editorLangId == quarto || editorLangId == markdown"
         },
         {
           "command": "quarto.clearCache",

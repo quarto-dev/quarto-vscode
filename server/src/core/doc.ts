@@ -8,6 +8,7 @@ import { URI } from "vscode-uri";
 import { TextDocument } from "vscode-languageserver-textdocument";
 
 export const kQuartoLanguageId = "quarto";
+export const kMarkdownLanguageId = "markdown";
 export const kYamlLanguageId = "yaml";
 
 export enum DocType {
@@ -27,7 +28,10 @@ export function docType(doc: TextDocument) {
 }
 
 export function isQuartoDoc(doc: TextDocument) {
-  return doc.languageId === kQuartoLanguageId;
+  return (
+    doc.languageId === kQuartoLanguageId ||
+    doc.languageId === kMarkdownLanguageId
+  );
 }
 
 export function isQuartoYaml(doc: TextDocument) {

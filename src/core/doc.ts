@@ -8,6 +8,7 @@ import * as vscode from "vscode";
 import { Uri } from "vscode";
 import { extname } from "./path";
 export const kQuartoLanguageId = "quarto";
+export const kMarkdownLanguageId = "markdown";
 const kMermaidLanguageId = "mermaid";
 const kDotLanguageId = "dot";
 const kYamlLanguageId = "yaml";
@@ -18,7 +19,10 @@ export const kQuartoDocSelector: vscode.DocumentSelector = {
 };
 
 export function isQuartoDoc(doc?: vscode.TextDocument) {
-  return isLanguageDoc(kQuartoLanguageId, doc);
+  return (
+    isLanguageDoc(kQuartoLanguageId, doc) ||
+    isLanguageDoc(kMarkdownLanguageId, doc)
+  );
 }
 
 export function isMermaidDoc(doc?: vscode.TextDocument) {

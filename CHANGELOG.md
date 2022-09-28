@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.42.0 (Unreleased)
+
+- Make Quarto Render commands available for `markdown` document type
+
 ## 1.41.0 (Release on 25 September 2022)
 
 - Automatically configure spell-checking for Quarto documents when the Spell Right extension is installed.
