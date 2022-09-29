@@ -698,11 +698,6 @@
       "type": "object",
       "title": "Quarto",
       "properties": {
-        "quarto.spelling.autoConfigure": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Automatically configure spell-checking for Quarto documents when the [Spell Right](https://marketplace.visualstudio.com/items?itemName=ban.spellright) extension is installed."
-        },
         "quarto.assist.updateMode": {
           "type": "string",
           "description": "Controls how the Quarto Assist panel is updated when the cursor moves.",
