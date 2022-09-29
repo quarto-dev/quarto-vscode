@@ -3,6 +3,7 @@
 ## 1.43.0 (Release on 29 September 2022)
 
 - Remove automatic spelling configuration for Spell Right
+- Ensure that crossrefs aren't processed for display equation preview
 
 ## 1.42.0 (Release on 28 September 2022)
 

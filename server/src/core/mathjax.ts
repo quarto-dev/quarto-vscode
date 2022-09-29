@@ -72,6 +72,9 @@ export function mathjaxLoadedExtensions() {
 }
 
 export function mathjaxTypesetToMarkdown(tex: string): MarkupContent | null {
+  // remove crossref if necessary
+  tex = tex.replace(/\$\$\s+\{#eq[\w\-]+\}\s*$/, "");
+
   const typesetOpts = {
     scale: config.mathJaxScale(),
     color: getColor(),
