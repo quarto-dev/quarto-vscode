@@ -15,7 +15,7 @@ import {
   MarkupKind,
 } from "vscode-languageserver/node";
 import { quartoProjectConfig } from "../../../shared/metadata";
-import { pathWithForwardSlashes } from "../../../core/path";
+import { pathWithForwardSlashes } from "../../../shared/path";
 
 import { quarto } from "../../../quarto/quarto";
 import { fileCrossrefIndexStorage } from "../../../shared/storage";

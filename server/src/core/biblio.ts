@@ -19,7 +19,7 @@ import {
 import { filePathForDoc } from "./doc";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { documentFrontMatter } from "./markdown/markdown";
-import { pathWithForwardSlashes } from "./path";
+import { pathWithForwardSlashes } from "../shared/path";
 
 export type CslRef = {
   id: string;
