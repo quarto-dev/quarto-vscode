@@ -7,7 +7,7 @@ import path from "path";
 import fs from "fs";
 
 import * as yaml from "js-yaml";
-import { QuartoContext } from "./quarto";
+import { ExecFileSyncOptions } from "child_process";
 
 export function parseFrontMatterStr(str: string) {
   str = str.replace(/---\s*$/, "");
@@ -104,11 +104,11 @@ export type QuartoProjectConfig = {
 };
 
 export async function quartoProjectConfig(
-  quarto: QuartoContext,
+  runQuarto: (options: ExecFileSyncOptions, ...args: string[]) => string,
   file: string
 ): Promise<QuartoProjectConfig | undefined> {
   // disqualifying conditions
-  if (!quarto || !fs.existsSync(file)) {
+  if (!fs.existsSync(file)) {
     return undefined;
   }
   // lookup in cache
@@ -132,7 +132,7 @@ export async function quartoProjectConfig(
   try {
     if (fs.statSync(file).isDirectory()) {
       config = JSON.parse(
-        quarto.runQuarto({ cwd: file }, "inspect")
+        runQuarto({ cwd: file }, "inspect")
       ) as QuartoProjectConfig;
       // older versions of quarto don't provide the dir so fill it in if we need to
       if (!config.dir) {
@@ -140,11 +140,7 @@ export async function quartoProjectConfig(
       }
     } else {
       config = JSON.parse(
-        quarto.runQuarto(
-          { cwd: path.dirname(file) },
-          "inspect",
-          path.basename(file)
-        )
+        runQuarto({ cwd: path.dirname(file) }, "inspect", path.basename(file))
       ).project as QuartoProjectConfig | undefined;
       // older versions of quarto don't provide the dir so fill it in if we need to
       if (config && !config.dir) {
