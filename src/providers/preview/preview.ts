@@ -48,6 +48,7 @@ import {
 } from "./preview-env";
 import { MarkdownEngine } from "../../markdown/engine";
 import { shQuote, winShEscape } from "../../shared/strings";
+import { pathWithForwardSlashes } from "../../shared/path";
 
 import {
   QuartoPreviewWebview,
@@ -391,7 +392,7 @@ class PreviewManager {
     const cmd: string[] = [
       this.quartoContext_.useCmd ? winShEscape(quarto) : shQuote(quarto),
       isShiny ? "serve" : "preview",
-      shQuote(target.fsPath),
+      shQuote(pathWithForwardSlashes(target.fsPath)),
     ];
 
     // extra args for normal docs

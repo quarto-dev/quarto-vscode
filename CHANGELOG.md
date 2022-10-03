@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.44.0 (Unreleased)
+
+- Preview path compatibility for Git Bash terminal on Windows
+
 ## 1.43.0 (Release on 29 September 2022)
 
 - Remove automatic spelling configuration for Spell Right
