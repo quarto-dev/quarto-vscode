@@ -152,7 +152,7 @@ export class MarkdownTableOfContents {
         });
       } else if (token.type === kFrontMatter) {
         const meta = parseFrontMatterStr(token.markup);
-        if (meta["title"]) {
+        if (meta?.["title"]) {
           toc.push({
             type: TocEntryType.Title,
             text: meta["title"],
