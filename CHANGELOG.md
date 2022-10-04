@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.44.0 (Unreleased)
+## 1.44.0 (Release on 3 October 2022)
 
 - Preview path compatibility for Git Bash terminal on Windows
 
