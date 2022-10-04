@@ -18,6 +18,7 @@ import {
 } from "../../markdown/language";
 import { virtualDoc, virtualDocUri } from "../../vdoc/vdoc";
 import { lines } from "../../core/text";
+import { cellOptions, kExecuteEval } from "./options";
 
 export function hasExecutor(language: string) {
   return !!kCellExecutors.find((x) => x.language === language);
@@ -27,6 +28,16 @@ export function blockHasExecutor(token?: Token) {
   if (token) {
     const language = languageNameFromBlock(token);
     return isExecutableLanguageBlock(token) && hasExecutor(language);
+  } else {
+    return false;
+  }
+}
+
+export function blockIsExecutable(token?: Token) {
+  if (token) {
+    return (
+      blockHasExecutor(token) && cellOptions(token)[kExecuteEval] !== false
+    );
   } else {
     return false;
   }

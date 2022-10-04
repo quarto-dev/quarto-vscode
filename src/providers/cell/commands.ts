@@ -22,6 +22,7 @@ import {
 } from "../../markdown/language";
 import {
   blockHasExecutor,
+  blockIsExecutable,
   codeFromBlock,
   ensureRequiredExtension,
   executeInteractive,
@@ -123,7 +124,7 @@ class RunNextCellCommand extends RunCommand implements Command {
   public readonly id = RunNextCellCommand.id;
 
   override async doExecute(editor: TextEditor, tokens: Token[], line: number) {
-    const block = nextBlock(line, tokens);
+    const block = nextBlock(line, tokens, true);
     if (block) {
       await runAdjacentBlock(editor, block);
     }
@@ -138,7 +139,7 @@ class RunPreviousCellCommand extends RunCommand implements Command {
   public readonly id = RunPreviousCellCommand.id;
 
   override async doExecute(editor: TextEditor, tokens: Token[], line: number) {
-    const block = previousBlock(line, tokens);
+    const block = previousBlock(line, tokens, true);
     if (block) {
       if (block) {
         await runAdjacentBlock(editor, block);
@@ -206,7 +207,7 @@ class RunCellsAboveCommand extends RunCommand implements Command {
   ) {
     // collect up blocks prior to the active one
     const blocks: Token[] = [];
-    for (const blk of tokens.filter(blockHasExecutor)) {
+    for (const blk of tokens.filter(blockIsExecutable)) {
       // if the end of this block is past the line then bail
       if (!blk.map || blk.map[1] > line) {
         break;
@@ -259,7 +260,7 @@ class RunCellsBelowCommand extends RunCommand implements Command {
       : undefined;
 
     const blocks: string[] = [];
-    for (const blk of tokens.filter(blockHasExecutor)) {
+    for (const blk of tokens.filter(blockIsExecutable)) {
       // skip if the cell is above or at the cursor
       if (blk.map && line < blk.map[0]) {
         // set langauge if needed
@@ -299,7 +300,7 @@ class RunAllCellsCommand extends RunCommand implements Command {
   ) {
     let language: string | undefined;
     const blocks: string[] = [];
-    for (const block of tokens.filter(blockHasExecutor)) {
+    for (const block of tokens.filter(blockIsExecutable)) {
       const blockLanguage = languageNameFromBlock(block);
       if (!language) {
         language = blockLanguage;
@@ -375,8 +376,10 @@ function navigateToBlock(editor: TextEditor, block: Token) {
   }
 }
 
-function nextBlock(line: number, tokens: Token[]) {
-  for (const block of tokens.filter(blockHasExecutor)) {
+function nextBlock(line: number, tokens: Token[], requireExecutable = false) {
+  for (const block of tokens.filter(
+    requireExecutable ? blockIsExecutable : blockHasExecutor
+  )) {
     if (block.map && block.map[0] > line) {
       return block;
     }
@@ -384,8 +387,14 @@ function nextBlock(line: number, tokens: Token[]) {
   return undefined;
 }
 
-function previousBlock(line: number, tokens: Token[]) {
-  for (const block of tokens.filter(blockHasExecutor).reverse()) {
+function previousBlock(
+  line: number,
+  tokens: Token[],
+  requireExecutable = false
+) {
+  for (const block of tokens
+    .filter(requireExecutable ? blockIsExecutable : blockHasExecutor)
+    .reverse()) {
     if (block.map && block.map[1] < line) {
       return block;
     }

@@ -2,6 +2,7 @@
 
 ## 1.45.0 (Unreleased)
 
+- Respect `eval: false` for cell execution commands
 - LaTeX equation preview: include \newcommand (and similar) definitions in preview
 
 ## 1.44.0 (Release on 3 October 2022)
