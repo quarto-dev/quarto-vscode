@@ -131,9 +131,8 @@ export async function renderOnSave(engine: MarkdownEngine, editor: TextEditor) {
 
   // finally, consult vs code settings
   const render =
-    workspace
-      .getConfiguration("quarto", editor.document)
-      .get<boolean>("render.renderOnSave") || false;
+    workspace.getConfiguration("quarto").get<boolean>("render.renderOnSave") ||
+    false;
   return render;
 }
 
