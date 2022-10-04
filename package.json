@@ -679,13 +679,21 @@
         "editor.wordBasedSuggestions": false
       },
       "[yaml]": {
-        "editor.quickSuggestions": true,
+        "editor.quickSuggestions": {
+          "comments": "on",
+          "other": "on",
+          "strings": "on"
+        },
         "editor.quickSuggestionsDelay": 250,
         "editor.wordBasedSuggestions": false
       },
       "[quarto]": {
         "editor.wordWrap": "on",
-        "editor.quickSuggestions": true,
+        "editor.quickSuggestions": {
+          "comments": "on",
+          "other": "on",
+          "strings": "on"
+        },
         "editor.quickSuggestionsDelay": 250,
         "editor.snippetSuggestions": "none",
         "editor.wordBasedSuggestions": false,
