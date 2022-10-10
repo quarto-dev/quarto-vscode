@@ -55,6 +55,7 @@ import {
   QuartoPreviewWebviewManager,
 } from "./preview-webview";
 import {
+  haveNotebookSaveEvents,
   isQuartoShinyDoc,
   previewDirForDocument,
   renderOnSave,
@@ -112,7 +113,7 @@ export function activatePreview(
   );
   // we use 1.60 as our minimum version (and type import) but
   // onDidSaveNotebookDocument was introduced in 1.67
-  if ((vscode.workspace as any).onDidSaveNotebookDocument) {
+  if (haveNotebookSaveEvents()) {
     context.subscriptions.push(
       (vscode.workspace as any).onDidSaveNotebookDocument(
         async (notebook: NotebookDocument) => {

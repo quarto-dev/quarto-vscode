@@ -6,6 +6,9 @@
 import * as path from "path";
 import * as fs from "fs";
 
+import semver from "semver";
+
+import vscode from "vscode";
 import { TextDocument, TextEditor, Uri, workspace } from "vscode";
 import { parseFrontMatterStr } from "../../core/yaml";
 import { MarkdownEngine } from "../../markdown/engine";
@@ -100,10 +103,7 @@ export async function documentFrontMatter(
 export async function renderOnSave(engine: MarkdownEngine, editor: TextEditor) {
   // if its a notebook and we don't have a save hook for notebooks then don't
   // allow renderOnSave (b/c we can't detect the saves)
-  if (
-    isNotebook(editor.document) &&
-    !(workspace as any).onDidSaveNotebookDocument
-  ) {
+  if (isNotebook(editor.document) && !haveNotebookSaveEvents()) {
     return false;
   }
 
@@ -134,6 +134,13 @@ export async function renderOnSave(engine: MarkdownEngine, editor: TextEditor) {
     workspace.getConfiguration("quarto").get<boolean>("render.renderOnSave") ||
     false;
   return render;
+}
+
+export function haveNotebookSaveEvents() {
+  return (
+    semver.gte(vscode.version, "1.67.0") &&
+    !!(workspace as any).onDidSaveNotebookDocument
+  );
 }
 
 function readRenderOnSave(yaml: Record<string, unknown>) {
