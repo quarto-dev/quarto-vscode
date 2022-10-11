@@ -62,6 +62,7 @@
     "onCommand:quarto.fileNewPresentation",
     "onCommand:quarto.walkthrough.verifyInstallation",
     "onCommand:quarto.walkthrough.newDocument",
+    "onCommand:quarto.createProject",
     "workspaceContains:**/*.qmd",
     "workspaceContains:**/_quarto.{yml,yaml}",
     "workspaceContains:**/_extension.{yml,yaml}",
@@ -242,6 +243,11 @@
       {
         "command": "quarto.fileNewNotebook",
         "title": "Quarto Notebook (ipynb)",
+        "category": "Quarto"
+      },
+      {
+        "command": "quarto.createProject",
+        "title": "Create Project",
         "category": "Quarto"
       },
       {
@@ -539,6 +545,9 @@
         {
           "command": "quarto.fileNewPresentation",
           "when": "false"
+        },
+        {
+          "command": "quarto.createProject"
         },
         {
           "command": "quarto.renderProject"

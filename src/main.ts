@@ -18,6 +18,7 @@ import { initQuartoContext } from "./shared/quarto";
 import { activateStatusBar } from "./providers/statusbar";
 import { walkthroughCommands } from "./providers/walkthrough";
 import { activateLuaTypes } from "./providers/lua-types";
+import { activateCreate } from "./providers/create/create";
 
 export async function activate(context: vscode.ExtensionContext) {
   // create markdown engine
@@ -64,6 +65,10 @@ export async function activate(context: vscode.ExtensionContext) {
   // provide preview
   const previewCommands = activatePreview(context, quartoContext, engine);
   commands.push(...previewCommands);
+
+  // provide create
+  const createCommands = activateCreate(quartoContext);
+  commands.push(...createCommands);
 
   // provide code lens
   vscode.languages.registerCodeLensProvider(
