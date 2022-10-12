@@ -67,7 +67,7 @@ export async function activate(context: vscode.ExtensionContext) {
   commands.push(...previewCommands);
 
   // provide create
-  const createCommands = activateCreate(quartoContext);
+  const createCommands = activateCreate(context, quartoContext);
   commands.push(...createCommands);
 
   // provide code lens

@@ -4,9 +4,13 @@
  *---------------------------------------------------------------------------------------------
  */
 
+import { ExtensionContext } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { CreateProjectCommand } from "./project";
 
-export function activateCreate(quartoContext: QuartoContext) {
-  return [new CreateProjectCommand(quartoContext)];
+export function activateCreate(
+  context: ExtensionContext,
+  quartoContext: QuartoContext
+) {
+  return [new CreateProjectCommand(context, quartoContext)];
 }
