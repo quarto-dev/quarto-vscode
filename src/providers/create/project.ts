@@ -11,6 +11,7 @@ import { commands, ExtensionContext, QuickPickItem, Uri, window } from "vscode";
 import { Command } from "../../core/command";
 import { withMinimumQuartoVersion } from "../../core/quarto";
 import { QuartoContext } from "../../shared/quarto";
+import { createFirstRun } from "./firstrun";
 
 export class CreateProjectCommand implements Command {
   constructor(
@@ -69,7 +70,7 @@ export class CreateProjectCommand implements Command {
         );
 
         // create the project
-        await createAndOpenProject(this.quartoContext_, typePick.type, projDir);
+        await createAndOpenProject(this.quartoContext_, typePick, projDir);
       }
     );
   }
@@ -77,11 +78,15 @@ export class CreateProjectCommand implements Command {
 
 async function createAndOpenProject(
   quartoContext: QuartoContext,
-  type: string,
+  pick: CreateProjectQuickPickItem,
   projDir: string
 ) {
   // create the project
-  quartoContext.runQuarto({}, "create-project", projDir, "--type", type);
+  quartoContext.runQuarto({}, "create-project", projDir, "--type", pick.type);
+
+  // write the first run file
+  createFirstRun(projDir, pick.firstRun);
+
   // open the project
   await commands.executeCommand("vscode.openFolder", Uri.file(projDir));
 }
@@ -89,6 +94,7 @@ async function createAndOpenProject(
 interface CreateProjectQuickPickItem extends QuickPickItem {
   type: string;
   name: string;
+  firstRun: string[];
 }
 
 function selectProjectType(
@@ -99,6 +105,7 @@ function selectProjectType(
     const defaultType: CreateProjectQuickPickItem = {
       type: "default",
       name: "Default",
+      firstRun: ["$(dirname).qmd"],
       label: "$(gear) Default Project",
       detail: "Simple project with starter document",
       alwaysShow: true,
@@ -106,6 +113,7 @@ function selectProjectType(
     const websiteType: CreateProjectQuickPickItem = {
       type: "website",
       name: "Website",
+      firstRun: ["index.qmd"],
       label: "$(globe) Website Project",
       detail: "Website with index and about pages",
       alwaysShow: true,
@@ -113,6 +121,7 @@ function selectProjectType(
     const blogType: CreateProjectQuickPickItem = {
       type: "website:blog",
       name: "Blog",
+      firstRun: ["index.qmd"],
       label: "$(preview) Blog Project",
       detail: "Blog with index/about pages and posts.",
       alwaysShow: true,
@@ -120,6 +129,7 @@ function selectProjectType(
     const bookType: CreateProjectQuickPickItem = {
       type: "book",
       name: "Book",
+      firstRun: ["index.qmd"],
       label: "$(book) Book Project",
       detail: "Book with chapters and bibliography.",
       alwaysShow: true,

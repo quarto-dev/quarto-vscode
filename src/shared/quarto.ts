@@ -15,6 +15,7 @@ export interface QuartoContext {
   version: string;
   binPath: string;
   resourcePath: string;
+  workspaceDir?: string;
   useCmd: boolean;
   runQuarto: (options: ExecFileSyncOptions, ...args: string[]) => string;
   runPandoc: (options: ExecFileSyncOptions, ...args: string[]) => string;
@@ -56,6 +57,7 @@ export function initQuartoContext(
     return {
       available: true,
       ...quartoInstall,
+      workspaceDir: workspaceFolder,
       useCmd,
       runQuarto: (options: ExecFileSyncOptions, ...args: string[]) =>
         execProgram(

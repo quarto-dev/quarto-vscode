@@ -7,14 +7,15 @@ import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
 import * as semver from "semver";
-import * as child_process from "child_process";
 import { ExecFileSyncOptions } from "child_process";
+import { execProgram } from "./exec";
 
 export interface QuartoContext {
   available: boolean;
   version: string;
   binPath: string;
   resourcePath: string;
+  workspaceDir?: string;
   useCmd: boolean;
   runQuarto: (options: ExecFileSyncOptions, ...args: string[]) => string;
   runPandoc: (options: ExecFileSyncOptions, ...args: string[]) => string;
@@ -56,6 +57,7 @@ export function initQuartoContext(
     return {
       available: true,
       ...quartoInstall,
+      workspaceDir: workspaceFolder,
       useCmd,
       runQuarto: (options: ExecFileSyncOptions, ...args: string[]) =>
         execProgram(
@@ -164,6 +166,7 @@ function scanForQuarto(): QuartoInstallation | undefined {
   } else if (os.platform() === "linux") {
     scanPaths.push("/opt/quarto/bin");
     scanPaths.push("/usr/lib/rstudio/bin/quarto/bin");
+    scanPaths.push("/usr/lib/rstudio-server/bin/quarto/bin");
   }
 
   for (const scanPath of scanPaths.filter(fs.existsSync)) {
@@ -174,18 +177,4 @@ function scanForQuarto(): QuartoInstallation | undefined {
   }
 
   return undefined;
-}
-
-// helper to run a program and capture its output
-function execProgram(
-  program: string,
-  args: string[],
-  options?: ExecFileSyncOptions
-) {
-  return (
-    child_process.execFileSync(program, args, {
-      encoding: "utf-8",
-      ...options,
-    }) as unknown as string
-  ).trim();
 }

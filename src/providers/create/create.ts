@@ -4,13 +4,28 @@
  *---------------------------------------------------------------------------------------------
  */
 
-import { ExtensionContext } from "vscode";
+import path from "path";
+
+import { ExtensionContext, workspace, window, ViewColumn } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
+import { collectFirstRun } from "./firstrun";
 import { CreateProjectCommand } from "./project";
 
-export function activateCreate(
+export async function activateCreate(
   context: ExtensionContext,
   quartoContext: QuartoContext
 ) {
+  // open documents if there is a first-run file
+  if (quartoContext.workspaceDir) {
+    const firstRun = collectFirstRun(quartoContext.workspaceDir).map((file) =>
+      path.join(quartoContext.workspaceDir!, file)
+    );
+    for (const file of firstRun) {
+      const doc = await workspace.openTextDocument(file);
+      await window.showTextDocument(doc, ViewColumn.Active);
+    }
+  }
+
+  // commands
   return [new CreateProjectCommand(context, quartoContext)];
 }
