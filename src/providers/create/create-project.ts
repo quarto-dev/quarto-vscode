@@ -34,7 +34,9 @@ export class CreateProjectCommand implements Command {
         // resolve directory
         const projDir = await resolveDirectoryForCreate(
           this.context_,
-          "Project"
+          "Project",
+          "Project Directory Name",
+          false
         );
         if (!projDir) {
           return;
@@ -106,7 +108,7 @@ function selectProjectType(
       alwaysShow: true,
     };
     const quickPick = window.createQuickPick<CreateProjectQuickPickItem>();
-    quickPick.title = "Create Project";
+    quickPick.title = "Create Quarto Project";
     quickPick.placeholder = "Select project type";
     quickPick.step = step;
     quickPick.totalSteps = totalSteps;

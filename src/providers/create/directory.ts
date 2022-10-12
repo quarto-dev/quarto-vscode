@@ -11,7 +11,9 @@ import { ExtensionContext, Uri, window } from "vscode";
 
 export async function resolveDirectoryForCreate(
   context: ExtensionContext,
-  name: string
+  name: string,
+  subdirTitle: string,
+  forceSubdirPrompt: boolean
 ) {
   // select direcotry (see if we have a default parent)
   const kDefaultParentDir = `quarto.create${name}.dir`;
@@ -20,7 +22,7 @@ export async function resolveDirectoryForCreate(
     undefined
   );
   const projFolder = await window.showOpenDialog({
-    title: `New ${name} Direcory`,
+    title: `New ${name} Directory`,
     openLabel: `Choose ${name} Directory`,
     canSelectFiles: false,
     canSelectFolders: true,
@@ -36,9 +38,24 @@ export async function resolveDirectoryForCreate(
 
   // see if we need a sub-directory
   let projDir: string | undefined = projFolder[0].fsPath;
-  projDir = isDirEmpty(projDir)
-    ? projDir
-    : await directoryWithSubdir(name, projDir, 2, 2);
+  let defaultName: string | undefined;
+  const emptyDir = isDirEmpty(projDir);
+
+  // prompt if the directory is not empty or we are being forced
+  if (!emptyDir || forceSubdirPrompt) {
+    // if they gave us an empty dir then that's the default
+    if (emptyDir) {
+      defaultName = path.basename(projDir);
+      projDir = path.dirname(projDir);
+    }
+    projDir = await directoryWithSubdir(
+      subdirTitle,
+      projDir,
+      defaultName,
+      2,
+      2
+    );
+  }
   if (!projDir) {
     return;
   }
@@ -51,16 +68,22 @@ export async function resolveDirectoryForCreate(
 }
 
 function directoryWithSubdir(
-  name: string,
+  title: string,
   parentDir: string,
+  defaultName?: string,
   step?: number,
   totalSteps?: number
 ): Promise<string | undefined> {
   return new Promise<string | undefined>((resolve) => {
     const inputBox = window.createInputBox();
-    inputBox.title = `${name} Subdirectory`;
-    inputBox.prompt = parentDir;
-    inputBox.placeholder = `New ${name.toLowerCase()} subdirectory name`;
+    inputBox.title = title;
+    inputBox.prompt = defaultName
+      ? path.join(parentDir, defaultName)
+      : defaultName;
+    inputBox.placeholder = title;
+    if (defaultName) {
+      inputBox.value = defaultName;
+    }
     inputBox.step = step;
     inputBox.totalSteps = totalSteps;
     inputBox.onDidChangeValue((value) => {

@@ -7,7 +7,14 @@
 import fs from "fs";
 import path from "path";
 
-import { commands, ExtensionContext, QuickPickItem, Uri, window } from "vscode";
+import {
+  commands,
+  ExtensionContext,
+  QuickPickItem,
+  QuickPickItemKind,
+  Uri,
+  window,
+} from "vscode";
 import { Command } from "../../core/command";
 import { withMinimumQuartoVersion } from "../../core/quarto";
 import { QuartoContext } from "../../shared/quarto";
@@ -37,7 +44,9 @@ export class CreateExtensionCommand implements Command {
         // resolve directory
         const extensionDir = await resolveDirectoryForCreate(
           this.context_,
-          "Extension"
+          "Extension",
+          "Extension Name",
+          true
         );
         if (!extensionDir) {
           return;
@@ -91,33 +100,84 @@ function selectExtensionType(
   totalSteps?: number
 ): Promise<CreateExtensionQuickPickItem | undefined> {
   return new Promise<CreateExtensionQuickPickItem | undefined>((resolve) => {
-    const shortcodeType: CreateExtensionQuickPickItem = {
-      type: "shortcode",
-      name: "Shortcode",
+    const extensionQuickPick = (
+      name: string,
+      type: string,
+      detail: string
+    ) => ({
+      type: type || name.toLowerCase(),
+      name,
       firstRun: ["example.qmd"],
-      label: "Shortcode Extension",
-      detail: "A shortcode for generating content",
+      label: name,
+      detail,
       alwaysShow: true,
-    };
-    const filterType: CreateExtensionQuickPickItem = {
-      type: "filter",
-      name: "Filter",
-      firstRun: ["example.qmd"],
-      label: "Filter Extension",
-      detail: "A filter for filtering",
-      alwaysShow: true,
-    };
-    const quickPick = window.createQuickPick<CreateExtensionQuickPickItem>();
-    quickPick.title = "Create Extension";
+    });
+
+    const quickPick = window.createQuickPick<QuickPickItem>();
+    quickPick.title = "Create Quarto Extension";
     quickPick.placeholder = "Select extension type";
     quickPick.step = step;
     quickPick.totalSteps = totalSteps;
-    quickPick.items = [shortcodeType, filterType];
+    quickPick.items = [
+      extensionQuickPick(
+        "Shortcode",
+        "shortcode",
+        "Markdown directive that generates content"
+      ),
+      extensionQuickPick(
+        "Filter",
+        "filter",
+        "Custom markdown rendering behavior"
+      ),
+      extensionQuickPick(
+        "Revealjs Plugin",
+        "revealjs",
+        "New capabilities for Revealjs presentations"
+      ),
+      {
+        label: "Formats",
+        kind: QuickPickItemKind.Separator,
+      },
+      extensionQuickPick(
+        "Journal Article Format",
+        "journal",
+        "Professional Journal article format"
+      ),
+      extensionQuickPick(
+        "Custom Format (HTML)",
+        "format:html",
+        "HTML format with custom options, style sheet, etc."
+      ),
+      extensionQuickPick(
+        "Custom Format (PDF)",
+        "format:pdf",
+        "PDF format with custom options, LaTeX directives, etc."
+      ),
+      extensionQuickPick(
+        "Custom Format (MS Word)",
+        "format:docx",
+        "MS Word format with custom options, template, etc."
+      ),
+      extensionQuickPick(
+        "Custom Format (Revealjs)",
+        "format:revealjs",
+        "Revealjs format with custom options, theme, etc."
+      ),
+      {
+        label: "Projects",
+        kind: QuickPickItemKind.Separator,
+      },
+      extensionQuickPick(
+        "Custom Project Type",
+        "project",
+        "Project with standard set of options"
+      ),
+    ];
     let accepted = false;
     quickPick.onDidAccept(() => {
       accepted = true;
       quickPick.hide();
-      resolve(quickPick.selectedItems[0]);
+      resolve(quickPick.selectedItems[0] as CreateExtensionQuickPickItem);
     });
     quickPick.onDidHide(() => {
       if (!accepted) {
