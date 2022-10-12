@@ -4,13 +4,11 @@
  *---------------------------------------------------------------------------------------------
  */
 
-import fs from "fs";
-import path from "path";
-
 import { commands, ExtensionContext, QuickPickItem, Uri, window } from "vscode";
 import { Command } from "../../core/command";
 import { withMinimumQuartoVersion } from "../../core/quarto";
 import { QuartoContext } from "../../shared/quarto";
+import { resolveDirectoryForCreate } from "./directory";
 import { createFirstRun } from "./firstrun";
 
 export class CreateProjectCommand implements Command {
@@ -33,41 +31,14 @@ export class CreateProjectCommand implements Command {
           return;
         }
 
-        // select direcotry (see if we have a default parent)
-        const kDefaultProjectParentDir = "quarto.createProject.dir";
-        const defaultParent = this.context_.globalState.get<string | undefined>(
-          kDefaultProjectParentDir,
-          undefined
+        // resolve directory
+        const projDir = await resolveDirectoryForCreate(
+          this.context_,
+          "Project"
         );
-        const projFolder = await window.showOpenDialog({
-          title: "New Project Direcory",
-          openLabel: "Choose Project Directory",
-          canSelectFiles: false,
-          canSelectFolders: true,
-          canSelectMany: false,
-          defaultUri:
-            defaultParent && fs.existsSync(defaultParent)
-              ? Uri.file(defaultParent)
-              : undefined,
-        });
-        if (!projFolder) {
-          return;
-        }
-
-        // see if we need a sub-directory
-        let projDir: string | undefined = projFolder[0].fsPath;
-        projDir = isDirEmpty(projDir)
-          ? projDir
-          : await projectDirectoryWithSubdir(projDir, 2, 2);
         if (!projDir) {
           return;
         }
-
-        // update the default project parent dir
-        this.context_.globalState.update(
-          kDefaultProjectParentDir,
-          path.dirname(projDir)
-        );
 
         // create the project
         await createAndOpenProject(this.quartoContext_, typePick, projDir);
@@ -153,43 +124,4 @@ function selectProjectType(
     });
     quickPick.show();
   });
-}
-
-function projectDirectoryWithSubdir(
-  parentDir: string,
-  step?: number,
-  totalSteps?: number
-): Promise<string | undefined> {
-  return new Promise<string | undefined>((resolve) => {
-    const inputBox = window.createInputBox();
-    inputBox.title = `Project Subdirectory`;
-    inputBox.prompt = parentDir;
-    inputBox.placeholder = "New project subdirectory name";
-    inputBox.step = step;
-    inputBox.totalSteps = totalSteps;
-    inputBox.onDidChangeValue((value) => {
-      inputBox.prompt = path.join(parentDir, value);
-    });
-    let accepted = false;
-    inputBox.onDidAccept(() => {
-      accepted = true;
-      inputBox.hide();
-      resolve(
-        inputBox.value.length ? path.join(parentDir, inputBox.value) : undefined
-      );
-    });
-    inputBox.onDidHide(() => {
-      if (!accepted) {
-        resolve(undefined);
-      }
-    });
-    inputBox.show();
-  });
-}
-
-function isDirEmpty(dirname: string) {
-  const listing = fs
-    .readdirSync(dirname)
-    .filter((file) => path.basename(file) !== ".DS_Store");
-  return listing.length === 0;
 }

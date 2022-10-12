@@ -9,7 +9,8 @@ import path from "path";
 import { ExtensionContext, workspace, window, ViewColumn } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { collectFirstRun } from "./firstrun";
-import { CreateProjectCommand } from "./project";
+import { CreateProjectCommand } from "./create-project";
+import { CreateExtensionCommand } from "./create-extension";
 
 export async function activateCreate(
   context: ExtensionContext,
@@ -27,5 +28,8 @@ export async function activateCreate(
   }
 
   // commands
-  return [new CreateProjectCommand(context, quartoContext)];
+  return [
+    new CreateProjectCommand(context, quartoContext),
+    new CreateExtensionCommand(context, quartoContext),
+  ];
 }
