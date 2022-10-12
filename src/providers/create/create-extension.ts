@@ -5,6 +5,7 @@
  */
 
 import fs from "fs";
+import path from "path";
 
 import { commands, ExtensionContext, QuickPickItem, Uri, window } from "vscode";
 import { Command } from "../../core/command";
@@ -42,7 +43,7 @@ export class CreateExtensionCommand implements Command {
           return;
         }
 
-        // create the project
+        // create the extension
         await createAndOpenExtension(
           this.quartoContext_,
           typePick,
@@ -61,6 +62,16 @@ async function createAndOpenExtension(
   // create the project
   // quartoContext.runQuarto({}, "create-project", projDir, "--type", pick.type);
   fs.mkdirSync(extensionDir);
+  fs.writeFileSync(
+    path.join(extensionDir, "example.qmd"),
+    `---
+title: "Example"
+format: html
+---
+
+`,
+    { encoding: "utf-8" }
+  );
 
   // write the first run file
   createFirstRun(extensionDir, pick.firstRun);
