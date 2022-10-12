@@ -22,7 +22,7 @@ export async function activateCreate(
     );
     for (const file of firstRun) {
       const doc = await workspace.openTextDocument(file);
-      await window.showTextDocument(doc, ViewColumn.Active);
+      await window.showTextDocument(doc, ViewColumn.Active, false);
     }
   }
 
