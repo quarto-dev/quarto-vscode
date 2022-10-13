@@ -1,7 +1,8 @@
 # Changelog
 
-## 1.47.0 (Unreleased)
+## 1.47.0 (Release on 13 October 2022)
 
+- Quarto: Create Project command for creating common project types
 - Don't use forward slashes in path when running Quarto with cmd /C
 
 ## 1.46.0 (Release on 10 October 2022)
