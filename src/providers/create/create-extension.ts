@@ -165,15 +165,6 @@ function selectExtensionType(
         "format:revealjs",
         "Revealjs format with custom options, theme, etc."
       ),
-      {
-        label: "Projects",
-        kind: QuickPickItemKind.Separator,
-      },
-      extensionQuickPick(
-        "Custom Project Type",
-        "project",
-        "Project with standard set of options"
-      ),
     ];
     let accepted = false;
     quickPick.onDidAccept(() => {
