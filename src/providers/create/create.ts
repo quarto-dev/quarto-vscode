@@ -26,6 +26,6 @@ export async function activateCreate(
   // commands
   return [
     new CreateProjectCommand(context, quartoContext),
-    new CreateExtensionCommand(context, quartoContext),
+    // new CreateExtensionCommand(context, quartoContext),
   ];
 }
