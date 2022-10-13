@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.47.0 (Unreleased)
+
+- Don't use forward slashes in path when running Quarto with cmd /C
+
 ## 1.46.0 (Release on 10 October 2022)
 
 - Survive missing vscode.workspace.onDidSaveNotebookDocument in versions < 1.67

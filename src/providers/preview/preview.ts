@@ -393,7 +393,11 @@ class PreviewManager {
     const cmd: string[] = [
       this.quartoContext_.useCmd ? winShEscape(quarto) : shQuote(quarto),
       isShiny ? "serve" : "preview",
-      shQuote(pathWithForwardSlashes(target.fsPath)),
+      shQuote(
+        this.quartoContext_.useCmd
+          ? target.fsPath
+          : pathWithForwardSlashes(target.fsPath)
+      ),
     ];
 
     // extra args for normal docs
