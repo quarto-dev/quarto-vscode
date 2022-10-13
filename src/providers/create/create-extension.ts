@@ -54,6 +54,7 @@ export class CreateExtensionCommand implements Command {
 
         // create the extension
         await createAndOpenExtension(
+          this.context_,
           this.quartoContext_,
           typePick,
           extensionDir
@@ -64,6 +65,7 @@ export class CreateExtensionCommand implements Command {
 }
 
 async function createAndOpenExtension(
+  context: ExtensionContext,
   _quartoContext: QuartoContext,
   pick: CreateExtensionQuickPickItem,
   extensionDir: string
@@ -83,7 +85,7 @@ format: html
   );
 
   // write the first run file
-  createFirstRun(extensionDir, pick.firstRun);
+  createFirstRun(context, extensionDir, pick.firstRun);
 
   // open the project
   await commands.executeCommand("vscode.openFolder", Uri.file(extensionDir));

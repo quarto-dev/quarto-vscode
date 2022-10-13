@@ -43,13 +43,19 @@ export class CreateProjectCommand implements Command {
         }
 
         // create the project
-        await createAndOpenProject(this.quartoContext_, typePick, projDir);
+        await createAndOpenProject(
+          this.context_,
+          this.quartoContext_,
+          typePick,
+          projDir
+        );
       }
     );
   }
 }
 
 async function createAndOpenProject(
+  context: ExtensionContext,
   quartoContext: QuartoContext,
   pick: CreateProjectQuickPickItem,
   projDir: string
@@ -58,7 +64,7 @@ async function createAndOpenProject(
   quartoContext.runQuarto({}, "create-project", projDir, "--type", pick.type);
 
   // write the first run file
-  createFirstRun(projDir, pick.firstRun);
+  createFirstRun(context, projDir, pick.firstRun);
 
   // open the project
   await commands.executeCommand("vscode.openFolder", Uri.file(projDir));

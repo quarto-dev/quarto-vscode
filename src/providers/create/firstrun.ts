@@ -4,30 +4,28 @@
  *---------------------------------------------------------------------------------------------
  */
 
-import fs from "fs";
 import path from "path";
+import { ExtensionContext } from "vscode";
 
-export function createFirstRun(projectDir: string, openFiles: string[]) {
+const kQuartoCreateFirstRun = "quarto.create.firstRun";
+
+export function createFirstRun(
+  context: ExtensionContext,
+  projectDir: string,
+  openFiles: string[]
+) {
   openFiles = openFiles.map((file) =>
-    file.replace("$(dirname)", path.basename(projectDir))
+    path.join(projectDir, file.replace("$(dirname)", path.basename(projectDir)))
   );
-  fs.writeFileSync(firstRunFile(projectDir), openFiles.join("\n"), {
-    encoding: "utf-8",
-  });
+  context.globalState.update(kQuartoCreateFirstRun, openFiles.join("\n"));
 }
 
-export function collectFirstRun(projectDir: string): string[] {
-  const firstRun = firstRunFile(projectDir);
-  if (fs.existsSync(firstRun)) {
-    const files = fs.readFileSync(firstRun, { encoding: "utf-8" }).split("\n");
-    fs.unlinkSync(firstRun);
-    return files;
-  } else {
-    return [];
-  }
-}
-
-function firstRunFile(projectDir: string) {
-  const kQuartoFirstRun = ".quarto-firstrun";
-  return path.join(projectDir, kQuartoFirstRun);
+export function collectFirstRun(
+  context: ExtensionContext,
+  projectDir: string
+): string[] {
+  return context.globalState
+    .get<string>(kQuartoCreateFirstRun, "")
+    .split("\n")
+    .filter((file) => file.startsWith(projectDir));
 }
