@@ -470,6 +470,12 @@
         "key": "ctrl+alt+r",
         "mac": "cmd+alt+r",
         "when": "editorTextFocus && editorLangId == quarto && !findInputFocussed && !replaceInputFocussed"
+      },
+      {
+        "command": "quarto.paste",
+        "key": "ctrl+v",
+        "mac": "cmd+v",
+        "when": "editorTextFocus && editorLangId == quarto && editorHasSelection && !findInputFocussed && !replaceInputFocussed"
       }
     ],
     "menus": {

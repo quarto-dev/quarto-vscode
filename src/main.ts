@@ -19,6 +19,7 @@ import { activateStatusBar } from "./providers/statusbar";
 import { walkthroughCommands } from "./providers/walkthrough";
 import { activateLuaTypes } from "./providers/lua-types";
 import { activateCreate } from "./providers/create/create";
+import { activatePaste } from "./providers/paste";
 
 export async function activate(context: vscode.ExtensionContext) {
   // create markdown engine
@@ -75,6 +76,10 @@ export async function activate(context: vscode.ExtensionContext) {
     kQuartoDocSelector,
     quartoCellExecuteCodeLensProvider(engine)
   );
+
+  // provide paste handling
+  const pasteCommands = activatePaste();
+  commands.push(...pasteCommands);
 
   // activate providers common to browser/node
   activateCommon(context, engine, commands);

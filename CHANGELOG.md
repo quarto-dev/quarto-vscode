@@ -2,6 +2,7 @@
 
 ## 1.48.0 (Unreleased)
 
+- Implment smart paste of links (surround selected text)
 - Use REditorSupport.r as ID for R extension
 
 ## 1.47.0 (Release on 13 October 2022)
