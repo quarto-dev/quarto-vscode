@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.49.0 (Unreleased)
+
+- Add create project command to file -> new file menu
+
 ## 1.48.0 (Release on 14 October 2022)
 
 - Implment smart paste of links (surround selected text)

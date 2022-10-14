@@ -25,7 +25,12 @@ export async function activateCreate(
 
   // commands
   return [
-    new CreateProjectCommand(context, quartoContext),
+    new CreateProjectCommand("quarto.createProject", context, quartoContext),
+    new CreateProjectCommand(
+      "quarto.fileCreateProject",
+      context,
+      quartoContext
+    ),
     new CreateExtensionCommand(context, quartoContext),
   ];
 }

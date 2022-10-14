@@ -13,11 +13,10 @@ import { createFirstRun } from "./firstrun";
 
 export class CreateProjectCommand implements Command {
   constructor(
+    public readonly id: string,
     private readonly context_: ExtensionContext,
     private readonly quartoContext_: QuartoContext
   ) {}
-  private static readonly id = "quarto.createProject";
-  public readonly id = CreateProjectCommand.id;
 
   async execute() {
     await withMinimumQuartoVersion(
