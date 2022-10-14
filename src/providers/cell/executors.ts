@@ -195,7 +195,7 @@ const pythonCellExecutor: CellExecutor = {
 
 const rCellExecutor: CellExecutor = {
   language: "r",
-  requiredExtension: ["reditorsupport.r", "Ikuyadeu.r"],
+  requiredExtension: ["REditorSupport.r", "Ikuyadeu.r"],
   requiredExtensionName: "R",
   requiredVersion: "2.4.0",
   isYamlOption: isYamlHashOption,

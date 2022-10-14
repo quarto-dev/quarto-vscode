@@ -97,7 +97,9 @@ export class PreviewEnvManager {
     }
 
     // QUARTO_R
-    const rExtension = extensions.getExtension("Ikuyadeu.r");
+    const rExtension =
+      extensions.getExtension("REditorSupport.r") ||
+      extensions.getExtension("Ikuyadeu.r");
     if (rExtension) {
       const rPath = workspace.getConfiguration("r.rpath", workspaceFolder?.uri);
       let quartoR: string | undefined;

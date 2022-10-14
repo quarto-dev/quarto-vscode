@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.48.0 (Unreleased)
+
+- Use REditorSupport.r as ID for R extension
+
 ## 1.47.0 (Release on 13 October 2022)
 
 - Quarto: Create Project command for creating common project types
