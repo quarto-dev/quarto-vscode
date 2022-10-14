@@ -107,7 +107,7 @@ these extensions:
 - [Python
   Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 - [R
-  Extension](https://marketplace.visualstudio.com/items?itemName=Ikuyadeu.r)
+  Extension](https://marketplace.visualstudio.com/items?itemName=REditorSupport.r)
 - [Julia
   Extension](https://marketplace.visualstudio.com/items?itemName=julialang.language-julia)
 
