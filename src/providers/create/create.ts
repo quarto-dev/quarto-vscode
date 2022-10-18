@@ -8,7 +8,6 @@ import { ExtensionContext, workspace, window, ViewColumn } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { collectFirstRun } from "./firstrun";
 import { CreateProjectCommand } from "./create-project";
-import { CreateExtensionCommand } from "./create-extension";
 
 export async function activateCreate(
   context: ExtensionContext,
@@ -31,6 +30,5 @@ export async function activateCreate(
       context,
       quartoContext
     ),
-    new CreateExtensionCommand(context, quartoContext),
   ];
 }

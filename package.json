@@ -64,7 +64,6 @@
     "onCommand:quarto.walkthrough.newDocument",
     "onCommand:quarto.createProject",
     "onCommand:quarto.fileCreateProject",
-    "onCommand:quarto.createExtension",
     "workspaceContains:**/*.qmd",
     "workspaceContains:**/_quarto.{yml,yaml}",
     "workspaceContains:**/_extension.{yml,yaml}",
@@ -255,11 +254,6 @@
       {
         "command": "quarto.fileCreateProject",
         "title": "Quarto Project",
-        "category": "Quarto"
-      },
-      {
-        "command": "quarto.createExtension",
-        "title": "Create Extension",
         "category": "Quarto"
       },
       {
@@ -573,9 +567,6 @@
         {
           "command": "quarto.fileCreateProject",
           "when": "false"
-        },
-        {
-          "command": "quarto.createExtension"
         },
         {
           "command": "quarto.renderProject"
