@@ -4,7 +4,6 @@
  *---------------------------------------------------------------------------------------------
  */
 
-import fs from "fs";
 import path from "path";
 
 import {
@@ -25,14 +24,14 @@ export class CreateExtensionCommand implements Command {
   constructor(
     private readonly context_: ExtensionContext,
     private readonly quartoContext_: QuartoContext
-  ) {}
+  ) { }
   private static readonly id = "quarto.createExtension";
   public readonly id = CreateExtensionCommand.id;
 
   async execute() {
     await withMinimumQuartoVersion(
       this.quartoContext_,
-      "1.3.0",
+      "1.2.222",
       "Creating extensions",
       async () => {
         // select extension type
@@ -66,29 +65,38 @@ export class CreateExtensionCommand implements Command {
 
 async function createAndOpenExtension(
   context: ExtensionContext,
-  _quartoContext: QuartoContext,
+  quartoContext: QuartoContext,
   pick: CreateExtensionQuickPickItem,
   extensionDir: string
 ) {
-  // create the project
-  // quartoContext.runQuarto({}, "create-project", projDir, "--type", pick.type);
-  fs.mkdirSync(extensionDir);
-  fs.writeFileSync(
-    path.join(extensionDir, "example.qmd"),
-    `---
-title: "Example"
-format: html
----
+  // Create the extension command
+  const cmd = extensionCmd(pick.type, extensionDir);
+  console.log(cmd);
 
-`,
-    { encoding: "utf-8" }
-  );
+  // Run the quarto command
+  const stdout = quartoContext.runQuarto({ input: cmd }, "create", "--json");
 
-  // write the first run file
-  createFirstRun(context, extensionDir, pick.firstRun);
+  // Read the response
+  const response = JSON.parse(stdout);
+  const outPath = response.path;
+  const openfiles = response.openfiles;
 
   // open the project
-  await commands.executeCommand("vscode.openFolder", Uri.file(extensionDir));
+  createFirstRun(context, outPath, openfiles);
+  await commands.executeCommand("vscode.openFolder", Uri.file(outPath));
+}
+
+function extensionCmd(template: string, dir: string) {
+  const name = path.basename(dir);
+  const directory = dir;
+  return JSON.stringify({
+    type: "extension",
+    directive: {
+      directory,
+      name,
+      template,
+    }
+  });
 }
 
 interface CreateExtensionQuickPickItem extends QuickPickItem {
