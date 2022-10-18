@@ -102,7 +102,7 @@ export function activatePreview(
         (await renderOnSave(engine, editor)) &&
         (await previewManager.isPreviewRunning())
       ) {
-        await previewDoc(editor, undefined, false, engine);
+        await previewDoc(editor, undefined, true, engine);
       }
     }
   };
@@ -137,8 +137,8 @@ export function isPreviewRunning() {
 
 export async function previewDoc(
   editor: TextEditor,
-  format?: string | null,
-  save?: boolean,
+  format: string | null | undefined,
+  renderOnSave: boolean,
   engine?: MarkdownEngine,
   onShow?: () => void
 ) {
@@ -162,8 +162,8 @@ export async function previewDoc(
     await window.showTextDocument(editor.document, editor.viewColumn, false);
   }
 
-  // save (exit if we cancelled)
-  if (save) {
+  // if this wasn't a renderOnSave then save
+  if (!renderOnSave) {
     await commands.executeCommand("workbench.action.files.save");
     if (editor.document.isDirty) {
       return;
@@ -185,7 +185,7 @@ export async function previewDoc(
     }
 
     // run the preview
-    await previewManager.preview(doc.uri, doc, format);
+    await previewManager.preview(doc.uri, doc, format, renderOnSave);
 
     // focus the editor (sometimes the terminal steals focus)
     if (!isNotebook(doc)) {
@@ -195,7 +195,7 @@ export async function previewDoc(
 }
 
 export async function previewProject(target: Uri, format?: string) {
-  await previewManager.preview(target, undefined, format);
+  await previewManager.preview(target, undefined, format, false);
 }
 
 class PreviewManager {
@@ -223,7 +223,12 @@ class PreviewManager {
     this.outputSink_.dispose();
   }
 
-  public async preview(uri: Uri, doc?: TextDocument, format?: string | null) {
+  public async preview(
+    uri: Uri,
+    doc: TextDocument | undefined,
+    format: string | null | undefined,
+    renderOnSave: boolean
+  ) {
     // resolve format if we need to
     if (format === undefined) {
       format = this.previewFormats_.get(uri.fsPath) || null;
@@ -238,7 +243,9 @@ class PreviewManager {
       try {
         const response = await this.previewRenderRequest(doc, format);
         if (response.status === 200) {
-          this.terminal_!.show(true);
+          if (!renderOnSave) {
+            this.terminal_!.show(true);
+          }
         } else {
           await this.startPreview(previewEnv, uri, format, doc);
         }
@@ -513,6 +520,9 @@ class PreviewManager {
       knitrErrorLocation(output, previewFile, previewDir) ||
       luaErrorLocation(output, previewFile, previewDir);
     if (errorLoc && fs.existsSync(errorLoc.file)) {
+      // ensure terminal is visible
+      this.terminal_!.show(true);
+
       // find existing visible instance
       const fileUri = Uri.file(errorLoc.file);
       const editor = findEditor((doc) => doc.uri.fsPath === fileUri.fsPath);
