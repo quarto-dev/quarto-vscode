@@ -3,6 +3,8 @@
 ## 1.49.0 (Unreleased)
 
 - Add create project command to file -> new file menu
+- Don't re-show the terminal unless a rendering error occurs
+- Add status bar progress for rendering
 
 ## 1.48.0 (Release on 14 October 2022)
 

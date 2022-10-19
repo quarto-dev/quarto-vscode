@@ -49,6 +49,14 @@ window.addEventListener("message", (e) => {
       break;
     }
 
+    case "error": {
+      vscode.postMessage({
+        type: "previewError",
+        msg: e.data.msg,
+      });
+      break;
+    }
+
     case "openExternal": {
       vscode.postMessage({
         type: "openExternal",

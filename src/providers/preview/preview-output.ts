@@ -8,7 +8,10 @@ import * as path from "path";
 import * as fs from "fs";
 
 export class PreviewOutputSink {
-  constructor(readonly handler_: (output: string) => Promise<void>) {
+  constructor(
+    readonly handler_: (output: string) => Promise<void>,
+    readonly tick_: () => Promise<void>
+  ) {
     // allocate a directory for preview output
     tmp.setGracefulCleanup();
     const previewDir = tmp.dirSync({ prefix: "quarto-preview" });
@@ -23,6 +26,7 @@ export class PreviewOutputSink {
         this.lastModified_ = lastModified;
         await this.readOutput();
       }
+      await this.tick_();
     }, 200);
   }
 

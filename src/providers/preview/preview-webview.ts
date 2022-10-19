@@ -27,6 +27,11 @@ export class QuartoPreviewWebviewManager extends QuartoWebviewManager<
       this.activeView_.setSlideIndex(slideIndex);
     }
   }
+  public setOnError(handler: (msg: string) => void) {
+    if (this.activeView_) {
+      this.activeView_.setOnError(handler);
+    }
+  }
 }
 
 export class QuartoPreviewWebview extends QuartoWebview<string> {
@@ -46,6 +51,11 @@ export class QuartoPreviewWebview extends QuartoWebview<string> {
               env.openExternal(url);
             } catch {
               // Noop
+            }
+            break;
+          case "previewError":
+            if (this.onError_) {
+              this.onError_(e.msg);
             }
             break;
         }
@@ -80,6 +90,10 @@ export class QuartoPreviewWebview extends QuartoWebview<string> {
         });
       })
     );
+  }
+
+  public setOnError(handler: (msg: string) => void) {
+    this.onError_ = handler;
   }
 
   public clear() {
@@ -152,4 +166,6 @@ export class QuartoPreviewWebview extends QuartoWebview<string> {
   private assetPath(asset: string) {
     return ["assets", "www", "preview", asset];
   }
+
+  private onError_: ((msg: string) => void) | undefined;
 }

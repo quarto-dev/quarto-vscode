@@ -25,6 +25,8 @@ import vscode, {
   Position,
   TextEditorRevealType,
   NotebookDocument,
+  ProgressLocation,
+  CancellationToken,
 } from "vscode";
 import { QuartoContext } from "../../shared/quarto";
 import { previewCommands } from "./commands";
@@ -74,6 +76,8 @@ import {
 import { revealSlideIndex } from "./preview-reveal";
 
 tmp.setGracefulCleanup();
+
+const kPreviewWindowTitle = "Quarto Preview";
 
 const kLocalPreviewRegex =
   /(http:\/\/(?:localhost|127\.0\.0\.1)\:\d+\/?[^\s]*)/;
@@ -185,7 +189,7 @@ export async function previewDoc(
     }
 
     // run the preview
-    await previewManager.preview(doc.uri, doc, format, renderOnSave);
+    await previewManager.preview(doc.uri, doc, format);
 
     // focus the editor (sometimes the terminal steals focus)
     if (!isNotebook(doc)) {
@@ -195,7 +199,7 @@ export async function previewDoc(
 }
 
 export async function previewProject(target: Uri, format?: string) {
-  await previewManager.preview(target, undefined, format, false);
+  await previewManager.preview(target, undefined, format);
 }
 
 class PreviewManager {
@@ -211,7 +215,10 @@ class PreviewManager {
       "Quarto Preview",
       QuartoPreviewWebview
     );
-    this.outputSink_ = new PreviewOutputSink(this.onPreviewOutput.bind(this));
+    this.outputSink_ = new PreviewOutputSink(
+      this.onPreviewOutput.bind(this),
+      this.onPreviewTick.bind(this)
+    );
     this.previewEnvManager_ = new PreviewEnvManager(
       this.outputSink_,
       this.renderToken_
@@ -226,8 +233,7 @@ class PreviewManager {
   public async preview(
     uri: Uri,
     doc: TextDocument | undefined,
-    format: string | null | undefined,
-    renderOnSave: boolean
+    format: string | null | undefined
   ) {
     // resolve format if we need to
     if (format === undefined) {
@@ -236,6 +242,8 @@ class PreviewManager {
       this.previewFormats_.set(uri.fsPath, format);
     }
 
+    this.progressDismiss();
+    this.progressCancellationToken_ = undefined;
     this.previewOutput_ = "";
     this.previewDoc_ = doc;
     const previewEnv = await this.previewEnvManager_.previewEnv(uri);
@@ -243,9 +251,7 @@ class PreviewManager {
       try {
         const response = await this.previewRenderRequest(doc, format);
         if (response.status === 200) {
-          if (!renderOnSave) {
-            this.terminal_!.show(true);
-          }
+          this.progressShow(uri);
         } else {
           await this.startPreview(previewEnv, uri, format, doc);
         }
@@ -336,14 +342,8 @@ class PreviewManager {
     return requestUri;
   }
 
-  private async startPreview(
-    previewEnv: PreviewEnv,
-    target: Uri,
-    format: string | null,
-    doc?: TextDocument
-  ) {
+  private async killPreview() {
     // dispose any existing preview terminals
-    const kPreviewWindowTitle = "Quarto Preview";
     const terminal = window.terminals.find((terminal) => {
       return terminal.name === kPreviewWindowTitle;
     });
@@ -351,6 +351,18 @@ class PreviewManager {
       await this.previewTerminateRequest();
       terminal.dispose();
     }
+    this.progressDismiss();
+    this.progressCancellationToken_ = undefined;
+  }
+
+  private async startPreview(
+    previewEnv: PreviewEnv,
+    target: Uri,
+    format: string | null,
+    doc?: TextDocument
+  ) {
+    // dispose any existing preview terminals
+    await this.killPreview();
 
     // cleanup output
     this.outputSink_.reset();
@@ -440,6 +452,15 @@ class PreviewManager {
     }
 
     this.terminal_.sendText(cmdText, true);
+
+    // show progress
+    this.progressShow(target);
+  }
+
+  private async onPreviewTick() {
+    if (this.progressCancelled()) {
+      await this.killPreview();
+    }
   }
 
   private async onPreviewOutput(output: string) {
@@ -450,6 +471,9 @@ class PreviewManager {
       // detect new preview and show in browser
       const match = this.previewOutput_.match(kLocalPreviewRegex);
       if (match) {
+        // dismiss progress
+        this.progressDismiss();
+
         // capture output file
         const fileMatch = this.previewOutput_.match(kOutputCreatedPattern);
         if (fileMatch) {
@@ -495,11 +519,39 @@ class PreviewManager {
     } else {
       // detect update to existing preview and activate browser
       if (this.previewOutput_.match(kOutputCreatedPattern)) {
+        this.progressDismiss();
         if (this.previewType_ === "internal" && this.previewRevealConfig()) {
           this.updatePreview();
         }
       }
     }
+  }
+
+  private progressShow(uri: Uri) {
+    window.withProgress(
+      {
+        title: `Rendering ${path.basename(uri.fsPath)}`,
+        cancellable: true,
+        location: ProgressLocation.Window,
+      },
+      (_progress, token) => {
+        this.progressCancellationToken_ = token;
+        return new Promise((resolve) => {
+          this.progressDismiss_ = resolve;
+        });
+      }
+    );
+  }
+
+  private progressDismiss() {
+    if (this.progressDismiss_) {
+      this.progressDismiss_();
+      this.progressDismiss_ = undefined;
+    }
+  }
+
+  private progressCancelled() {
+    return !!this.progressCancellationToken_?.isCancellationRequested;
   }
 
   private async detectErrorNavigation(output: string) {
@@ -520,6 +572,9 @@ class PreviewManager {
       knitrErrorLocation(output, previewFile, previewDir) ||
       luaErrorLocation(output, previewFile, previewDir);
     if (errorLoc && fs.existsSync(errorLoc.file)) {
+      // dismiss progress
+      this.progressDismiss();
+
       // ensure terminal is visible
       this.terminal_!.show(true);
 
@@ -555,6 +610,7 @@ class PreviewManager {
         preserveFocus: true,
         viewColumn: ViewColumn.Beside,
       });
+      this.webviewManager_.setOnError(this.progressDismiss.bind(this));
     } else {
       this.showOuputFile();
     }
@@ -642,6 +698,10 @@ class PreviewManager {
   private previewType_: "internal" | "external" | "none" | undefined;
 
   private terminal_: Terminal | undefined;
+
+  // progress management
+  private progressDismiss_: ((value?: unknown) => void) | undefined;
+  private progressCancellationToken_: CancellationToken | undefined;
 
   private readonly renderToken_: string;
   private readonly previewEnvManager_: PreviewEnvManager;
