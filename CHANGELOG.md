@@ -1,10 +1,11 @@
 # Changelog
 
-## 1.49.0 (Unreleased)
+## 1.49.0 (Release on 19 October 2022)
 
 - Add create project command to file -> new file menu
 - Don't re-show the terminal unless a rendering error occurs
 - Add status bar progress for rendering
+- Don't show bibliography completions unless they match the prefix
 
 ## 1.48.0 (Release on 14 October 2022)
 

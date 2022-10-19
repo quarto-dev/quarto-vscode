@@ -12,21 +12,23 @@ import {
 import { biblioRefs } from "../../../core/biblio";
 
 export function biblioCompletions(
-  _token: string,
+  token: string,
   doc: TextDocument
 ): CompletionItem[] | null {
   const refs = biblioRefs(doc);
   if (refs) {
-    return refs.map((ref) => ({
-      kind: CompletionItemKind.Constant,
-      label: ref.id,
-      documentation: ref.cite
-        ? {
-            kind: MarkupKind.Markdown,
-            value: ref.cite,
-          }
-        : undefined,
-    }));
+    return refs
+      .filter((ref) => ref.id.startsWith(token))
+      .map((ref) => ({
+        kind: CompletionItemKind.Constant,
+        label: ref.id,
+        documentation: ref.cite
+          ? {
+              kind: MarkupKind.Markdown,
+              value: ref.cite,
+            }
+          : undefined,
+      }));
   } else {
     return null;
   }
