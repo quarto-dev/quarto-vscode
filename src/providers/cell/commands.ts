@@ -165,19 +165,22 @@ class RunSelectionCommand extends RunCommand implements Command {
     _line: number,
     block: Token
   ) {
-    // determine the selected lines
-    const selection = editor.document.getText(
-      new Range(
-        new Position(editor.selection.start.line, 0),
-        new Position(
-          editor.selection.end.line,
-          editor.document.lineAt(editor.selection.end).text.length
+    // if the selection is empty take the whole line, otherwise
+    // take the selected text exactly
+    const selection = editor.selection.isEmpty
+      ? editor.document.getText(
+          new Range(
+            new Position(editor.selection.start.line, 0),
+            new Position(
+              editor.selection.end.line,
+              editor.document.lineAt(editor.selection.end).text.length
+            )
+          )
         )
-      )
-    );
+      : editor.document.getText(editor.selection);
 
-    // for single-line selections we advance to the next line
-    if (editor.selection.isSingleLine) {
+    // for empty selections we advance to the next line
+    if (editor.selection.isEmpty) {
       const selPos = new Position(editor.selection.start.line + 1, 0);
       editor.selection = new Selection(selPos, selPos);
     }

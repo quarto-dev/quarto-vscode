@@ -2,6 +2,7 @@
 
 ## 1.50.0 (Unreleased)
 
+- Run only selected text for non-empty editor selections
 - Filter crossref completions by prefix match
 
 ## 1.49.0 (Release on 19 October 2022)
