@@ -21,7 +21,7 @@ import { quarto } from "../../../quarto/quarto";
 import { fileCrossrefIndexStorage } from "../../../shared/storage";
 
 export async function crossrefCompletions(
-  _token: string,
+  token: string,
   code: string,
   filePath: string,
   projectDir?: string
@@ -86,7 +86,9 @@ export async function crossrefCompletions(
     }
   }
 
-  return xrefs.map(xrefCompletion(!!projectDir));
+  return xrefs
+    .map(xrefCompletion(!!projectDir))
+    .filter((ref) => ref.label.startsWith(token));
 }
 
 type ProjectXRefIndex = Record<string, Record<string, string>>;
