@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.50.0 (Unreleased)
+
+- Filter crossref completions by prefix match
+
 ## 1.49.0 (Release on 19 October 2022)
 
 - Add create project command to file -> new file menu
