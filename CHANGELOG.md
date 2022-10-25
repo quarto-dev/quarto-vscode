@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.51.0 (Unreleased)
+## 1.51.0 (Release on 24 October 2022)
 
 - Always render on save for notebooks (as they don't execute by default)
 - Improved slide preview for notebooks (return last slide)
