@@ -22,7 +22,7 @@ export class QuartoPreviewWebviewManager extends QuartoWebviewManager<
       this.activeView_.clear();
     }
   }
-  public setSlideIndex(slideIndex: number) {
+  public setSlideIndex(slideIndex?: number) {
     if (this.activeView_) {
       this.activeView_.setSlideIndex(slideIndex);
     }
@@ -102,7 +102,7 @@ export class QuartoPreviewWebview extends QuartoWebview<string> {
     });
   }
 
-  public setSlideIndex(slideIndex: number) {
+  public setSlideIndex(slideIndex?: number) {
     this._webviewPanel.webview.postMessage({
       type: "setSlideIndex",
       index: slideIndex,

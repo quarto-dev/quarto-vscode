@@ -23,7 +23,7 @@ const reloadButton = header.querySelector(".reload-button");
 const openExternalButton = header.querySelector(".open-external-button");
 const kQuartoPreviewReqId = "quartoPreviewReqId";
 const kQuartoPreviewThemeCategory = "quartoPreviewThemeCategory";
-let slideIndex = 0;
+let slideIndex = undefined;
 
 const updateAddressBar = (href) => {
   const url = new URL(href);
@@ -76,18 +76,20 @@ window.addEventListener("message", (e) => {
       break;
     }
     case "setSlideIndex": {
-      slideIndex = e.data.index || 0;
+      slideIndex = e.data.index;
       break;
     }
     case "reveal-init": {
       // set the slide index
       const slides = e.data.data.slides;
-      const slide = slides[slideIndex];
-      if (slide) {
-        e.source.postMessage(
-          { message: "reveal-slide", data: slide },
-          e.origin
-        );
+      if (slideIndex !== undefined) {
+        const slide = slides[slideIndex];
+        if (slide) {
+          e.source.postMessage(
+            { message: "reveal-slide", data: slide },
+            e.origin
+          );
+        }
       }
 
       // let reveal know we are ready for additional messages

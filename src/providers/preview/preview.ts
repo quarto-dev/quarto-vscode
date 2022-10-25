@@ -154,6 +154,8 @@ export async function previewDoc(
       previewManager.setSlideIndex(
         await revealSlideIndex(editor.selection.active, editor.document, engine)
       );
+    } else {
+      previewManager.setSlideIndex(undefined);
     }
   }
   //  set onShow if provided
@@ -263,7 +265,7 @@ class PreviewManager {
     }
   }
 
-  public setSlideIndex(slideIndex: number) {
+  public setSlideIndex(slideIndex?: number) {
     this.webviewManager_.setSlideIndex(slideIndex);
   }
 
