@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.51.0 (Unreleased)
+
+- Always render on save for notebooks (as they don't execute by default)
+
 ## 1.50.0 (Release on 19 October 2022)
 
 - Run only selected text for non-empty editor selections

@@ -107,6 +107,11 @@ export async function renderOnSave(engine: MarkdownEngine, editor: TextEditor) {
     return false;
   }
 
+  // notebooks automatically get renderOnSave
+  if (isNotebook(editor.document)) {
+    return true;
+  }
+
   // first look for document level editor setting
   const docYaml = await documentFrontMatter(engine, editor.document);
   const docSetting = readRenderOnSave(docYaml);
