@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.52.0 (Unreleased)
+## 1.52.0 (Release on 26 October 2022)
 
 - Don't include full path for preview file when running on WSL
 
