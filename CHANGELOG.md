@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.52.0 (Unreleased)
+
+- Don't include full path for preview file when running on WSL
+
 ## 1.51.0 (Release on 24 October 2022)
 
 - Always render on save for notebooks (as they don't execute by default)
