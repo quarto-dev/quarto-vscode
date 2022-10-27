@@ -401,9 +401,6 @@ class PreviewManager {
       );
     }
 
-    // are we running in wsl?
-    const isWsl = vscode.env.remoteName === "wsl";
-
     // is this is a shiny doc?
     const isShiny = await isQuartoShinyDoc(this.engine_, doc);
 
@@ -420,8 +417,6 @@ class PreviewManager {
       shQuote(
         this.quartoContext_.useCmd
           ? target.fsPath
-          : isWsl
-          ? path.basename(target.fsPath)
           : pathWithForwardSlashes(target.fsPath)
       ),
     ];

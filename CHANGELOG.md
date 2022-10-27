@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.53.0 (Release on 27 October 2022)
+
+- Once again use full path in WSL (previous change wasn't effective)
+
 ## 1.52.0 (Release on 26 October 2022)
 
 - Don't include full path for preview file when running on WSL
