@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.54.0 (Unreleased)
+
+- Improve handling of first-run files for create project command
+
 ## 1.53.0 (Release on 27 October 2022)
 
 - Once again use full path in WSL (previous change wasn't effective)

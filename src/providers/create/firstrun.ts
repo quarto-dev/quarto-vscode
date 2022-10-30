@@ -4,6 +4,7 @@
  *---------------------------------------------------------------------------------------------
  */
 
+import fs from "fs";
 import path from "path";
 import { ExtensionContext } from "vscode";
 
@@ -20,12 +21,14 @@ export function createFirstRun(
   context.globalState.update(kQuartoCreateFirstRun, openFiles.join("\n"));
 }
 
-export function collectFirstRun(
+export async function collectFirstRun(
   context: ExtensionContext,
   projectDir: string
-): string[] {
-  return context.globalState
+): Promise<string[]> {
+  const firstRun = context.globalState
     .get<string>(kQuartoCreateFirstRun, "")
     .split("\n")
-    .filter((file) => file.startsWith(projectDir));
+    .filter((file) => file.startsWith(projectDir) && fs.existsSync(file));
+  await context.globalState.update(kQuartoCreateFirstRun, undefined);
+  return firstRun;
 }
