@@ -26,6 +26,7 @@ import {
   codeFromBlock,
   ensureRequiredExtension,
   executeInteractive,
+  executeSelectionInteractive,
 } from "./executors";
 
 export function cellCommands(engine: MarkdownEngine): Command[] {
@@ -165,29 +166,36 @@ class RunSelectionCommand extends RunCommand implements Command {
     _line: number,
     block: Token
   ) {
-    // if the selection is empty take the whole line, otherwise
-    // take the selected text exactly
-    const selection = editor.selection.isEmpty
-      ? editor.document.getText(
-          new Range(
-            new Position(editor.selection.start.line, 0),
-            new Position(
-              editor.selection.end.line,
-              editor.document.lineAt(editor.selection.end).text.length
+    // get language and attempt language aware runSelection
+    const language = languageNameFromBlock(block);
+    const executed = await executeSelectionInteractive(language);
+
+    // if the executor isn't capable of lenguage aware runSelection
+    // then determine the selection manually
+    if (!executed) {
+      // if the selection is empty take the whole line, otherwise
+      // take the selected text exactly
+      const selection = editor.selection.isEmpty
+        ? editor.document.getText(
+            new Range(
+              new Position(editor.selection.start.line, 0),
+              new Position(
+                editor.selection.end.line,
+                editor.document.lineAt(editor.selection.end).text.length
+              )
             )
           )
-        )
-      : editor.document.getText(editor.selection);
+        : editor.document.getText(editor.selection);
 
-    // for empty selections we advance to the next line
-    if (editor.selection.isEmpty) {
-      const selPos = new Position(editor.selection.start.line + 1, 0);
-      editor.selection = new Selection(selPos, selPos);
+      // for empty selections we advance to the next line
+      if (editor.selection.isEmpty) {
+        const selPos = new Position(editor.selection.start.line + 1, 0);
+        editor.selection = new Selection(selPos, selPos);
+      }
+
+      // run code
+      await executeInteractive(language, [selection]);
     }
-
-    // run code
-    const language = languageNameFromBlock(block);
-    await executeInteractive(language, [selection]);
   }
 }
 

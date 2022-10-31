@@ -72,6 +72,19 @@ export async function executeInteractive(
   }
 }
 
+// attempt language aware execution of current selection (returns false
+// if the executor doesn't support this, in which case generic
+// executeInteractive will be called)
+export async function executeSelectionInteractive(language: string) {
+  const executor = kCellExecutors.find((x) => x.language === language);
+  if (executor?.executeSelection) {
+    await executor.executeSelection();
+    return true;
+  } else {
+    return false;
+  }
+}
+
 export function hasCellExecutor(language: string) {
   return !!kCellExecutors.find((x) => x.language === language);
 }
@@ -178,6 +191,7 @@ interface CellExecutor {
   requiredVersion?: string;
   isYamlOption: (line: string) => boolean;
   execute: (blocks: string[]) => Promise<void>;
+  executeSelection?: () => Promise<void>;
 }
 
 const pythonCellExecutor: CellExecutor = {
@@ -201,6 +215,9 @@ const rCellExecutor: CellExecutor = {
   isYamlOption: isYamlHashOption,
   execute: async (blocks: string[]) => {
     await commands.executeCommand("r.runSelection", blocks.join("\n").trim());
+  },
+  executeSelection: async () => {
+    await commands.executeCommand("r.runSelection");
   },
 };
 

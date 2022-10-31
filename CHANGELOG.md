@@ -2,6 +2,7 @@
 
 ## 1.54.0 (Unreleased)
 
+- Intelligent run selection for R (runs complete statment not just line)
 - Improve handling of first-run files for create project command
 
 ## 1.53.0 (Release on 27 October 2022)
