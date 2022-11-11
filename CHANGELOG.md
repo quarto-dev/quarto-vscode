@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.55.0 (Unreleased)
+
+- Don't use '-' as a completion trigger character (messes up crossref completions)
+
 ## 1.54.0 (Release on 31 October 2022)
 
 - Intelligent run selection for R (runs complete statment not just line)
