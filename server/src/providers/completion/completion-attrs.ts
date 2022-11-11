@@ -13,7 +13,7 @@ export async function attrCompletions(context: EditorContext) {
   }
 
   // validate trigger
-  if (context.trigger && !["-", "="].includes(context.trigger)) {
+  if (context.trigger && !["="].includes(context.trigger)) {
     return null;
   }
 

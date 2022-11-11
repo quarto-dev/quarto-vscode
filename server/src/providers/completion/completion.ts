@@ -22,7 +22,7 @@ export const kCompletionCapabilities: ServerCapabilities = {
     resolveProvider: false,
     // register a superset of all trigger characters for embedded languages
     // (languages are responsible for declaring which one they support if any)
-    triggerCharacters: [".", "$", "@", ":", "\\", "-", "="],
+    triggerCharacters: [".", "$", "@", ":", "\\", "="],
   },
 };
 

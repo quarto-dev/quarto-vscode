@@ -27,7 +27,7 @@ export async function refsCompletions(
   }
 
   // validate trigger
-  if (context.trigger && !["@", "-"].includes(context.trigger)) {
+  if (context.trigger && !["@"].includes(context.trigger)) {
     return null;
   }
 

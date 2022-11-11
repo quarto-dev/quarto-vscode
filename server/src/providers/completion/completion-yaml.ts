@@ -19,11 +19,6 @@ export async function yamlCompletions(context: EditorContext) {
     return null;
   }
 
-  // validate trigger
-  if (context.trigger && !["-"].includes(context.trigger)) {
-    return null;
-  }
-
   // get completions
   const result = await quarto.getYamlCompletions(context);
   if (result) {
