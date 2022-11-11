@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.55.0 (Unreleased)
+## 1.55.0 (Release on 11 November 2022)
 
 - Don't use '-' as a completion trigger character (messes up crossref completions)
 
