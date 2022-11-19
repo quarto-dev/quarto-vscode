@@ -12,8 +12,10 @@ import {
   SignatureHelpContext,
   workspace,
   window,
+  Range,
   ColorThemeKind,
   ConfigurationTarget,
+  MarkdownString,
 } from "vscode";
 import {
   LanguageClient,
@@ -31,6 +33,7 @@ import {
   TextDocument,
 } from "vscode";
 import {
+  MarkedString,
   Middleware,
   ProvideCompletionItemsSignature,
   ProvideHoverSignature,
@@ -41,6 +44,7 @@ import { virtualDoc, virtualDocUri } from "../vdoc/vdoc";
 import { activateVirtualDocEmbeddedContent } from "../vdoc/vdoc-content";
 import { deactivateVirtualDocTempFiles } from "../vdoc/vdoc-tempfile";
 import { imageHover } from "../providers/hover-image";
+import { EmbeddedLanguage } from "../vdoc/languages";
 
 let client: LanguageClient;
 
@@ -145,14 +149,30 @@ function embeddedCodeCompletionProvider(engine: MarkdownEngine) {
       // get uri for completions
       const vdocUri = await virtualDocUri(vdoc, document.uri);
 
-      // execute completions
       try {
-        return await commands.executeCommand<CompletionList>(
+        const completions = await commands.executeCommand<CompletionList>(
           "vscode.executeCompletionItemProvider",
           vdocUri,
-          position,
+          adjustedPosition(language, position),
           context.triggerCharacter
         );
+        return completions.items.map((completion) => {
+          if (language.inject && completion.range) {
+            if (completion.range instanceof Range) {
+              completion.range = unadjustedRange(language, completion.range);
+            } else {
+              completion.range.inserting = unadjustedRange(
+                language,
+                completion.range.inserting
+              );
+              completion.range.replacing = unadjustedRange(
+                language,
+                completion.range.replacing
+              );
+            }
+          }
+          return completion;
+        });
       } catch (error) {
         return undefined;
       }
@@ -182,15 +202,24 @@ function embeddedHoverProvider(engine: MarkdownEngine) {
 
       // execute hover
       try {
-        const hover = await commands.executeCommand<Hover[]>(
+        const hovers = await commands.executeCommand<Hover[]>(
           "vscode.executeHoverProvider",
           vdocUri,
-          position
+          adjustedPosition(vdoc.language, position)
         );
-        if (hover && hover.length > 0) {
-          // reutrn the last hover (arbitrary, but it seems like the
-          // LSP results are returned second)
-          return hover[hover.length - 1];
+        if (hovers && hovers.length > 0) {
+          // consolidate content
+          const contents = new Array<MarkdownString | MarkedString>();
+          hovers.forEach((hover) => {
+            hover.contents.forEach((hoverContent) => {
+              contents.push(hoverContent);
+            });
+          });
+          // adjust range if required
+          const range = hovers[0].range
+            ? unadjustedRange(vdoc.language, hovers[0].range)
+            : undefined;
+          return new Hover(contents, range);
         }
       } catch (error) {
         console.log(error);
@@ -217,7 +246,7 @@ function embeddedSignatureHelpProvider(engine: MarkdownEngine) {
         return await commands.executeCommand<SignatureHelp>(
           "vscode.executeSignatureHelpProvider",
           vdocUri,
-          position,
+          adjustedPosition(vdoc.language, position),
           context.triggerCharacter
         );
       } catch (error) {
@@ -228,6 +257,20 @@ function embeddedSignatureHelpProvider(engine: MarkdownEngine) {
     }
   };
 }
+
+// adjust position for inject
+const adjustedPosition = (language: EmbeddedLanguage, pos: Position) => {
+  return new Position(pos.line + (language.inject?.length || 0), pos.character);
+};
+const unadjustedPosition = (language: EmbeddedLanguage, pos: Position) => {
+  return new Position(pos.line - (language.inject?.length || 0), pos.character);
+};
+const unadjustedRange = (language: EmbeddedLanguage, range: Range) => {
+  return new Range(
+    unadjustedPosition(language, range.start),
+    unadjustedPosition(language, range.end)
+  );
+};
 
 function isWithinYamlComment(doc: TextDocument, pos: Position) {
   const line = doc.lineAt(pos.line).text;

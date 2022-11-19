@@ -55,7 +55,7 @@ export async function virtualDoc(
 
     // perform inject if necessary
     if (language.inject) {
-      lines[0] = language.inject;
+      lines.unshift(...language.inject);
     }
 
     // return the language and the content

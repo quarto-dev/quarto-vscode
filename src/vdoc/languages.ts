@@ -8,7 +8,7 @@ export interface EmbeddedLanguage {
   extension: string;
   type: "content" | "tempfile";
   trigger?: string[];
-  inject?: string;
+  inject?: string[];
   reuseVdoc?: boolean;
 }
 
@@ -20,7 +20,7 @@ const kEmbededLanguages = [
   // these langauges required creatinga a temp file
   defineLanguage("python", {
     ext: "py",
-    inject: "# type: ignore\n# flake8: noqa",
+    inject: ["# type: ignore", "# flake8: noqa"],
     trigger: ["."],
   }),
   defineLanguage("r", { trigger: ["$", "@", ":", "."], reuseVdoc: true }),
@@ -52,7 +52,7 @@ interface LanguageOptions {
   ext?: string;
   type?: "content" | "tempfile";
   trigger?: string[];
-  inject?: string;
+  inject?: string[];
   reuseVdoc?: boolean;
 }
 
