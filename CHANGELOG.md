@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.56.0 (Release on 19 November 2022)
+
+- Resolve Python completion problems (adjust completion positions for inject)
+- Return multiple hover results from hover provider
+
 ## 1.55.0 (Release on 11 November 2022)
 
 - Don't use '-' as a completion trigger character (messes up crossref completions)
