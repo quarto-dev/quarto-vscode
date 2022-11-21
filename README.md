@@ -9,7 +9,7 @@ VS Code extension for the [Quarto](https://quarto.org) scientific and technical 
 - Completion for citations and cross references
 - Commands and key-bindings for running cells and selected line(s)
 - Automatic navigation to render errors for Jupyter, Knitr, and YAML
-- Live preview for embedded mermaid and graphviz diagrams
+- Live preview for embedded Mermaid and Graphviz diagrams
 - Assist panel for contextual help, image preview, and math preview
 - Code snippets for common markdown constructs
 - Code folding and document outline for navigation within documents

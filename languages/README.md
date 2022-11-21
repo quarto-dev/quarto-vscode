@@ -1,4 +1,4 @@
-We've incorporated code from several other extensions to provide features for LaTeX, Medmaid, and Graphviz:
+We've incorporated code from several other extensions to provide features for LaTeX, Mermaid, and Graphviz:
 
 - LaTeX code completion, preview, and language support from https://github.com/James-Yu/LaTeX-Workshop
 

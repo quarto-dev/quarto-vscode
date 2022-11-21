@@ -11,7 +11,7 @@
 
 ## 1.54.0 (Release on 31 October 2022)
 
-- Intelligent run selection for R (runs complete statment not just line)
+- Intelligent run selection for R (runs complete statement not just line)
 - Improve handling of first-run files for create project command
 
 ## 1.53.0 (Release on 27 October 2022)
@@ -41,7 +41,7 @@
 
 ## 1.48.0 (Release on 14 October 2022)
 
-- Implment smart paste of links (surround selected text)
+- Implement smart paste of links (surround selected text)
 - Use REditorSupport.r as ID for R extension
 
 ## 1.47.0 (Release on 13 October 2022)
