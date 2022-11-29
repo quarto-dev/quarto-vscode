@@ -7,6 +7,7 @@ import { extname } from "path";
 
 export const kTextHtml = "text/html";
 export const kTextMarkdown = "text/markdown";
+export const kTextXml = "text/xml";
 export const kTextLatex = "text/latex";
 export const kTextPlain = "text/plain";
 export const kImagePng = "image/png";
@@ -52,7 +53,9 @@ export function isHtmlContent(path?: string) {
 export function isTextContent(path?: string) {
   return (
     path &&
-    (contentType(path) === kTextMarkdown || contentType(path) === kTextPlain)
+    (contentType(path) === kTextMarkdown ||
+      contentType(path) === kTextPlain ||
+      contentType(path) === kTextXml)
   );
 }
 
