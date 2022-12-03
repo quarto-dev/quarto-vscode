@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.57.0 (Release on 3 December 2022)
+
+- Enable preview of XML files (useful for JATS)
+- Add "document" role to Quarto Lens
+
 ## 1.56.0 (Release on 19 November 2022)
 
 - Resolve Python completion problems (adjust completion positions for inject)
