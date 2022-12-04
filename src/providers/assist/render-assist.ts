@@ -51,7 +51,7 @@ export function renderWebviewHtml(webview: Webview, extensionUri: Uri) {
       <title>Quarto Lens</title>
     </head>
     <body>
-      <article id="main" role="document"></article>
+      <article id="main" role="document" tabindex="0"></article>
 
       <script nonce="${nonce}" src="${scriptUri}"></script>
     </body>
