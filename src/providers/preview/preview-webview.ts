@@ -128,7 +128,7 @@ export class QuartoPreviewWebview extends QuartoWebview<string> {
     <header class="header">
       <nav class="controls">
         <button
-          title=""Back"
+          title="Back"
           class="back-button icon"><i class="codicon codicon-arrow-left"></i></button>
 
         <button
